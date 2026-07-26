@@ -1053,11 +1053,6 @@ function snowy_lr_featured_station()
         <div class="snowy-feat__head">
             <span class="snowy-feat__badges">
                 <img class="snowy-feat__logo" src="https://lariojameteo.es/wp-content/uploads/2017/09/cropped-cropped-cropped-Sologota_Favicon-WEB.png" alt="La Rioja Meteo" width="26" height="26" loading="lazy" />
-                <span class="snowy-feat__station-ico" aria-hidden="true">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
-                        <path d="M12 3v18M12 3l-5 3M12 3l5 3M12 9l-5 3M12 9l5 3"/><path d="M7 21h10"/>
-                    </svg>
-                </span>
             </span>
             <span class="snowy-feat__kicker">Nuestra estación · en directo</span>
             <h2 class="snowy-feat__title"><?php echo esc_html($s['stationName']); ?></h2>
@@ -1125,8 +1120,6 @@ function snowy_lr_featured_styles()
 .snowy-feat__cta:hover{text-decoration:underline}
 .snowy-feat__badges{display:inline-flex;align-items:center;gap:.45rem;margin-bottom:.4rem}
 .snowy-feat__logo{width:26px;height:26px;object-fit:contain;background:transparent;padding:0}
-.snowy-feat__station-ico{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
-  border-radius:6px;background:#e0f2fe;color:#0369a1}
 @media(max-width:560px){
   .snowy-feat{padding:1.05rem}
   .snowy-feat__temp{font-size:2.4rem}
