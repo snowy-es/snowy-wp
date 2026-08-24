@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,11 @@ y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 == Changelog ==
+
+= 2.4.1 =
+* Los estilos viajan con la página en vez de como fichero enlazado: los
+  optimizadores que generan CSS único por página descartaban la hoja entera y
+  los widgets salían sin formato.
 
 = 2.4.0 =
 * Nuevos widgets: lluvia acumulada, ranking por variable, comparativa de

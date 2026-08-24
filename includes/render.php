@@ -217,16 +217,57 @@ function snowy_wp_hazard_window($hazard)
     );
 }
 
+/**
+ * Hoja de estilos, minificada y cacheada.
+ *
+ * Se sirve como estilo en linea y no como fichero enlazado a proposito. Los
+ * optimizadores que generan CSS "unico" por pagina analizan el HTML antes de que
+ * exista, deciden que estas reglas no se usan y las tiran: medido en La Rioja
+ * Meteo, el CSS del plugin desaparecia entero del que acababa sirviendose y los
+ * widgets salian sin formato. En linea viaja con la pagina y no hay analisis que
+ * lo pueda descartar.
+ */
+function snowy_wp_css()
+{
+    $clave = SNOWY_WP_CACHE_PREFIX . 'css_' . SNOWY_WP_VERSION;
+    $css = get_transient($clave);
+    if (is_string($css) && $css !== '') {
+        return $css;
+    }
+
+    $css = (string) @file_get_contents(SNOWY_WP_DIR . 'assets/snowy-wp.css');
+    if ($css === '') {
+        return '';
+    }
+
+    $css = preg_replace('#/\*.*?\*/#s', '', $css);
+    $css = preg_replace('/\s*\n\s*/', '', $css);
+    $css = preg_replace('/\s{2,}/', ' ', $css);
+    $css = trim($css);
+
+    set_transient($clave, $css, WEEK_IN_SECONDS);
+
+    return $css;
+}
+
 function snowy_wp_styles()
 {
-    wp_enqueue_style('snowy-wp', plugins_url('assets/snowy-wp.css', SNOWY_WP_FILE), [], SNOWY_WP_VERSION);
+    $css = snowy_wp_css();
+    if ($css === '') {
+        return;
+    }
+
+    wp_register_style('snowy-wp', false);
+    wp_enqueue_style('snowy-wp');
 
     // El acento se inyecta como variable para que quien instala el plugin pueda
     // vestirlo con su color sin tocar la hoja de estilos.
     $accent = snowy_wp_accent();
     if ($accent) {
-        wp_add_inline_style('snowy-wp', sprintf(':root{--snowy-accent:%s}', $accent));
+        $css = sprintf(':root{--snowy-accent:%s}', $accent) . $css;
     }
+
+    wp_add_inline_style('snowy-wp', $css);
 }
 add_action('wp_enqueue_scripts', 'snowy_wp_styles');
 
