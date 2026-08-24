@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.3.0
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,10 @@ shortcode y como bloque de Gutenberg:
 * Ficha de una estación concreta, para incrustar dentro de un artículo.
 * Calidad del aire: índice europeo, PM2,5, PM10, ozono y NO₂.
 * Polen: gramíneas, olivo, abedul, aliso, artemisa y ambrosía, con su nivel.
+* Lluvia acumulada del día por estación.
+* Ranking por cualquier variable de la red.
+* Comparativa de varias estaciones enfrentadas.
+* Previsión de polvo sahariano por días.
 
 Se puede filtrar por región y los datos se cachean para no golpear la API en
 cada visita. Si la API no responde, los widgets no pintan nada en vez de romper
@@ -65,6 +69,10 @@ y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 == Changelog ==
+
+= 2.4.0 =
+* Nuevos widgets: lluvia acumulada, ranking por variable, comparativa de
+  estaciones y polvo sahariano.
 
 = 2.3.0 =
 * La ficha de estación incluye la evolución de las últimas 24 horas.

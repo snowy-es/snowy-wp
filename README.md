@@ -15,6 +15,10 @@ cualquier WordPress.
 | `[snowy_estacion id="9115X"]` | Snowy · Ficha de estación | Tarjeta para incrustar en un artículo |
 | `[snowy_aire]` | Snowy · Calidad del aire | Índice europeo, PM2,5, PM10, ozono y NO₂ |
 | `[snowy_polen]` | Snowy · Polen | Gramíneas, olivo, abedul, aliso, artemisa y ambrosía |
+| `[snowy_lluvia]` | Snowy · Lluvia acumulada | Acumulados del día, solo de las que han recogido algo |
+| `[snowy_ranking variable="racha"]` | Snowy · Ranking | Tabla ordenada por cualquier variable de la red |
+| `[snowy_comparador ids="A,B"]` | Snowy · Comparativa | Varias estaciones enfrentadas en columnas |
+| `[snowy_calima]` | Snowy · Polvo sahariano | Intensidad prevista de calima por días |
 
 Los widgets de aire y polen se ubican solos en el centro de las estaciones de
 tu región; `lat` y `lon` solo hacen falta si quieres otro punto.

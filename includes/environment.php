@@ -244,3 +244,121 @@ function snowy_wp_shortcode_polen($atts = [])
     return ob_get_clean();
 }
 add_shortcode('snowy_polen', 'snowy_wp_shortcode_polen');
+
+const SNOWY_WP_TTL_DUST = 3600;
+
+/**
+ * Umbrales de polvo en suspension. La API devuelve una serie horaria en
+ * microgramos por metro cubico; estos cortes son los que separan un cielo
+ * turbio de una calima que se nota al respirar.
+ */
+const SNOWY_WP_DUST_LEVELS = [
+    ['max' => 10,  'label' => 'Sin calima',  'class' => 'is-good'],
+    ['max' => 50,  'label' => 'Ligera',      'class' => 'is-fair'],
+    ['max' => 150, 'label' => 'Moderada',    'class' => 'is-moderate'],
+    ['max' => 350, 'label' => 'Intensa',     'class' => 'is-poor'],
+];
+
+function snowy_wp_dust_level($value)
+{
+    foreach (SNOWY_WP_DUST_LEVELS as $level) {
+        if ($value < $level['max']) {
+            return $level;
+        }
+    }
+
+    return ['label' => __('Muy intensa', 'snowy-wp'), 'class' => 'is-very-poor'];
+}
+
+function snowy_wp_dust($lat, $lon)
+{
+    return snowy_wp_cached('dust_' . md5("$lat|$lon"), SNOWY_WP_TTL_DUST, static function () use ($lat, $lon) {
+        return snowy_wp_get(sprintf('/air-quality/dust?lat=%s&lon=%s', rawurlencode($lat), rawurlencode($lon)));
+    });
+}
+
+/**
+ * [snowy_calima] — polvo sahariano ahora y en los proximos dias.
+ *
+ * Se resume por dias en vez de listar las ciento veinte horas que devuelve la
+ * fuente: lo que se pregunta es que dia llega y cuanto aprieta.
+ */
+function snowy_wp_shortcode_calima($atts = [])
+{
+    $atts = shortcode_atts(['lat' => '', 'lon' => '', 'dias' => 4, 'nivel' => ''], (array) $atts, 'snowy_calima');
+    $tag = snowy_wp_heading_tag($atts['nivel']);
+    $point = snowy_wp_air_point($atts);
+    if (!$point) {
+        return '';
+    }
+
+    $data = snowy_wp_dust($point['lat'], $point['lon']);
+    $times = $data['times'] ?? [];
+    $dust  = $data['dust'] ?? [];
+    if (!$times || !$dust || count($times) !== count($dust)) {
+        return '';
+    }
+
+    // Se agrupa por dia local quedandose con el pico, que es lo que se percibe.
+    $dias = [];
+    foreach ($times as $i => $t) {
+        $valor = $dust[$i] ?? null;
+        if ($valor === null) {
+            continue;
+        }
+        $ts = strtotime($t);
+        if (!$ts) {
+            continue;
+        }
+        $clave = wp_date('Y-m-d', $ts);
+        $dias[$clave] = max($dias[$clave] ?? 0, (float) $valor);
+    }
+
+    if (!$dias) {
+        return '';
+    }
+
+    $dias = array_slice($dias, 0, max(1, min(5, (int) $atts['dias'])), true);
+    $pico = max($dias);
+
+    ob_start(); ?>
+    <div class="snowy-wp-wrap">
+        <div class="snowy-wp-head">
+            <<?php echo esc_attr($tag); ?>><?php esc_html_e('Polvo sahariano', 'snowy-wp'); ?></<?php echo esc_attr($tag); ?>>
+            <span class="snowy-wp-tag"><?php
+                echo esc_html($pico < 10 ? __('sin calima prevista', 'snowy-wp') : __('previsión', 'snowy-wp'));
+            ?></span>
+        </div>
+        <?php if ($pico < 10) : ?>
+            <p class="snowy-wp-empty"><?php esc_html_e('No se espera polvo en suspensión en los próximos días.', 'snowy-wp'); ?></p>
+        <?php else : ?>
+            <div class="snowy-wp-scroll">
+            <table class="snowy-wp-table">
+                <thead><tr>
+                    <th><?php esc_html_e('Día', 'snowy-wp'); ?></th>
+                    <th><?php esc_html_e('Intensidad', 'snowy-wp'); ?></th>
+                    <th><?php esc_html_e('Máximo', 'snowy-wp'); ?></th>
+                </tr></thead>
+                <tbody>
+                <?php foreach ($dias as $fecha => $valor) : ?>
+                    <?php $level = snowy_wp_dust_level($valor); ?>
+                    <tr>
+                        <td><?php echo esc_html(wp_date('l j', strtotime($fecha))); ?></td>
+                        <td><span class="snowy-wp-risk <?php echo esc_attr($level['class']); ?>"><?php echo esc_html($level['label']); ?></span></td>
+                        <td class="snowy-wp-val"><?php echo esc_html(number_format($valor, 0, ',', '.')); ?> µg/m³</td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            </div>
+        <?php endif; ?>
+        <p class="snowy-wp-credit"><?php printf(
+            /* translators: %s: enlace a snowy.es */
+            esc_html__('Previsión de polvo en suspensión servida por %s.', 'snowy-wp'),
+            '<a href="' . esc_url(SNOWY_WP_SITE) . '" target="_blank" rel="noopener"><strong>Snowy</strong></a>'
+        ); ?></p>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('snowy_calima', 'snowy_wp_shortcode_calima');

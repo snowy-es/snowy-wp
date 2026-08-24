@@ -5,6 +5,7 @@
 	var RangeControl = components.RangeControl;
 	var TextControl = components.TextControl;
 	var ToggleControl = components.ToggleControl;
+	var SelectControl = components.SelectControl;
 	var InspectorControls = wp.blockEditor.InspectorControls;
 	var __ = i18n.__;
 
@@ -115,6 +116,80 @@
 			],
 		},
 		{
+			name: 'snowy/lluvia',
+			title: __( 'Snowy · Lluvia acumulada', 'snowy-wp' ),
+			description: __( 'Acumulados del día de las estaciones que han recogido algo.', 'snowy-wp' ),
+			keywords: [ 'snowy', 'lluvia', 'precipitacion', 'pluviometria' ],
+			attributes: { limite: { type: 'number', default: 10 } },
+			panel: __( 'Opciones', 'snowy-wp' ),
+			controls: [
+				{ type: 'range', attr: 'limite', label: __( 'Cuántas estaciones mostrar', 'snowy-wp' ), min: 3, max: 40 },
+			],
+		},
+		{
+			name: 'snowy/ranking',
+			title: __( 'Snowy · Ranking', 'snowy-wp' ),
+			description: __( 'Tabla ordenada por la variable que elijas.', 'snowy-wp' ),
+			keywords: [ 'snowy', 'ranking', 'clasificacion' ],
+			attributes: {
+				variable: { type: 'string', default: 'temperatura' },
+				limite: { type: 'number', default: 8 },
+				titulo: { type: 'string', default: '' },
+			},
+			panel: __( 'Opciones', 'snowy-wp' ),
+			controls: [
+				{
+					type: 'select',
+					attr: 'variable',
+					label: __( 'Variable', 'snowy-wp' ),
+					options: [
+						{ label: __( 'Temperatura actual', 'snowy-wp' ), value: 'temperatura' },
+						{ label: __( 'Temperatura máxima', 'snowy-wp' ), value: 'maxima' },
+						{ label: __( 'Temperatura mínima', 'snowy-wp' ), value: 'minima' },
+						{ label: __( 'Lluvia acumulada', 'snowy-wp' ), value: 'lluvia' },
+						{ label: __( 'Racha máxima', 'snowy-wp' ), value: 'racha' },
+						{ label: __( 'Humedad', 'snowy-wp' ), value: 'humedad' },
+						{ label: __( 'Presión', 'snowy-wp' ), value: 'presion' },
+					],
+				},
+				{ type: 'range', attr: 'limite', label: __( 'Cuántas estaciones mostrar', 'snowy-wp' ), min: 3, max: 40 },
+				{ type: 'text', attr: 'titulo', label: __( 'Título', 'snowy-wp' ), help: __( 'Vacío usa el de la variable.', 'snowy-wp' ) },
+			],
+		},
+		{
+			name: 'snowy/comparador',
+			title: __( 'Snowy · Comparativa', 'snowy-wp' ),
+			description: __( 'Dos o más estaciones enfrentadas en columnas.', 'snowy-wp' ),
+			keywords: [ 'snowy', 'comparar', 'estaciones' ],
+			attributes: {
+				ids: { type: 'string', default: '' },
+				titulo: { type: 'string', default: '' },
+			},
+			panel: __( 'Estaciones', 'snowy-wp' ),
+			requires: 'ids',
+			requiresHint: __( 'Indica al menos dos identificadores separados por comas en el panel lateral.', 'snowy-wp' ),
+			controls: [
+				{
+					type: 'text',
+					attr: 'ids',
+					label: __( 'Identificadores', 'snowy-wp' ),
+					help: __( 'Separados por comas. Los tienes en Widgets Snowy.', 'snowy-wp' ),
+				},
+				{ type: 'text', attr: 'titulo', label: __( 'Título', 'snowy-wp' ) },
+			],
+		},
+		{
+			name: 'snowy/calima',
+			title: __( 'Snowy · Polvo sahariano', 'snowy-wp' ),
+			description: __( 'Intensidad prevista de calima por días.', 'snowy-wp' ),
+			keywords: [ 'snowy', 'calima', 'polvo', 'sahara' ],
+			attributes: { dias: { type: 'number', default: 4 } },
+			panel: __( 'Opciones', 'snowy-wp' ),
+			controls: [
+				{ type: 'range', attr: 'dias', label: __( 'Días a resumir', 'snowy-wp' ), min: 1, max: 5 },
+			],
+		},
+		{
 			name: 'snowy/estacion',
 			title: __( 'Snowy · Ficha de estación', 'snowy-wp' ),
 			description: __(
@@ -152,6 +227,16 @@
 				value: value,
 				min: control.min,
 				max: control.max,
+				onChange: set,
+			} );
+		}
+
+		if ( control.type === 'select' ) {
+			return el( SelectControl, {
+				key: control.attr,
+				label: control.label,
+				value: value,
+				options: control.options,
 				onChange: set,
 			} );
 		}

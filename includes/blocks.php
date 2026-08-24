@@ -43,6 +43,29 @@ const SNOWY_WP_BLOCKS = [
             'lon' => ['type' => 'string', 'default' => ''],
         ],
     ],
+    'snowy/lluvia' => [
+        'cb'    => 'snowy_wp_shortcode_lluvia',
+        'attrs' => ['limite' => ['type' => 'number', 'default' => 10]],
+    ],
+    'snowy/ranking' => [
+        'cb'    => 'snowy_wp_shortcode_ranking',
+        'attrs' => [
+            'variable' => ['type' => 'string', 'default' => 'temperatura'],
+            'limite'   => ['type' => 'number', 'default' => 8],
+            'titulo'   => ['type' => 'string', 'default' => ''],
+        ],
+    ],
+    'snowy/comparador' => [
+        'cb'    => 'snowy_wp_shortcode_comparador',
+        'attrs' => [
+            'ids'    => ['type' => 'string', 'default' => ''],
+            'titulo' => ['type' => 'string', 'default' => ''],
+        ],
+    ],
+    'snowy/calima' => [
+        'cb'    => 'snowy_wp_shortcode_calima',
+        'attrs' => ['dias' => ['type' => 'number', 'default' => 4]],
+    ],
     'snowy/polen' => [
         'cb'    => 'snowy_wp_shortcode_polen',
         'attrs' => [
