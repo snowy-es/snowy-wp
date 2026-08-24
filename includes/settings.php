@@ -37,6 +37,7 @@ function snowy_wp_sanitize_settings($input)
         'region'       => sanitize_text_field($input['region'] ?? ''),
         'stations_url' => esc_url_raw($input['stations_url'] ?? ''),
         'heading_level' => SNOWY_WP_HEADING_LEVELS[$input['heading_level'] ?? ''] ?? 'h3',
+        'accent'        => empty($input['accent_reset']) && preg_match('/^#[0-9a-fA-F]{6}$/', $input['accent'] ?? '') ? $input['accent'] : '',
         'attribution'  => !empty($input['attribution']),
     ];
 
@@ -147,6 +148,19 @@ function snowy_wp_settings_page()
                             <?php endforeach; ?>
                         </select>
                         <p class="description"><?php esc_html_e('Nivel del título de cada widget. Elige el que encaje bajo los encabezados de tus artículos: un nivel que se salta un escalón rompe el orden de la página para los lectores de pantalla.', 'snowy-wp'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="snowy_wp_accent"><?php esc_html_e('Color de acento', 'snowy-wp'); ?></label></th>
+                    <td>
+                        <input type="color" id="snowy_wp_accent"
+                               name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[accent]"
+                               value="<?php echo esc_attr($options['accent'] ?: '#0369a1'); ?>">
+                        <label style="margin-left:1rem">
+                            <input type="checkbox" name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[accent_reset]" value="1">
+                            <?php esc_html_e('Volver al azul de Snowy', 'snowy-wp'); ?>
+                        </label>
+                        <p class="description"><?php esc_html_e('Se usa en enlaces, gráficos y detalles de los widgets, para que encajen con tu marca.', 'snowy-wp'); ?></p>
                     </td>
                 </tr>
                 <tr>

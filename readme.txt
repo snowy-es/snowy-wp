@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,13 @@ y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 == Changelog ==
+
+= 2.3.0 =
+* La ficha de estación incluye la evolución de las últimas 24 horas.
+* Aviso por correo y prueba en Salud del sitio cuando la clave deja de servir.
+* Actualizaciones automáticas: el plugin ofrece las versiones nuevas en Plugins.
+* Tres composiciones listas en la pestaña de patrones del editor.
+* Color de acento configurable para que los widgets encajen con tu marca.
 
 = 2.2.0 =
 * El nivel del encabezado de cada widget es configurable: fijar h3 rompía el

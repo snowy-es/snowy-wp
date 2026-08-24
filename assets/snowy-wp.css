@@ -33,11 +33,11 @@
 .snowy-wp-wrap.snowy-wp-wrap .snowy-wp-link,
 .snowy-wp-card.snowy-wp-card .snowy-wp-link{color:#0f172a;text-decoration:none}
 .snowy-wp-wrap.snowy-wp-wrap .snowy-wp-link:hover,
-.snowy-wp-card.snowy-wp-card .snowy-wp-link:hover{color:#0369a1}
+.snowy-wp-card.snowy-wp-card .snowy-wp-link:hover{color:var(--snowy-accent,#0369a1)}
 /* Un enlace dentro de un parrafo no puede distinguirse solo por el color, asi
    que el subrayado de la atribucion se mantiene por encima del reset. */
 .snowy-wp-credit.snowy-wp-credit a,
-.snowy-wp-empty.snowy-wp-empty a{text-decoration:underline;color:#0369a1}
+.snowy-wp-empty.snowy-wp-empty a{text-decoration:underline;color:var(--snowy-accent,#0369a1)}
 .snowy-wp-wrap.snowy-wp-wrap h3,
 .snowy-wp-card.snowy-wp-card h4{text-transform:none;letter-spacing:-.01em}
 .snowy-wp-wrap.snowy-wp-wrap h3::after,
@@ -47,7 +47,7 @@
    overflow hidden del contenedor, que en movil se comia columnas enteras. */
 .snowy-wp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
-.snowy-wp-wrap{--sn-ink:#0f172a;--sn-mute:#64748b;--sn-line:#e2e8f0;--sn-accent:#0369a1;--sn-soft:#f8fafc;
+.snowy-wp-wrap{--sn-ink:#0f172a;--sn-mute:#64748b;--sn-line:#e2e8f0;--sn-accent:var(--snowy-accent,#0369a1);--sn-soft:#f8fafc;
   border:1px solid var(--sn-line);border-radius:14px;background:#fff;overflow:hidden;margin:1.75rem 0;
   box-shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px -12px rgba(15,23,42,.12)}
 .snowy-wp-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;
@@ -75,9 +75,9 @@
 .snowy-wp-credit{font-size:.78rem;line-height:1.55;color:#475569;margin:0;
   padding:.75rem 1.15rem;background:var(--sn-soft);border-top:1px solid var(--sn-line)}
 .snowy-wp-credit a{color:#0369a1;text-decoration:underline}
-.snowy-wp-card{border:1px solid #e2e8f0;border-left:4px solid #0369a1;border-radius:12px;
+.snowy-wp-card{border:1px solid #e2e8f0;border-left:4px solid var(--snowy-accent,#0369a1);border-radius:12px;
   padding:1.05rem 1.25rem;margin:1.75rem 0;background:linear-gradient(180deg,#f8fafc,#fff)}
-.snowy-wp-card-eyebrow{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:#0369a1;
+.snowy-wp-card-eyebrow{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--snowy-accent,#0369a1);
   margin:0 0 .25rem;font-weight:700}
 .snowy-wp-card-title{margin:0 0 .85rem;font-size:1.15rem;font-weight:700}
 .snowy-wp-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:.85rem}
@@ -122,3 +122,12 @@
 .snowy-wp-risk.is-poor{background:#ffedd5;color:#9a3412}
 .snowy-wp-risk.is-very-poor{background:#fee2e2;color:#991b1b}
 @media(max-width:560px){.snowy-wp-air{gap:1rem;padding:1rem}}
+
+/* Grafico de evolucion de la ficha de estacion */
+.snowy-wp-card-spark{margin:1rem 0 0}
+.snowy-wp-spark{display:block;width:100%;height:48px;overflow:visible}
+.snowy-wp-spark-line{fill:none;stroke:var(--snowy-accent,#0369a1);stroke-width:1.8;
+  stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.snowy-wp-spark-area{fill:var(--snowy-accent,#0369a1);opacity:.10;stroke:none}
+.snowy-wp-spark-caption{margin:.35rem 0 0;font-size:.7rem;color:#475569;
+  text-transform:uppercase;letter-spacing:.05em}

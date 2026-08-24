@@ -205,7 +205,7 @@ add_shortcode('snowy_viento', 'snowy_wp_shortcode_viento');
  */
 function snowy_wp_shortcode_estacion($atts = [])
 {
-    $atts = shortcode_atts(['id' => '', 'nombre' => ''], (array) $atts, 'snowy_estacion');
+    $atts = shortcode_atts(['id' => '', 'nombre' => '', 'grafico' => 'si'], (array) $atts, 'snowy_estacion');
     $stations = snowy_wp_stations();
     if (!$stations) {
         return '';
@@ -237,6 +237,17 @@ function snowy_wp_shortcode_estacion($atts = [])
             <div><span><?php esc_html_e('Mínima hoy', 'snowy-wp'); ?></span><strong><?php echo esc_html(snowy_wp_temp($found['today']['tmin'] ?? null)); ?></strong></div>
             <div><span><?php esc_html_e('Racha máx.', 'snowy-wp'); ?></span><strong><?php echo esc_html(snowy_wp_speed($found['today']['gustMax'] ?? null)); ?></strong></div>
         </div>
+        <?php
+        $points = $atts['grafico'] !== 'no'
+            ? snowy_wp_evolution($found['network'] ?? '', $found['stationId'] ?? '')
+            : null;
+        ?>
+        <?php if ($points) : ?>
+            <div class="snowy-wp-card-spark">
+                <?php echo snowy_wp_sparkline($points); ?>
+                <p class="snowy-wp-spark-caption"><?php echo snowy_wp_sparkline_caption($points, SNOWY_WP_SPARK_HOURS); ?></p>
+            </div>
+        <?php endif; ?>
         <p class="snowy-wp-card-foot">
             <?php echo snowy_wp_network_badge($found['network'] ?? ''); ?>
             <?php printf(

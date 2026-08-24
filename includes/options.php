@@ -16,6 +16,7 @@ const SNOWY_WP_DEFAULTS = [
     'stations_url'   => '',
     'attribution'    => true,
     'heading_level'  => 'h3',
+    'accent'         => '',
 ];
 
 /**
@@ -82,4 +83,14 @@ function snowy_wp_heading_tag($override = '')
     $tag = $override !== '' ? $override : (string) snowy_wp_option('heading_level');
 
     return SNOWY_WP_HEADING_LEVELS[$tag] ?? 'h3';
+}
+
+/**
+ * Color de acento efectivo. Vacio deja el azul de Snowy.
+ */
+function snowy_wp_accent()
+{
+    $accent = trim((string) snowy_wp_option('accent'));
+
+    return preg_match('/^#[0-9a-fA-F]{6}$/', $accent) ? $accent : '';
 }

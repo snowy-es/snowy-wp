@@ -87,6 +87,7 @@ const SNOWY_WP_WIDGETS = [
         'attrs' => [
             'id'     => 'Identificador de la estación. Los tienes en la tabla de abajo.',
             'nombre' => 'Alternativa a id: el nombre exacto de la estación.',
+            'grafico' => 'no para ocultar la evolución de las últimas 24 horas. Por defecto se muestra.',
         ],
         'block'   => 'Snowy · Ficha de estación',
         'ejemplo' => '[snowy_estacion id="9115X"]',
@@ -215,6 +216,14 @@ function snowy_wp_admin_page()
                 <td><?php esc_html_e('Cada widget indica de dónde viene el dato y los avisos atribuyen a AEMET como fuente. Es la condición de uso y no se puede desactivar.', 'snowy-wp'); ?></td>
             </tr>
             <tr>
+                <td><strong><?php esc_html_e('Actualizaciones', 'snowy-wp'); ?></strong></td>
+                <td><?php esc_html_e('El plugin comprueba por su cuenta si hay una versión nueva publicada y la ofrece en Plugins, como cualquier otro. No se instala nada sin que lo pidas.', 'snowy-wp'); ?></td>
+            </tr>
+            <tr>
+                <td><strong><?php esc_html_e('Si la clave deja de valer', 'snowy-wp'); ?></strong></td>
+                <td><?php esc_html_e('Se revisa a diario y se avisa por correo al administrador la primera vez que falla. El diagnóstico también aparece en Herramientas > Salud del sitio.', 'snowy-wp'); ?></td>
+            </tr>
+            <tr>
                 <td><strong><?php esc_html_e('Encabezados', 'snowy-wp'); ?></strong></td>
                 <td><?php printf(
                     /* translators: %s: enlace a los ajustes */
@@ -245,6 +254,16 @@ function snowy_wp_admin_page()
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <h2><?php esc_html_e('Composiciones listas', 'snowy-wp'); ?></h2>
+        <p style="max-width:900px">
+            <?php esc_html_e('En el editor de bloques, el botón de insertar tiene una pestaña de Patrones con una categoría Snowy. Ahí hay tres montajes que ya combinan varias piezas:', 'snowy-wp'); ?>
+        </p>
+        <ul style="max-width:900px;list-style:disc;margin-left:1.5rem;color:#646970">
+            <?php foreach (SNOWY_WP_PATTERNS as $pat) : ?>
+                <li><strong><?php echo esc_html($pat['title']); ?></strong> — <?php echo esc_html($pat['description']); ?></li>
+            <?php endforeach; ?>
+        </ul>
 
         <h2><?php esc_html_e('Ayuda', 'snowy-wp'); ?></h2>
         <p>

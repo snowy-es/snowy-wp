@@ -220,6 +220,13 @@ function snowy_wp_hazard_window($hazard)
 function snowy_wp_styles()
 {
     wp_enqueue_style('snowy-wp', plugins_url('assets/snowy-wp.css', SNOWY_WP_FILE), [], SNOWY_WP_VERSION);
+
+    // El acento se inyecta como variable para que quien instala el plugin pueda
+    // vestirlo con su color sin tocar la hoja de estilos.
+    $accent = snowy_wp_accent();
+    if ($accent) {
+        wp_add_inline_style('snowy-wp', sprintf(':root{--snowy-accent:%s}', $accent));
+    }
 }
 add_action('wp_enqueue_scripts', 'snowy_wp_styles');
 

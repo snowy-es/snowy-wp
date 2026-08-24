@@ -3,7 +3,7 @@
  * Plugin Name:       Snowy — datos meteorológicos en vivo
  * Plugin URI:        https://github.com/snowy-es/snowy-wp
  * Description:       Shortcodes y bloques con datos en vivo de la red de estaciones de Snowy: extremos del día, rachas de viento, avisos de AEMET y fichas de estación.
- * Version:           2.2.0
+ * Version:           2.3.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Snowy
@@ -12,13 +12,14 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       snowy-wp
  * Domain Path:       /languages
+ * Update URI:        https://github.com/snowy-es/snowy-wp
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-const SNOWY_WP_VERSION = '2.2.0';
+const SNOWY_WP_VERSION = '2.3.0';
 const SNOWY_WP_SITE    = 'https://snowy.es';
 const SNOWY_WP_API     = 'https://api.snowy.es';
 const SNOWY_WP_CONTACT = 'hola@snowy.es';
@@ -69,11 +70,15 @@ if (snowy_wp_legacy_is_active()) {
 require_once SNOWY_WP_DIR . 'includes/options.php';
 require_once SNOWY_WP_DIR . 'includes/api.php';
 require_once SNOWY_WP_DIR . 'includes/render.php';
+require_once SNOWY_WP_DIR . 'includes/sparkline.php';
 require_once SNOWY_WP_DIR . 'includes/shortcodes.php';
 require_once SNOWY_WP_DIR . 'includes/environment.php';
 require_once SNOWY_WP_DIR . 'includes/blocks.php';
 require_once SNOWY_WP_DIR . 'includes/settings.php';
 require_once SNOWY_WP_DIR . 'includes/admin.php';
+require_once SNOWY_WP_DIR . 'includes/health.php';
+require_once SNOWY_WP_DIR . 'includes/patterns.php';
+require_once SNOWY_WP_DIR . 'includes/updates.php';
 
 function snowy_wp_load_textdomain()
 {
@@ -89,5 +94,6 @@ add_action('init', 'snowy_wp_load_textdomain');
 function snowy_wp_deactivate()
 {
     snowy_wp_flush_cache();
+    wp_clear_scheduled_hook(SNOWY_WP_HEALTH_CRON);
 }
 register_deactivation_hook(__FILE__, 'snowy_wp_deactivate');
