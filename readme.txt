@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,8 @@ shortcode y como bloque de Gutenberg:
 * Tabla completa de estaciones con temperatura, máxima, mínima y humedad.
 * Ranking de rachas de viento.
 * Ficha de una estación concreta, para incrustar dentro de un artículo.
+* Calidad del aire: índice europeo, PM2,5, PM10, ozono y NO₂.
+* Polen: gramíneas, olivo, abedul, aliso, artemisa y ambrosía, con su nivel.
 
 Se puede filtrar por región y los datos se cachean para no golpear la API en
 cada visita. Si la API no responde, los widgets no pintan nada en vez de romper
@@ -63,6 +65,15 @@ y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 == Changelog ==
+
+= 2.1.0 =
+* Nuevos widgets de calidad del aire y de polen.
+* El modo snapshot ya no anuncia "datos congelados" cuando no ha congelado nada,
+  ni congela respuestas vacías o previsualizaciones.
+* Los bloques exponen congelar, filtrar por estaciones y título, que antes solo
+  estaban disponibles desde el shortcode.
+* Los widgets aguantan una caída de la API sirviendo la última lectura buena.
+* Blindaje de estilos frente al tema anfitrión y tablas desplazables en móvil.
 
 = 2.0.0 =
 * Primera versión distribuible: configuración por región, ajustes en el admin y

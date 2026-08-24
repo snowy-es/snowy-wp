@@ -38,7 +38,7 @@ function snowy_wp_shortcode_extremos($atts = [])
                 <h3><?php esc_html_e('Las más cálidas de hoy', 'snowy-wp'); ?></h3>
                 <span class="snowy-wp-tag"><?php esc_html_e('máximas', 'snowy-wp'); ?></span>
             </div>
-            <table class="snowy-wp-table">
+            <div class="snowy-wp-scroll"><table class="snowy-wp-table">
                 <thead><tr>
                     <th><?php esc_html_e('Estación', 'snowy-wp'); ?></th>
                     <th><?php esc_html_e('Máxima', 'snowy-wp'); ?></th>
@@ -53,14 +53,14 @@ function snowy_wp_shortcode_extremos($atts = [])
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
         <div class="snowy-wp-wrap">
             <div class="snowy-wp-head">
                 <h3><?php esc_html_e('Las más frías de hoy', 'snowy-wp'); ?></h3>
                 <span class="snowy-wp-tag"><?php esc_html_e('mínimas', 'snowy-wp'); ?></span>
             </div>
-            <table class="snowy-wp-table">
+            <div class="snowy-wp-scroll"><table class="snowy-wp-table">
                 <thead><tr>
                     <th><?php esc_html_e('Estación', 'snowy-wp'); ?></th>
                     <th><?php esc_html_e('Mínima', 'snowy-wp'); ?></th>
@@ -75,7 +75,7 @@ function snowy_wp_shortcode_extremos($atts = [])
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
     <?php echo snowy_wp_credit(); ?>
@@ -98,6 +98,7 @@ function snowy_wp_shortcode_estaciones($atts = [])
         });
         $stations = $snap['data'];
         $ts = $snap['ts'];
+        $frozen = $ts !== null;
     } else {
         $stations = snowy_wp_filter_ids(snowy_wp_stations(), $atts['ids']);
         $ts = null;
@@ -123,7 +124,7 @@ function snowy_wp_shortcode_estaciones($atts = [])
         <h3><?php echo esc_html($title); ?></h3>
         <span class="snowy-wp-tag"><?php echo esc_html($frozen ? __('dato histórico', 'snowy-wp') : __('en vivo', 'snowy-wp')); ?></span>
     </div>
-    <table class="snowy-wp-table snowy-wp-estaciones">
+    <div class="snowy-wp-scroll"><table class="snowy-wp-table snowy-wp-estaciones">
         <thead><tr>
             <th><?php esc_html_e('Estación', 'snowy-wp'); ?></th>
             <th><?php esc_html_e('Ahora', 'snowy-wp'); ?></th>
@@ -144,7 +145,7 @@ function snowy_wp_shortcode_estaciones($atts = [])
             </tr>
         <?php endforeach; ?>
         </tbody>
-    </table>
+    </table></div>
     <?php echo $frozen ? snowy_wp_snapshot_note($ts) : snowy_wp_credit(); ?>
     </div>
     <?php
@@ -172,7 +173,7 @@ function snowy_wp_shortcode_viento($atts = [])
         <h3><?php esc_html_e('Rachas más fuertes de hoy', 'snowy-wp'); ?></h3>
         <span class="snowy-wp-tag"><?php esc_html_e('viento', 'snowy-wp'); ?></span>
     </div>
-    <table class="snowy-wp-table">
+    <div class="snowy-wp-scroll"><table class="snowy-wp-table">
         <thead><tr>
             <th><?php esc_html_e('Estación', 'snowy-wp'); ?></th>
             <th><?php esc_html_e('Racha máxima', 'snowy-wp'); ?></th>
@@ -187,7 +188,7 @@ function snowy_wp_shortcode_viento($atts = [])
             </tr>
         <?php endforeach; ?>
         </tbody>
-    </table>
+    </table></div>
     <?php echo snowy_wp_credit(); ?>
     </div>
     <?php
@@ -262,6 +263,7 @@ function snowy_wp_shortcode_avisos($atts = [])
         $snap = snowy_wp_snapshot('avisos', 'snowy_wp_hazards');
         $days = $snap['data'];
         $ts = $snap['ts'];
+        $frozen = $ts !== null;
     } else {
         $days = snowy_wp_hazards();
         $ts = null;
@@ -292,7 +294,7 @@ function snowy_wp_shortcode_avisos($atts = [])
         <?php else : ?>
             <?php foreach ($days as $day) : ?>
                 <p class="snowy-wp-day"><?php echo esc_html($day['label']); ?></p>
-                <table class="snowy-wp-table">
+                <div class="snowy-wp-scroll"><table class="snowy-wp-table">
                     <thead><tr>
                         <th><?php esc_html_e('Nivel', 'snowy-wp'); ?></th>
                         <th><?php esc_html_e('Fenómeno', 'snowy-wp'); ?></th>
@@ -309,7 +311,7 @@ function snowy_wp_shortcode_avisos($atts = [])
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
-                </table>
+                </table></div>
             <?php endforeach; ?>
         <?php endif; ?>
         <?php if ($frozen) : ?>

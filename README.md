@@ -13,6 +13,11 @@ cualquier WordPress.
 | `[snowy_estaciones]` | Snowy · Estaciones | Tabla con temperatura, máxima, mínima y humedad |
 | `[snowy_viento limite="8"]` | Snowy · Rachas de viento | Ranking de rachas máximas |
 | `[snowy_estacion id="9115X"]` | Snowy · Ficha de estación | Tarjeta para incrustar en un artículo |
+| `[snowy_aire]` | Snowy · Calidad del aire | Índice europeo, PM2,5, PM10, ozono y NO₂ |
+| `[snowy_polen]` | Snowy · Polen | Gramíneas, olivo, abedul, aliso, artemisa y ambrosía |
+
+Los widgets de aire y polen se ubican solos en el centro de las estaciones de
+tu región; `lat` y `lon` solo hacen falta si quieres otro punto.
 
 Los bloques aparecen escribiendo `/snowy` en el editor y **se previsualizan
 dentro del editor**: `ServerSideRender` llama al mismo `render_callback` que
@@ -56,11 +61,25 @@ de datos.
   cliente, habría que quitar la clave: sería pública.
 - **Si la API no responde, se degrada.** Los widgets devuelven cadena vacía y la
   página se sirve igual. Un fallo nuestro no puede tumbar tu web.
-- **Los datos se cachean** diez minutos las estaciones y quince los avisos, con
-  transients. Al guardar los ajustes la caché se vacía.
-- **`modo="snapshot"`** congela los datos dentro de un post la primera vez que
-  se renderiza, con una nota de la fecha. Un artículo de hace un mes no debe
-  mostrar la temperatura de hoy.
+- **Los datos se cachean** diez minutos las estaciones, quince los avisos y
+  treinta el aire, con transients. Al guardar los ajustes la caché se vacía.
+- **Si la API se cae, el widget aguanta.** Se guarda la última respuesta buena
+  durante 24 horas y se sirve esa, diciendo su antigüedad, en vez de dejar un
+  hueco en un artículo publicado.
+- **`modo="snapshot"`** congela los datos dentro de un post, con una nota de la
+  fecha. Un artículo de hace un mes no debe mostrar la temperatura de hoy.
+  Nunca congela una respuesta vacía —una caída de la API dejaría el widget
+  muerto para siempre—, ni congela mientras editas, ni anuncia "congelado"
+  cuando no hay post al que asociar el dato.
+
+## Estilos y temas
+
+El plugin se pinta dentro del contenido del tema y hereda lo que este aplique a
+párrafos, tablas y enlaces. El CSS incluye un blindaje para los choques que
+aparecen en la práctica: letra capital sobre la línea de atribución, texto
+justificado, márgenes y `border-spacing` en las tablas, y subrayado sobre los
+enlaces. Las tablas se desplazan dentro de su caja en móvil en vez de quedar
+recortadas.
 
 ## Atribución
 
@@ -78,6 +97,7 @@ includes/options.php  opciones y resolución de la clave
 includes/api.php      cliente HTTP, caché y tolerancia a fallos
 includes/render.php   helpers de formato, atribución y snapshots
 includes/shortcodes.php
+includes/environment.php  calidad del aire y polen
 includes/blocks.php   registro de bloques sobre los mismos callbacks
 includes/settings.php Ajustes > Snowy
 includes/admin.php    página de ayuda con los shortcodes y los ids

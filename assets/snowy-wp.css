@@ -1,3 +1,43 @@
+/*
+ * Blindaje frente al tema anfitrion.
+ *
+ * Un plugin distribuible se pinta dentro del contenido del tema y hereda lo que
+ * este aplique a parrafos, tablas y enlaces. Medido en La Rioja Meteo: letra
+ * capital de 43px flotando en el credito, texto justificado, 24px de margen y
+ * 2px de border-spacing en las tablas, y subrayado en los enlaces sobre el
+ * borde inferior propio.
+ *
+ * La clase repetida sube la especificidad lo justo para ganar a los selectores
+ * de contenido del tema sin recurrir a !important.
+ */
+.snowy-wp-wrap.snowy-wp-wrap,
+.snowy-wp-card.snowy-wp-card{text-align:left;font-family:inherit}
+/* La letra capital es el unico caso donde no basta con la especificidad: el
+   selector tipico del tema (.contenido > p:first-of-type::first-letter) puntua
+   por encima de cualquier combinacion de clases propias, y ningun tema deberia
+   imponer tipografia de articulo a una linea de atribucion. */
+.snowy-wp-credit::first-letter,
+.snowy-wp-empty::first-letter,
+.snowy-wp-day::first-letter,
+.snowy-wp-card p::first-letter{font-size:inherit!important;line-height:inherit!important;
+  font-weight:inherit!important;color:inherit!important;float:none!important;margin:0!important;
+  padding:0!important;background:none!important;text-transform:none!important}
+.snowy-wp-credit.snowy-wp-credit,
+.snowy-wp-empty.snowy-wp-empty{text-align:left}
+.snowy-wp-table.snowy-wp-table{margin:0;border-spacing:0;border-collapse:collapse;table-layout:auto}
+.snowy-wp-table.snowy-wp-table caption{display:none}
+.snowy-wp-wrap.snowy-wp-wrap a,
+.snowy-wp-card.snowy-wp-card a{text-decoration:none;box-shadow:none}
+.snowy-wp-link.snowy-wp-link{text-decoration:none}
+.snowy-wp-wrap.snowy-wp-wrap h3,
+.snowy-wp-card.snowy-wp-card h4{text-transform:none;letter-spacing:-.01em}
+.snowy-wp-wrap.snowy-wp-wrap h3::after,
+.snowy-wp-wrap.snowy-wp-wrap h3::before{display:none}
+
+/* La tabla se desplaza dentro de su caja en vez de quedar recortada por el
+   overflow hidden del contenedor, que en movil se comia columnas enteras. */
+.snowy-wp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
 .snowy-wp-wrap{--sn-ink:#0f172a;--sn-mute:#64748b;--sn-line:#e2e8f0;--sn-accent:#0369a1;--sn-soft:#f8fafc;
   border:1px solid var(--sn-line);border-radius:14px;background:#fff;overflow:hidden;margin:1.75rem 0;
   box-shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px -12px rgba(15,23,42,.12)}
@@ -46,9 +86,29 @@
 .snowy-wp-empty{margin:0;padding:1.15rem;color:#0f172a;font-size:.95rem}
 .snowy-wp-frozen{background:#fffbeb;border-top-color:#fde68a;color:#854d0e}
 @media(max-width:640px){
-  .snowy-wp-table th:nth-child(3),.snowy-wp-table td:nth-child(3){display:none}
   .snowy-wp-table{font-size:.88rem}
   .snowy-wp-table th,.snowy-wp-table td{padding:.55rem .8rem}
   .snowy-wp-head{padding:.8rem}
   .snowy-wp-credit{padding:.7rem .8rem}
 }
+
+.snowy-wp-air{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;padding:1.15rem}
+.snowy-wp-air-index{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-width:104px;padding:.75rem 1rem;border-radius:12px;background:#f1f5f9;color:#475569}
+.snowy-wp-air-index strong{font-size:2.1rem;line-height:1;font-variant-numeric:tabular-nums}
+.snowy-wp-air-index span{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;
+  font-weight:700;margin-top:.3rem;text-align:center}
+.snowy-wp-air-index.is-good{background:#dcfce7;color:#166534}
+.snowy-wp-air-index.is-fair{background:#ecfccb;color:#3f6212}
+.snowy-wp-air-index.is-moderate{background:#fef9c3;color:#854d0e}
+.snowy-wp-air-index.is-poor{background:#ffedd5;color:#9a3412}
+.snowy-wp-air-index.is-very-poor{background:#fee2e2;color:#991b1b}
+.snowy-wp-air-index.is-extreme{background:#f5d0fe;color:#701a75}
+.snowy-wp-air .snowy-wp-card-grid{flex:1;min-width:0;margin:0}
+.snowy-wp-air .snowy-wp-card-grid small{font-size:.68rem;font-weight:500;color:#64748b}
+.snowy-wp-risk.is-good{background:#dcfce7;color:#166534}
+.snowy-wp-risk.is-fair{background:#ecfccb;color:#3f6212}
+.snowy-wp-risk.is-moderate{background:#fef9c3;color:#854d0e}
+.snowy-wp-risk.is-poor{background:#ffedd5;color:#9a3412}
+.snowy-wp-risk.is-very-poor{background:#fee2e2;color:#991b1b}
+@media(max-width:560px){.snowy-wp-air{gap:1rem;padding:1rem}}

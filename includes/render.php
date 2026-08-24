@@ -80,11 +80,25 @@ function snowy_wp_credit()
         $link
     );
 
-    $when = sprintf(
-        /* translators: %s: hora de actualizacion */
-        __('Actualizado a las %s.', 'snowy-wp'),
-        esc_html(wp_date('H:i'))
-    );
+    // La hora que se anuncia es la de la medida, no la de la visita: con la
+    // copia de seguridad en juego el dato puede tener horas, y decir "ahora"
+    // seria falso.
+    $ts  = snowy_wp_data_time(snowy_wp_stations_key());
+    $age = $ts ? time() - $ts : 0;
+
+    if ($ts && $age > HOUR_IN_SECONDS) {
+        $when = sprintf(
+            /* translators: %s: tiempo transcurrido, por ejemplo "2 horas" */
+            __('Última actualización hace %s.', 'snowy-wp'),
+            esc_html(human_time_diff($ts))
+        );
+    } else {
+        $when = sprintf(
+            /* translators: %s: hora de actualizacion */
+            __('Actualizado a las %s.', 'snowy-wp'),
+            esc_html(wp_date('H:i', $ts ?: null))
+        );
+    }
 
     return '<p class="snowy-wp-credit">' . $text . ' ' . $when . '</p>';
 }
@@ -95,12 +109,17 @@ function snowy_wp_credit()
  * Un widget en una pagina de datos debe ir siempre en vivo; dentro de un post
  * de actualidad, no: si el aviso caduca o la temperatura cambia, el articulo se
  * queda hablando de algo que ya no se ve.
+ *
+ * Devuelve ts null cuando no ha llegado a congelar nada. Quien pinta debe
+ * mirarlo: anunciar "datos congelados" sobre una lectura en vivo es mentirle al
+ * lector, y es justo lo que pasaba fuera del bucle, donde no hay post al que
+ * asociar el snapshot.
  */
 function snowy_wp_snapshot($key, callable $load)
 {
     $post_id = get_the_ID();
     if (!$post_id) {
-        return ['data' => $load(), 'ts' => time()];
+        return ['data' => $load(), 'ts' => null];
     }
 
     $meta  = '_snowy_wp_snap_' . md5($key);
@@ -110,10 +129,35 @@ function snowy_wp_snapshot($key, callable $load)
         return $saved;
     }
 
-    $snap = ['data' => $load(), 'ts' => time()];
+    $data = $load();
+
+    // Un resultado vacio puede ser la API caida, y congelar una caida deja el
+    // widget muerto para siempre. Tampoco se congela mientras se edita: el
+    // primer render suele ser una previsualizacion, con el dato de antes de
+    // publicar.
+    if (!$data || !snowy_wp_can_freeze($post_id)) {
+        return ['data' => $data, 'ts' => null];
+    }
+
+    $snap = ['data' => $data, 'ts' => time()];
     update_post_meta($post_id, $meta, $snap);
 
     return $snap;
+}
+
+/**
+ * Solo se congela sobre un post ya publico y en una peticion de lectura real.
+ */
+function snowy_wp_can_freeze($post_id)
+{
+    if (defined('REST_REQUEST') && REST_REQUEST) {
+        return false;
+    }
+    if (is_admin() || is_preview() || is_customize_preview()) {
+        return false;
+    }
+
+    return get_post_status($post_id) === 'publish';
 }
 
 function snowy_wp_snapshot_note($ts)

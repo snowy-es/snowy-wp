@@ -41,33 +41,65 @@ function snowy_wp_get($path)
     return is_array($data) ? $data : null;
 }
 
+const SNOWY_WP_TTL_FALLBACK = DAY_IN_SECONDS;
+
+/**
+ * Cache con red de seguridad.
+ *
+ * Ademas de la copia de trabajo, se guarda la ultima respuesta buena durante un
+ * dia. Si la API deja de responder, el widget sigue pintando ese dato con su
+ * antiguedad en vez de desaparecer de la pagina: una caida de media hora no
+ * deberia dejar un hueco en un articulo publicado.
+ */
 function snowy_wp_cached($key, $ttl, callable $fetch)
 {
-    $name   = SNOWY_WP_CACHE_PREFIX . $key;
+    $name     = SNOWY_WP_CACHE_PREFIX . $key;
+    $fallback = SNOWY_WP_CACHE_PREFIX . 'last_' . $key;
+
     $cached = get_transient($name);
     if (is_array($cached)) {
         return $cached;
     }
 
     $fresh = $fetch();
-    if ($fresh === null) {
-        return [];
+
+    if ($fresh === null || $fresh === []) {
+        $last = get_transient($fallback);
+
+        return is_array($last) && isset($last['data']) ? $last['data'] : [];
     }
 
     set_transient($name, $fresh, $ttl);
+    set_transient($fallback, ['data' => $fresh, 'ts' => time()], SNOWY_WP_TTL_FALLBACK);
 
     return $fresh;
+}
+
+/**
+ * Momento de la ultima respuesta buena, para no anunciar como "actualizado
+ * ahora" un dato que viene de la copia de seguridad.
+ */
+function snowy_wp_data_time($key)
+{
+    $last = get_transient(SNOWY_WP_CACHE_PREFIX . 'last_' . $key);
+
+    return is_array($last) && isset($last['ts']) ? (int) $last['ts'] : null;
 }
 
 /**
  * Estaciones con dato actual, filtradas por la region configurada. Sin region
  * se devuelve la red entera.
  */
+function snowy_wp_stations_key()
+{
+    return 'stations_' . md5(trim((string) snowy_wp_option('region')));
+}
+
 function snowy_wp_stations()
 {
     $region = trim((string) snowy_wp_option('region'));
 
-    return snowy_wp_cached('stations_' . md5($region), SNOWY_WP_TTL_STATIONS, static function () use ($region) {
+    return snowy_wp_cached(snowy_wp_stations_key(), SNOWY_WP_TTL_STATIONS, static function () use ($region) {
         $all = snowy_wp_get('/stations/markers');
         if ($all === null) {
             return null;
