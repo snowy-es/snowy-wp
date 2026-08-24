@@ -27,13 +27,13 @@
 		{
 			name: 'snowy/avisos',
 			title: 'Snowy · Avisos de AEMET',
-			description: 'Avisos vigentes en La Rioja para hoy, mañana y pasado.',
+			description: 'Avisos vigentes para hoy, mañana y pasado.',
 			keywords: [ 'snowy', 'avisos', 'aemet', 'alertas' ],
 		},
 		{
 			name: 'snowy/estaciones',
-			title: 'Snowy · Estaciones de La Rioja',
-			description: 'Tabla con las estaciones riojanas y su dato actual.',
+			title: 'Snowy · Estaciones',
+			description: 'Tabla con las estaciones de la red y su dato actual.',
 			keywords: [ 'snowy', 'estaciones', 'temperatura' ],
 		},
 	].forEach( function ( b ) {
@@ -65,7 +65,7 @@
 			name: 'snowy/viento',
 			title: 'Snowy · Rachas de viento',
 			description: 'Ranking de rachas máximas registradas hoy.',
-			keywords: [ 'snowy', 'viento', 'rachas', 'cierzo' ],
+			keywords: [ 'snowy', 'viento', 'rachas' ],
 		},
 	].forEach( function ( b ) {
 		blocks.registerBlockType( b.name, {
@@ -90,7 +90,7 @@
 								label: 'Cuántas estaciones mostrar',
 								value: props.attributes.limite,
 								min: 3,
-								max: 19,
+								max: 40,
 								onChange: function ( v ) {
 									props.setAttributes( { limite: v } );
 								},
@@ -127,7 +127,7 @@
 						{ title: 'Estación' },
 						el( TextControl, {
 							label: 'Identificador',
-							help: 'Por ejemplo 9115X. Los tienes en Widgets Snowy.',
+							help: 'Los identificadores están listados en Widgets Snowy.',
 							value: props.attributes.id,
 							onChange: function ( v ) {
 								props.setAttributes( { id: v } );

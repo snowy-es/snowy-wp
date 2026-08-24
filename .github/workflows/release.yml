@@ -1,0 +1,31 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Comprobar sintaxis PHP
+        run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+
+      # WordPress espera que el zip contenga una carpeta con el slug del plugin,
+      # no los ficheros sueltos: sin ella la instalacion desde el admin falla.
+      - name: Empaquetar
+        run: |
+          mkdir -p build/snowy-wp
+          rsync -a --exclude '.git' --exclude '.github' --exclude 'build' ./ build/snowy-wp/
+          cd build && zip -qr ../snowy-wp.zip snowy-wp
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: snowy-wp.zip
+          generate_release_notes: true
