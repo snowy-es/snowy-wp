@@ -12,7 +12,8 @@ if (!defined('ABSPATH')) {
  */
 function snowy_wp_shortcode_extremos($atts = [])
 {
-    $atts = shortcode_atts(['limite' => 8], (array) $atts, 'snowy_extremos');
+    $atts = shortcode_atts(['limite' => 8, 'nivel' => ''], (array) $atts, 'snowy_extremos');
+    $tag = snowy_wp_heading_tag($atts['nivel']);
     $stations = snowy_wp_stations();
     if (!$stations) {
         return '';
@@ -35,7 +36,7 @@ function snowy_wp_shortcode_extremos($atts = [])
     <div class="snowy-wp-extremos snowy-wp-wrap">
         <div class="snowy-wp-wrap">
             <div class="snowy-wp-head">
-                <h3><?php esc_html_e('Las más cálidas de hoy', 'snowy-wp'); ?></h3>
+                <<?php echo esc_attr($tag); ?>><?php esc_html_e('Las más cálidas de hoy', 'snowy-wp'); ?></<?php echo esc_attr($tag); ?>>
                 <span class="snowy-wp-tag"><?php esc_html_e('máximas', 'snowy-wp'); ?></span>
             </div>
             <div class="snowy-wp-scroll"><table class="snowy-wp-table">
@@ -57,7 +58,7 @@ function snowy_wp_shortcode_extremos($atts = [])
         </div>
         <div class="snowy-wp-wrap">
             <div class="snowy-wp-head">
-                <h3><?php esc_html_e('Las más frías de hoy', 'snowy-wp'); ?></h3>
+                <<?php echo esc_attr($tag); ?>><?php esc_html_e('Las más frías de hoy', 'snowy-wp'); ?></<?php echo esc_attr($tag); ?>>
                 <span class="snowy-wp-tag"><?php esc_html_e('mínimas', 'snowy-wp'); ?></span>
             </div>
             <div class="snowy-wp-scroll"><table class="snowy-wp-table">
@@ -89,8 +90,9 @@ add_shortcode('snowy_extremos', 'snowy_wp_shortcode_extremos');
  */
 function snowy_wp_shortcode_estaciones($atts = [])
 {
-    $atts = shortcode_atts(['ids' => '', 'modo' => 'vivo', 'titulo' => ''], (array) $atts, 'snowy_estaciones');
+    $atts = shortcode_atts(['ids' => '', 'modo' => 'vivo', 'titulo' => '', 'nivel' => ''], (array) $atts, 'snowy_estaciones');
     $frozen = $atts['modo'] === 'snapshot';
+    $tag = snowy_wp_heading_tag($atts['nivel']);
 
     if ($frozen) {
         $snap = snowy_wp_snapshot('estaciones|' . $atts['ids'], static function () use ($atts) {
@@ -121,7 +123,7 @@ function snowy_wp_shortcode_estaciones($atts = [])
     ob_start(); ?>
     <div class="snowy-wp-wrap">
     <div class="snowy-wp-head">
-        <h3><?php echo esc_html($title); ?></h3>
+        <<?php echo esc_attr($tag); ?>><?php echo esc_html($title); ?></<?php echo esc_attr($tag); ?>>
         <span class="snowy-wp-tag"><?php echo esc_html($frozen ? __('dato histórico', 'snowy-wp') : __('en vivo', 'snowy-wp')); ?></span>
     </div>
     <div class="snowy-wp-scroll"><table class="snowy-wp-table snowy-wp-estaciones">
@@ -158,7 +160,8 @@ add_shortcode('snowy_estaciones', 'snowy_wp_shortcode_estaciones');
  */
 function snowy_wp_shortcode_viento($atts = [])
 {
-    $atts = shortcode_atts(['limite' => 8], (array) $atts, 'snowy_viento');
+    $atts = shortcode_atts(['limite' => 8, 'nivel' => ''], (array) $atts, 'snowy_viento');
+    $tag = snowy_wp_heading_tag($atts['nivel']);
     $stations = array_filter(snowy_wp_stations(), static fn($s) => isset($s['today']['gustMax']) && $s['today']['gustMax'] !== null);
     if (!$stations) {
         return '';
@@ -170,7 +173,7 @@ function snowy_wp_shortcode_viento($atts = [])
     ob_start(); ?>
     <div class="snowy-wp-wrap">
     <div class="snowy-wp-head">
-        <h3><?php esc_html_e('Rachas más fuertes de hoy', 'snowy-wp'); ?></h3>
+        <<?php echo esc_attr($tag); ?>><?php esc_html_e('Rachas más fuertes de hoy', 'snowy-wp'); ?></<?php echo esc_attr($tag); ?>>
         <span class="snowy-wp-tag"><?php esc_html_e('viento', 'snowy-wp'); ?></span>
     </div>
     <div class="snowy-wp-scroll"><table class="snowy-wp-table">
@@ -256,8 +259,9 @@ add_shortcode('snowy_estacion', 'snowy_wp_shortcode_estacion');
  */
 function snowy_wp_shortcode_avisos($atts = [])
 {
-    $atts = shortcode_atts(['modo' => 'vivo'], (array) $atts, 'snowy_avisos');
+    $atts = shortcode_atts(['modo' => 'vivo', 'nivel' => ''], (array) $atts, 'snowy_avisos');
     $frozen = $atts['modo'] === 'snapshot';
+    $tag = snowy_wp_heading_tag($atts['nivel']);
 
     if ($frozen) {
         $snap = snowy_wp_snapshot('avisos', 'snowy_wp_hazards');
@@ -274,11 +278,11 @@ function snowy_wp_shortcode_avisos($atts = [])
     ob_start(); ?>
     <div class="snowy-wp-wrap">
         <div class="snowy-wp-head">
-            <h3><?php printf(
+            <<?php echo esc_attr($tag); ?>><?php printf(
                 /* translators: %s: nombre de la region configurada */
                 esc_html__('Avisos de AEMET en %s', 'snowy-wp'),
                 esc_html($region)
-            ); ?></h3>
+            ); ?></<?php echo esc_attr($tag); ?>>
             <span class="snowy-wp-tag"><?php
                 echo esc_html($frozen
                     ? __('aviso histórico', 'snowy-wp')

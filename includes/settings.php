@@ -36,6 +36,7 @@ function snowy_wp_sanitize_settings($input)
         'api_key'      => sanitize_text_field($input['api_key'] ?? ''),
         'region'       => sanitize_text_field($input['region'] ?? ''),
         'stations_url' => esc_url_raw($input['stations_url'] ?? ''),
+        'heading_level' => SNOWY_WP_HEADING_LEVELS[$input['heading_level'] ?? ''] ?? 'h3',
         'attribution'  => !empty($input['attribution']),
     ];
 
@@ -133,6 +134,19 @@ function snowy_wp_settings_page()
                                    value="<?php echo esc_attr($options['region']); ?>">
                         <?php endif; ?>
                         <p class="description"><?php esc_html_e('Filtra las estaciones y los avisos. Vacío muestra la red completa.', 'snowy-wp'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="snowy_wp_heading_level"><?php esc_html_e('Encabezado de los widgets', 'snowy-wp'); ?></label></th>
+                    <td>
+                        <select id="snowy_wp_heading_level" name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[heading_level]">
+                            <?php foreach (SNOWY_WP_HEADING_LEVELS as $tag) : ?>
+                                <option value="<?php echo esc_attr($tag); ?>" <?php selected($options['heading_level'], $tag); ?>>
+                                    <?php echo esc_html($tag === 'p' ? __('sin encabezado', 'snowy-wp') : $tag); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="description"><?php esc_html_e('Nivel del título de cada widget. Elige el que encaje bajo los encabezados de tus artículos: un nivel que se salta un escalón rompe el orden de la página para los lectores de pantalla.', 'snowy-wp'); ?></p>
                     </td>
                 </tr>
                 <tr>

@@ -15,7 +15,14 @@ const SNOWY_WP_DEFAULTS = [
     'region'         => '',
     'stations_url'   => '',
     'attribution'    => true,
+    'heading_level'  => 'h3',
 ];
+
+/**
+ * Niveles admitidos para el encabezado de los widgets. Se limita la lista
+ * porque el valor se interpola en el HTML.
+ */
+const SNOWY_WP_HEADING_LEVELS = ['h2' => 'h2', 'h3' => 'h3', 'h4' => 'h4', 'p' => 'p'];
 
 function snowy_wp_options()
 {
@@ -61,4 +68,18 @@ function snowy_wp_region_label()
     $region = trim((string) snowy_wp_option('region'));
 
     return $region !== '' ? $region : __('España', 'snowy-wp');
+}
+
+/**
+ * Etiqueta del encabezado de un widget.
+ *
+ * Un widget insertado en mitad de un articulo no sabe a que profundidad esta, y
+ * fijar h3 rompia el orden de encabezados de la pagina. Se puede elegir en los
+ * ajustes y por atributo en cada insercion.
+ */
+function snowy_wp_heading_tag($override = '')
+{
+    $tag = $override !== '' ? $override : (string) snowy_wp_option('heading_level');
+
+    return SNOWY_WP_HEADING_LEVELS[$tag] ?? 'h3';
 }

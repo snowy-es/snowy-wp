@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,15 @@ y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 == Changelog ==
+
+= 2.2.0 =
+* El nivel del encabezado de cada widget es configurable: fijar h3 rompía el
+  orden de encabezados del artículo donde se inserta.
+* Correcciones de accesibilidad medidas con axe: contraste de las cabeceras de
+  tabla y de la atribución, enlaces distinguibles sin depender del color y
+  listas de definiciones bien formadas.
+* El plugin cede el paso mientras siga activo «Snowy — datos de La Rioja», para
+  poder migrar sin dejar la web a medias.
 
 = 2.1.0 =
 * Nuevos widgets de calidad del aire y de polen.

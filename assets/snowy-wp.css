@@ -27,8 +27,17 @@
 .snowy-wp-table.snowy-wp-table{margin:0;border-spacing:0;border-collapse:collapse;table-layout:auto}
 .snowy-wp-table.snowy-wp-table caption{display:none}
 .snowy-wp-wrap.snowy-wp-wrap a,
-.snowy-wp-card.snowy-wp-card a{text-decoration:none;box-shadow:none}
-.snowy-wp-link.snowy-wp-link{text-decoration:none}
+.snowy-wp-card.snowy-wp-card a{box-shadow:none}
+/* El color tambien se reclama: el tema pinta los enlaces del contenido de un
+   azul que sobre blanco se queda en 3,1 de contraste, por debajo del minimo. */
+.snowy-wp-wrap.snowy-wp-wrap .snowy-wp-link,
+.snowy-wp-card.snowy-wp-card .snowy-wp-link{color:#0f172a;text-decoration:none}
+.snowy-wp-wrap.snowy-wp-wrap .snowy-wp-link:hover,
+.snowy-wp-card.snowy-wp-card .snowy-wp-link:hover{color:#0369a1}
+/* Un enlace dentro de un parrafo no puede distinguirse solo por el color, asi
+   que el subrayado de la atribucion se mantiene por encima del reset. */
+.snowy-wp-credit.snowy-wp-credit a,
+.snowy-wp-empty.snowy-wp-empty a{text-decoration:underline;color:#0369a1}
 .snowy-wp-wrap.snowy-wp-wrap h3,
 .snowy-wp-card.snowy-wp-card h4{text-transform:none;letter-spacing:-.01em}
 .snowy-wp-wrap.snowy-wp-wrap h3::after,
@@ -51,30 +60,31 @@
   border-right:1px solid var(--sn-line)}
 .snowy-wp-extremos>.snowy-wp-wrap:last-child{border-right:0}
 .snowy-wp-table{width:100%;border-collapse:collapse;margin:0;font-size:.93rem}
-.snowy-wp-table th{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--sn-mute);
+.snowy-wp-table th{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:#475569;
   font-weight:600;text-align:left;padding:.6rem 1.15rem;border-bottom:1px solid var(--sn-line);white-space:nowrap}
 .snowy-wp-table td{padding:.62rem 1.15rem;border-bottom:1px solid #f1f5f9;color:var(--sn-ink);vertical-align:middle}
 .snowy-wp-table tbody tr:last-child td{border-bottom:0}
 .snowy-wp-table tbody tr:hover{background:#f8fafc}
 .snowy-wp-val{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
 .snowy-wp-net{display:inline-block;font-size:.68rem;padding:.16rem .5rem;border-radius:999px;
-  background:#f1f5f9;color:var(--sn-mute);white-space:nowrap}
+  background:#f1f5f9;color:#475569;white-space:nowrap}
 .snowy-wp-net.is-official{background:#e0f2fe;color:#075985}
 .snowy-wp-link{color:var(--sn-ink);text-decoration:none;font-weight:600;
   border-bottom:1px solid rgba(3,105,161,.28);transition:border-color .15s,color .15s}
 .snowy-wp-link:hover{color:var(--sn-accent);border-bottom-color:var(--sn-accent)}
-.snowy-wp-credit{font-size:.78rem;line-height:1.55;color:var(--sn-mute);margin:0;
+.snowy-wp-credit{font-size:.78rem;line-height:1.55;color:#475569;margin:0;
   padding:.75rem 1.15rem;background:var(--sn-soft);border-top:1px solid var(--sn-line)}
-.snowy-wp-credit a{color:var(--sn-accent)}
+.snowy-wp-credit a{color:#0369a1;text-decoration:underline}
 .snowy-wp-card{border:1px solid #e2e8f0;border-left:4px solid #0369a1;border-radius:12px;
   padding:1.05rem 1.25rem;margin:1.75rem 0;background:linear-gradient(180deg,#f8fafc,#fff)}
 .snowy-wp-card-eyebrow{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:#0369a1;
   margin:0 0 .25rem;font-weight:700}
 .snowy-wp-card-title{margin:0 0 .85rem;font-size:1.15rem;font-weight:700}
 .snowy-wp-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:.85rem}
-.snowy-wp-card-grid span{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;
-  color:#64748b;margin-bottom:.12rem}
-.snowy-wp-card-grid strong{font-size:1.2rem;font-variant-numeric:tabular-nums}
+.snowy-wp-card-grid span,.snowy-wp-card-grid dt{display:block;font-size:.7rem;text-transform:uppercase;
+  letter-spacing:.05em;color:#475569;margin-bottom:.12rem}
+.snowy-wp-card-grid strong,.snowy-wp-card-grid dd{margin:0;font-size:1.2rem;font-weight:700;
+  font-variant-numeric:tabular-nums}
 .snowy-wp-card-foot{margin:.9rem 0 0;font-size:.76rem;color:#64748b}
 .snowy-wp-risk{display:inline-block;font-size:.7rem;font-weight:700;padding:.2rem .6rem;
   border-radius:999px;background:#f1f5f9;color:#475569;white-space:nowrap}
@@ -82,7 +92,7 @@
 .snowy-wp-risk.is-naranja{background:#ffedd5;color:#9a3412}
 .snowy-wp-risk.is-rojo{background:#fee2e2;color:#991b1b}
 .snowy-wp-day{margin:0;padding:.6rem 1.15rem .1rem;font-size:.72rem;text-transform:uppercase;
-  letter-spacing:.07em;color:#64748b;font-weight:700}
+  letter-spacing:.07em;color:#475569;font-weight:700}
 .snowy-wp-empty{margin:0;padding:1.15rem;color:#0f172a;font-size:.95rem}
 .snowy-wp-frozen{background:#fffbeb;border-top-color:#fde68a;color:#854d0e}
 @media(max-width:640px){
