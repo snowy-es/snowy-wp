@@ -5,27 +5,6 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Los shortcodes que registra el plugin. Se enumeran para poder saber, antes de
- * pintar nada, si la pagina que se sirve va a necesitar la hoja de estilos.
- */
-const SNOWY_WP_SHORTCODES = [
-    'snowy_avisos',
-    'snowy_estaciones',
-    'snowy_estacion',
-    'snowy_extremos',
-    'snowy_viento',
-    'snowy_lluvia',
-    'snowy_ranking',
-    'snowy_comparador',
-    'snowy_aire',
-    'snowy_polen',
-    'snowy_calima',
-    'snowy_embalses',
-    'snowy_prevision',
-    'snowy_clima',
-];
-
-/**
  * Hoja de estilos, minificada y cacheada.
  *
  * Se sirve como estilo en linea y no como fichero enlazado a proposito. Los
@@ -135,6 +114,19 @@ function snowy_wp_enqueue_styles()
 }
 
 /**
+ * Los shortcodes del plugin, preguntados al registro de WordPress en vez de
+ * enumerados: una lista escrita a mano se queda vieja el dia que alguien añade
+ * un widget y no se acuerda de apuntarlo aqui, y el sintoma seria un widget sin
+ * estilos.
+ */
+function snowy_wp_shortcodes()
+{
+    return array_filter(array_keys($GLOBALS['shortcode_tags'] ?? []), static function ($tag) {
+        return strpos($tag, 'snowy_') === 0;
+    });
+}
+
+/**
  * Marcas que delatan un widget dentro de un contenido.
  */
 function snowy_wp_content_has_widget($content)
@@ -149,7 +141,7 @@ function snowy_wp_content_has_widget($content)
         }
     }
 
-    foreach (SNOWY_WP_SHORTCODES as $tag) {
+    foreach (snowy_wp_shortcodes() as $tag) {
         if (has_shortcode($content, $tag)) {
             return true;
         }
