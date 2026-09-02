@@ -22,6 +22,16 @@ const SNOWY_WP_PATTERNS = [
         'description' => 'Tabla completa de estaciones con los avisos encima.',
         'content'     => "<!-- wp:snowy/avisos /-->\n<!-- wp:snowy/estaciones /-->",
     ],
+    'municipio' => [
+        'title'       => 'Snowy: página de municipio',
+        'description' => 'Previsión por días con los avisos vigentes encima y el dato medido debajo.',
+        'content'     => "<!-- wp:snowy/avisos /-->\n<!-- wp:snowy/prevision /-->\n<!-- wp:snowy/extremos {\"limite\":6} /-->",
+    ],
+    'agua' => [
+        'title'       => 'Snowy: agua y sequía',
+        'description' => 'Estado de los embalses con la lluvia acumulada de las estaciones debajo.',
+        'content'     => "<!-- wp:snowy/embalses /-->\n<!-- wp:snowy/lluvia /-->",
+    ],
     'ambiental' => [
         'title'       => 'Snowy: calidad del aire y polen',
         'description' => 'Índice de calidad del aire con los niveles de polen debajo.',

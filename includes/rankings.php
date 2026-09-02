@@ -166,6 +166,8 @@ function snowy_wp_shortcode_ranking($atts = [])
         'titulo'   => '',
         'nivel'    => '',
     ], (array) $atts, 'snowy_ranking');
+    snowy_wp_use_styles();
+
 
     $metric = SNOWY_WP_METRICS[$atts['variable']] ?? null;
     if (!$metric) {
@@ -203,6 +205,8 @@ function snowy_wp_shortcode_lluvia($atts = [])
     $atts = shortcode_atts(['limite' => 10, 'nivel' => ''], (array) $atts, 'snowy_lluvia');
     $metric = SNOWY_WP_METRICS['lluvia'];
     $tag = snowy_wp_heading_tag($atts['nivel']);
+    snowy_wp_use_styles();
+
     $stations = snowy_wp_ranked($metric, 'desc', $atts['limite'], true);
     $region = snowy_wp_region_label();
 
@@ -253,6 +257,8 @@ function snowy_wp_shortcode_comparador($atts = [])
 {
     $atts = shortcode_atts(['ids' => '', 'titulo' => '', 'nivel' => ''], (array) $atts, 'snowy_comparador');
     $stations = snowy_wp_filter_ids(snowy_wp_stations(), $atts['ids']);
+    snowy_wp_use_styles();
+
     if (count($stations) < 2) {
         return '';
     }

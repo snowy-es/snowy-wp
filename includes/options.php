@@ -11,12 +11,17 @@ const SNOWY_WP_OPTION = 'snowy_wp_settings';
  * nacional que a uno local, y filtrar es decision de quien lo instala.
  */
 const SNOWY_WP_DEFAULTS = [
-    'api_key'        => '',
-    'region'         => '',
-    'stations_url'   => '',
-    'attribution'    => true,
-    'heading_level'  => 'h3',
-    'accent'         => '',
+    'api_key'         => '',
+    'region'          => '',
+    'stations_url'    => '',
+    'attribution'     => true,
+    'heading_level'   => 'h3',
+    'accent'          => '',
+    'css_siempre'     => false,
+    'auto_shortcode'  => '',
+    'auto_donde'      => 'post',
+    'auto_posicion'   => 'despues',
+    'auto_categorias' => '',
 ];
 
 /**
