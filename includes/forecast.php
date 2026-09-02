@@ -340,7 +340,7 @@ function snowy_wp_shortcode_prevision($atts = [])
                         <span><?php echo esc_html(snowy_wp_temp($dia['tmin'])); ?></span>
                     </p>
                     <p class="snowy-wp-day-extra">
-                        <span<?php echo $data['total'] > 1 ? ' title="' . esc_attr(sprintf(
+                        <span class="snowy-wp-day-rain<?php echo $dia['lluvia'] > 0 ? ' is-wet' : ''; ?>"<?php echo $data['total'] > 1 ? ' title="' . esc_attr(sprintf(
                             /* translators: 1: modelos que predicen lluvia, 2: modelos consultados */
                             __('%1$s de %2$s modelos predicen precipitación', 'snowy-wp'),
                             $dia['conLluvia'],
@@ -356,7 +356,7 @@ function snowy_wp_shortcode_prevision($atts = [])
                             <span><?php echo esc_html(snowy_wp_speed($dia['racha'], 0)); ?></span>
                         <?php endif; ?>
                     </p>
-                    <?php if ($data['total'] > 1) : ?>
+                    <?php if ($data['total'] > 1 && $dia['confianza']['class'] !== 'is-good') : ?>
                         <p class="snowy-wp-day-trust">
                             <span class="snowy-wp-risk <?php echo esc_attr($dia['confianza']['class']); ?>"><?php
                                 printf(

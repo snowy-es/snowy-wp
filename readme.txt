@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,6 +72,11 @@ y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 == Changelog ==
+
+= 2.5.1 =
+* La previsión se lee mejor: en móvil, un día por línea en vez de una rejilla
+  que ocupaba el doble; la confianza solo se marca cuando baja de alta, y la
+  probabilidad de lluvia solo destaca cuando hay algo que esperar.
 
 = 2.5.0 =
 * Nuevos widgets: embalses, previsión por días y cambio climático del lugar.
