@@ -14,6 +14,8 @@ function snowy_wp_shortcode_extremos($atts = [])
 {
     $atts = shortcode_atts(['limite' => 8, 'nivel' => ''], (array) $atts, 'snowy_extremos');
     $tag = snowy_wp_heading_tag($atts['nivel']);
+    snowy_wp_use_styles();
+
     $stations = snowy_wp_stations();
     if (!$stations) {
         return '';
@@ -93,6 +95,8 @@ function snowy_wp_shortcode_estaciones($atts = [])
     $atts = shortcode_atts(['ids' => '', 'modo' => 'vivo', 'titulo' => '', 'nivel' => ''], (array) $atts, 'snowy_estaciones');
     $frozen = $atts['modo'] === 'snapshot';
     $tag = snowy_wp_heading_tag($atts['nivel']);
+    snowy_wp_use_styles();
+
 
     if ($frozen) {
         $snap = snowy_wp_snapshot('estaciones|' . $atts['ids'], static function () use ($atts) {
@@ -162,6 +166,8 @@ function snowy_wp_shortcode_viento($atts = [])
 {
     $atts = shortcode_atts(['limite' => 8, 'nivel' => ''], (array) $atts, 'snowy_viento');
     $tag = snowy_wp_heading_tag($atts['nivel']);
+    snowy_wp_use_styles();
+
     $stations = array_filter(snowy_wp_stations(), static fn($s) => isset($s['today']['gustMax']) && $s['today']['gustMax'] !== null);
     if (!$stations) {
         return '';
@@ -207,6 +213,8 @@ function snowy_wp_shortcode_estacion($atts = [])
 {
     $atts = shortcode_atts(['id' => '', 'nombre' => '', 'grafico' => 'si'], (array) $atts, 'snowy_estacion');
     $stations = snowy_wp_stations();
+    snowy_wp_use_styles();
+
     if (!$stations) {
         return '';
     }
@@ -273,6 +281,8 @@ function snowy_wp_shortcode_avisos($atts = [])
     $atts = shortcode_atts(['modo' => 'vivo', 'nivel' => ''], (array) $atts, 'snowy_avisos');
     $frozen = $atts['modo'] === 'snapshot';
     $tag = snowy_wp_heading_tag($atts['nivel']);
+    snowy_wp_use_styles();
+
 
     if ($frozen) {
         $snap = snowy_wp_snapshot('avisos', 'snowy_wp_hazards');

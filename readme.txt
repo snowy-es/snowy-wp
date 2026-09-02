@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.4.1
+Stable tag: 2.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,9 @@ shortcode y como bloque de Gutenberg:
 * Ranking por cualquier variable de la red.
 * Comparativa de varias estaciones enfrentadas.
 * Previsión de polvo sahariano por días.
+* Embalses de la región, con el porcentaje del conjunto y la variación semanal.
+* Previsión por días de una localidad.
+* Cuánto ha cambiado el clima del lugar desde 1950, sobre la serie de ERA5-Land.
 
 Se puede filtrar por región y los datos se cachean para no golpear la API en
 cada visita. Si la API no responde, los widgets no pintan nada en vez de romper
@@ -69,6 +72,13 @@ y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 == Changelog ==
+
+= 2.5.0 =
+* Nuevos widgets: embalses, previsión por días y cambio climático del lugar.
+* Colocación automática de un widget en entradas o páginas, con filtro por
+  categoría, sin editarlas una a una.
+* Los estilos ya no viajan en todas las páginas del sitio, solo en las que
+  llevan un widget. Además se imprimían dos veces en cada página.
 
 = 2.4.1 =
 * Los estilos viajan con la página en vez de como fichero enlazado: los

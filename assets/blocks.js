@@ -210,6 +210,112 @@
 				},
 			],
 		},
+		{
+			name: 'snowy/embalses',
+			title: __( 'Snowy · Embalses', 'snowy-wp' ),
+			description: __( 'Agua embalsada de la región, con el desglose por embalse.', 'snowy-wp' ),
+			keywords: [ 'snowy', 'embalses', 'pantanos', 'agua', 'sequia' ],
+			attributes: {
+				region: { type: 'string', default: '' },
+				cuenca: { type: 'string', default: '' },
+				limite: { type: 'number', default: 0 },
+				lluvia: { type: 'string', default: 'si' },
+				titulo: { type: 'string', default: '' },
+			},
+			panel: __( 'Opciones', 'snowy-wp' ),
+			controls: [
+				{
+					type: 'text',
+					attr: 'region',
+					label: __( 'Comunidad autónoma', 'snowy-wp' ),
+					help: __( 'Vacío usa la región configurada en Ajustes > Snowy.', 'snowy-wp' ),
+				},
+				{
+					type: 'text',
+					attr: 'cuenca',
+					label: __( 'Cuenca', 'snowy-wp' ),
+					help: __( 'Opcional, por ejemplo Ebro. Filtra dentro de la comunidad.', 'snowy-wp' ),
+				},
+				{
+					type: 'range',
+					attr: 'limite',
+					label: __( 'Cuántos embalses listar', 'snowy-wp' ),
+					min: 0,
+					max: 40,
+				},
+				{
+					type: 'toggle',
+					attr: 'lluvia',
+					label: __( 'Lluvia prevista en la cuenca', 'snowy-wp' ),
+					help: __( 'Añade cuánta lluvia se espera sobre la cuenca en siete días.', 'snowy-wp' ),
+					toValue: function ( on ) {
+						return on ? 'si' : 'no';
+					},
+					fromValue: function ( v ) {
+						return v !== 'no';
+					},
+				},
+				{ type: 'text', attr: 'titulo', label: __( 'Título', 'snowy-wp' ) },
+			],
+		},
+		{
+			name: 'snowy/prevision',
+			title: __( 'Snowy · Previsión', 'snowy-wp' ),
+			description: __( 'Previsión por días de una localidad. Es modelo, no dato medido.', 'snowy-wp' ),
+			keywords: [ 'snowy', 'prevision', 'tiempo', 'pronostico' ],
+			attributes: {
+				loc: { type: 'string', default: '' },
+				nombre: { type: 'string', default: '' },
+				dias: { type: 'number', default: 5 },
+				titulo: { type: 'string', default: '' },
+			},
+			panel: __( 'Lugar', 'snowy-wp' ),
+			controls: [
+				{
+					type: 'text',
+					attr: 'loc',
+					label: __( 'Localidad', 'snowy-wp' ),
+					help: __( 'Identificador de la localidad en snowy.es, por ejemplo logrono-espana. Vacío usa el centro de la red.', 'snowy-wp' ),
+				},
+				{ type: 'range', attr: 'dias', label: __( 'Días', 'snowy-wp' ), min: 1, max: 10 },
+				{ type: 'text', attr: 'nombre', label: __( 'Nombre a mostrar', 'snowy-wp' ) },
+				{ type: 'text', attr: 'titulo', label: __( 'Título', 'snowy-wp' ) },
+			],
+		},
+		{
+			name: 'snowy/clima',
+			title: __( 'Snowy · Cambio climático', 'snowy-wp' ),
+			description: __( 'Cuánto ha cambiado el clima del lugar desde 1950, sobre ERA5-Land.', 'snowy-wp' ),
+			keywords: [ 'snowy', 'clima', 'tendencia', 'era5' ],
+			attributes: {
+				loc: { type: 'string', default: '' },
+				nombre: { type: 'string', default: '' },
+				records: { type: 'string', default: 'si' },
+				titulo: { type: 'string', default: '' },
+			},
+			panel: __( 'Lugar', 'snowy-wp' ),
+			controls: [
+				{
+					type: 'text',
+					attr: 'loc',
+					label: __( 'Localidad', 'snowy-wp' ),
+					help: __( 'Identificador de la localidad en snowy.es. Vacío usa el centro de la red.', 'snowy-wp' ),
+				},
+				{
+					type: 'toggle',
+					attr: 'records',
+					label: __( 'Mostrar los récords', 'snowy-wp' ),
+					toValue: function ( on ) {
+						return on ? 'si' : 'no';
+					},
+					fromValue: function ( v ) {
+						return v !== 'no';
+					},
+				},
+				{ type: 'text', attr: 'nombre', label: __( 'Nombre a mostrar', 'snowy-wp' ) },
+				{ type: 'text', attr: 'titulo', label: __( 'Título', 'snowy-wp' ) },
+			],
+		},
 	];
 
 	function render( control, props ) {

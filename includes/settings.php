@@ -39,6 +39,14 @@ function snowy_wp_sanitize_settings($input)
         'heading_level' => SNOWY_WP_HEADING_LEVELS[$input['heading_level'] ?? ''] ?? 'h3',
         'accent'        => empty($input['accent_reset']) && preg_match('/^#[0-9a-fA-F]{6}$/', $input['accent'] ?? '') ? $input['accent'] : '',
         'attribution'  => !empty($input['attribution']),
+        'css_siempre'  => !empty($input['css_siempre']),
+        // El shortcode se guarda tal cual porque es lo que se va a ejecutar; lo
+        // que decide que se puede ejecutar es do_shortcode, que solo atiende a
+        // los que hay registrados.
+        'auto_shortcode'  => wp_kses_post($input['auto_shortcode'] ?? ''),
+        'auto_donde'      => SNOWY_WP_PLACEMENT_TARGETS[$input['auto_donde'] ?? ''] ?? 'post',
+        'auto_posicion'   => SNOWY_WP_PLACEMENT_POSITIONS[$input['auto_posicion'] ?? ''] ?? 'despues',
+        'auto_categorias' => sanitize_text_field($input['auto_categorias'] ?? ''),
     ];
 
     snowy_wp_flush_cache();
@@ -170,6 +178,54 @@ function snowy_wp_settings_page()
                                name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[stations_url]"
                                value="<?php echo esc_attr($options['stations_url']); ?>" placeholder="https://">
                         <p class="description"><?php esc_html_e('Opcional. Tu propia página de estaciones, si quieres enlazarla desde los widgets.', 'snowy-wp'); ?></p>
+                    </td>
+                </tr>
+            </table>
+
+            <h2><?php esc_html_e('Colocación automática', 'snowy-wp'); ?></h2>
+            <p style="max-width:640px"><?php esc_html_e('Inserta un widget en las entradas sin tener que editarlas una a una. No se aplica a las que ya llevan un widget puesto a mano.', 'snowy-wp'); ?></p>
+            <table class="form-table" role="presentation">
+                <tr>
+                    <th scope="row"><label for="snowy_wp_auto_shortcode"><?php esc_html_e('Widget a insertar', 'snowy-wp'); ?></label></th>
+                    <td>
+                        <input type="text" class="large-text code" id="snowy_wp_auto_shortcode"
+                               name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[auto_shortcode]"
+                               value="<?php echo esc_attr($options['auto_shortcode']); ?>"
+                               placeholder="[snowy_extremos limite=&quot;6&quot;]">
+                        <p class="description"><?php esc_html_e('El shortcode completo, con sus atributos. Vacío desactiva la colocación automática.', 'snowy-wp'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="snowy_wp_auto_donde"><?php esc_html_e('Dónde', 'snowy-wp'); ?></label></th>
+                    <td>
+                        <select id="snowy_wp_auto_donde" name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[auto_donde]">
+                            <option value="post" <?php selected($options['auto_donde'], 'post'); ?>><?php esc_html_e('En las entradas', 'snowy-wp'); ?></option>
+                            <option value="page" <?php selected($options['auto_donde'], 'page'); ?>><?php esc_html_e('En las páginas', 'snowy-wp'); ?></option>
+                            <option value="ambos" <?php selected($options['auto_donde'], 'ambos'); ?>><?php esc_html_e('En ambas', 'snowy-wp'); ?></option>
+                        </select>
+                        <select name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[auto_posicion]">
+                            <option value="despues" <?php selected($options['auto_posicion'], 'despues'); ?>><?php esc_html_e('debajo del contenido', 'snowy-wp'); ?></option>
+                            <option value="antes" <?php selected($options['auto_posicion'], 'antes'); ?>><?php esc_html_e('encima del contenido', 'snowy-wp'); ?></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="snowy_wp_auto_categorias"><?php esc_html_e('Solo en estas categorías', 'snowy-wp'); ?></label></th>
+                    <td>
+                        <input type="text" class="regular-text" id="snowy_wp_auto_categorias"
+                               name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[auto_categorias]"
+                               value="<?php echo esc_attr($options['auto_categorias']); ?>" placeholder="nieve, temporal">
+                        <p class="description"><?php esc_html_e('Slugs separados por comas. Vacío aplica a todas.', 'snowy-wp'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e('Estilos', 'snowy-wp'); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[css_siempre]" value="1" <?php checked(!empty($options['css_siempre'])); ?>>
+                            <?php esc_html_e('Cargar los estilos en todas las páginas', 'snowy-wp'); ?>
+                        </label>
+                        <p class="description"><?php esc_html_e('Normalmente no hace falta: los estilos viajan solo con las páginas que llevan un widget. Actívalo si tu tema llama a los shortcodes desde una plantilla y ves los widgets sin formato.', 'snowy-wp'); ?></p>
                     </td>
                 </tr>
             </table>

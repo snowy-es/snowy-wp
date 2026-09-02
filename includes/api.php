@@ -25,10 +25,10 @@ function snowy_wp_auth_headers()
  * Devuelve el cuerpo decodificado o null. Un fallo de la API nunca es una
  * excepcion aqui: las plantillas tienen que degradar sin romper la pagina.
  */
-function snowy_wp_get($path)
+function snowy_wp_get($path, $timeout = 8)
 {
     $response = wp_remote_get(SNOWY_WP_API . $path, [
-        'timeout' => 8,
+        'timeout' => $timeout,
         'headers' => snowy_wp_auth_headers(),
     ]);
 

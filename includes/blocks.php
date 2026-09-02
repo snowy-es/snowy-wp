@@ -66,6 +66,34 @@ const SNOWY_WP_BLOCKS = [
         'cb'    => 'snowy_wp_shortcode_calima',
         'attrs' => ['dias' => ['type' => 'number', 'default' => 4]],
     ],
+    'snowy/embalses' => [
+        'cb'    => 'snowy_wp_shortcode_embalses',
+        'attrs' => [
+            'region' => ['type' => 'string', 'default' => ''],
+            'cuenca' => ['type' => 'string', 'default' => ''],
+            'limite' => ['type' => 'number', 'default' => 0],
+            'lluvia' => ['type' => 'string', 'default' => 'si'],
+            'titulo' => ['type' => 'string', 'default' => ''],
+        ],
+    ],
+    'snowy/prevision' => [
+        'cb'    => 'snowy_wp_shortcode_prevision',
+        'attrs' => [
+            'loc'    => ['type' => 'string', 'default' => ''],
+            'nombre' => ['type' => 'string', 'default' => ''],
+            'dias'   => ['type' => 'number', 'default' => 5],
+            'titulo' => ['type' => 'string', 'default' => ''],
+        ],
+    ],
+    'snowy/clima' => [
+        'cb'    => 'snowy_wp_shortcode_clima',
+        'attrs' => [
+            'loc'     => ['type' => 'string', 'default' => ''],
+            'nombre'  => ['type' => 'string', 'default' => ''],
+            'records' => ['type' => 'string', 'default' => 'si'],
+            'titulo'  => ['type' => 'string', 'default' => ''],
+        ],
+    ],
     'snowy/polen' => [
         'cb'    => 'snowy_wp_shortcode_polen',
         'attrs' => [

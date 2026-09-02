@@ -19,9 +19,16 @@ cualquier WordPress.
 | `[snowy_ranking variable="racha"]` | Snowy · Ranking | Tabla ordenada por cualquier variable de la red |
 | `[snowy_comparador ids="A,B"]` | Snowy · Comparativa | Varias estaciones enfrentadas en columnas |
 | `[snowy_calima]` | Snowy · Polvo sahariano | Intensidad prevista de calima por días |
+| `[snowy_embalses]` | Snowy · Embalses | Agua embalsada de la región, con el desglose por embalse |
+| `[snowy_prevision loc="…"]` | Snowy · Previsión | Previsión por días de una localidad |
+| `[snowy_clima]` | Snowy · Cambio climático | Cuánto ha cambiado el clima del lugar desde 1950 |
 
-Los widgets de aire y polen se ubican solos en el centro de las estaciones de
-tu región; `lat` y `lon` solo hacen falta si quieres otro punto.
+Los widgets de aire, polen, previsión y clima se ubican solos en el centro de
+las estaciones de tu región; `loc`, `lat` y `lon` solo hacen falta si quieres
+otro punto.
+
+Todo es dato medido salvo `[snowy_prevision]`, que es modelo y lo dice en su
+pie.
 
 Los bloques aparecen escribiendo `/snowy` en el editor y **se previsualizan
 dentro del editor**: `ServerSideRender` llama al mismo `render_callback` que
@@ -65,8 +72,13 @@ de datos.
   cliente, habría que quitar la clave: sería pública.
 - **Si la API no responde, se degrada.** Los widgets devuelven cadena vacía y la
   página se sirve igual. Un fallo nuestro no puede tumbar tu web.
-- **Los datos se cachean** diez minutos las estaciones, quince los avisos y
-  treinta el aire, con transients. Al guardar los ajustes la caché se vacía.
+- **Los datos se cachean** con transients, cada uno según cada cuánto cambia:
+  diez minutos las estaciones, quince los avisos, treinta el aire, media hora la
+  previsión, seis horas los embalses —el boletín del MITECO es semanal— y una
+  semana la serie climática. Al guardar los ajustes la caché se vacía.
+- **Los estilos viajan solo con las páginas que llevan un widget.** Si tu tema
+  llama a los shortcodes desde una plantilla, actívalos para todo el sitio en
+  los ajustes.
 - **Si la API se cae, el widget aguanta.** Se guarda la última respuesta buena
   durante 24 horas y se sirve esa, diciendo su antigüedad, en vez de dejar un
   hueco en un artículo publicado.
@@ -101,11 +113,25 @@ includes/options.php  opciones y resolución de la clave
 includes/api.php      cliente HTTP, caché y tolerancia a fallos
 includes/render.php   helpers de formato, atribución y snapshots
 includes/shortcodes.php
-includes/environment.php  calidad del aire y polen
+includes/environment.php  calidad del aire, polen y calima
+includes/reservoirs.php   embalses
+includes/forecast.php     previsión por días y resolución de localidades
+includes/climate.php      serie climática de ERA5-Land
+includes/placement.php    colocación automática en entradas y páginas
+includes/assets.php       hoja de estilos y su encolado condicional
 includes/blocks.php   registro de bloques sobre los mismos callbacks
 includes/settings.php Ajustes > Snowy
 includes/admin.php    página de ayuda con los shortcodes y los ids
 ```
+
+## Colocación automática
+
+En **Ajustes > Snowy** se puede indicar un shortcode para que se inserte solo en
+las entradas o en las páginas, encima o debajo del contenido, opcionalmente solo
+en unas categorías. Es lo que evita editar mil entradas a mano.
+
+No se aplica sobre un contenido que ya trae un widget puesto a mano: lo que se
+haya colocado a propósito manda.
 
 ## Licencia
 

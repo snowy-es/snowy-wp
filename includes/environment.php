@@ -110,6 +110,8 @@ function snowy_wp_shortcode_aire($atts = [])
 {
     $atts = shortcode_atts(['lat' => '', 'lon' => '', 'nivel' => ''], (array) $atts, 'snowy_aire');
     $tag = snowy_wp_heading_tag($atts['nivel']);
+    snowy_wp_use_styles();
+
     $point = snowy_wp_air_point($atts);
     if (!$point) {
         return '';
@@ -171,6 +173,8 @@ function snowy_wp_shortcode_polen($atts = [])
 {
     $atts = shortcode_atts(['lat' => '', 'lon' => '', 'todos' => 'no', 'nivel' => ''], (array) $atts, 'snowy_polen');
     $tag = snowy_wp_heading_tag($atts['nivel']);
+    snowy_wp_use_styles();
+
     $point = snowy_wp_air_point($atts);
     if (!$point) {
         return '';
@@ -287,6 +291,8 @@ function snowy_wp_shortcode_calima($atts = [])
 {
     $atts = shortcode_atts(['lat' => '', 'lon' => '', 'dias' => 4, 'nivel' => ''], (array) $atts, 'snowy_calima');
     $tag = snowy_wp_heading_tag($atts['nivel']);
+    snowy_wp_use_styles();
+
     $point = snowy_wp_air_point($atts);
     if (!$point) {
         return '';
