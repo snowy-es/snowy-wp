@@ -188,12 +188,23 @@ function snowy_wp_shortcode_embalses($atts = [])
                     <?php endif; ?>
                 </p>
                 <?php if ($prevision && isset($prevision['totalPrecipitation7d'])) : ?>
-                    <p class="snowy-wp-total-meta"><?php printf(
-                        /* translators: 1: nombre de la cuenca, 2: precipitacion prevista */
-                        esc_html__('Lluvia prevista en la cuenca del %1$s: %2$s en siete días.', 'snowy-wp'),
-                        esc_html($cuencas[0]),
-                        '<strong>' . esc_html(number_format((float) $prevision['totalPrecipitation7d'], 1, ',', '.') . ' mm') . '</strong>'
-                    ); ?></p>
+                    <p class="snowy-wp-total-meta"><?php
+                        $mm = (float) $prevision['totalPrecipitation7d'];
+                        if ($mm < 1) {
+                            printf(
+                                /* translators: %s: nombre de la cuenca */
+                                esc_html__('No se espera lluvia sobre la cuenca del %s en los próximos siete días.', 'snowy-wp'),
+                                esc_html($cuencas[0])
+                            );
+                        } else {
+                            printf(
+                                /* translators: 1: nombre de la cuenca, 2: precipitacion prevista */
+                                esc_html__('Lluvia prevista en la cuenca del %1$s: %2$s en siete días.', 'snowy-wp'),
+                                esc_html($cuencas[0]),
+                                '<strong>' . esc_html(number_format($mm, 1, ',', '.') . ' mm') . '</strong>'
+                            );
+                        }
+                    ?></p>
                 <?php endif; ?>
             </div>
         </div>

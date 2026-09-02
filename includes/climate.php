@@ -65,7 +65,10 @@ function snowy_wp_climate_summary($cell)
         ? SNOWY_WP_CLIMATE_VARIABLE
         : 'temperature_mean';
 
-    $annual = $cell['annual'][$variable] ?? [];
+    // El año en curso llega hasta donde ERA5-Land haya consolidado, que van dos
+    // meses de retraso: contar sus dias de helada o su media anual junto a los
+    // de años completos compara medio año con doce meses.
+    $annual = snowy_wp_drop_current_year($cell['annual'][$variable] ?? []);
     if (!$annual) {
         return null;
     }
@@ -74,7 +77,7 @@ function snowy_wp_climate_summary($cell)
 
     $indices = [];
     foreach (SNOWY_WP_CLIMATE_INDICES as $key => $label) {
-        $serie = $cell['indices'][$key]['annual'] ?? [];
+        $serie = snowy_wp_drop_current_year($cell['indices'][$key]['annual'] ?? []);
         if (!$serie) {
             continue;
         }
@@ -96,6 +99,15 @@ function snowy_wp_climate_summary($cell)
         'indices'   => $indices,
         'records'   => $cell['records'] ?? [],
     ];
+}
+
+function snowy_wp_drop_current_year($serie)
+{
+    $ahora = (int) wp_date('Y');
+
+    return array_values(array_filter((array) $serie, static function ($punto) use ($ahora) {
+        return (int) ($punto[0] ?? 0) < $ahora;
+    }));
 }
 
 /**
