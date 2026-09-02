@@ -20,7 +20,7 @@ cualquier WordPress.
 | `[snowy_comparador ids="A,B"]` | Snowy · Comparativa | Varias estaciones enfrentadas en columnas |
 | `[snowy_calima]` | Snowy · Polvo sahariano | Intensidad prevista de calima por días |
 | `[snowy_embalses]` | Snowy · Embalses | Agua embalsada de la región, con el desglose por embalse |
-| `[snowy_prevision loc="…"]` | Snowy · Previsión | Previsión por días de una localidad |
+| `[snowy_prevision loc="…"]` | Snowy · Previsión | Previsión por días con el consenso de ECMWF, GFS e ICON |
 | `[snowy_clima]` | Snowy · Cambio climático | Cuánto ha cambiado el clima del lugar desde 1950 |
 
 Los widgets de aire, polen, previsión y clima se ubican solos en el centro de
@@ -28,7 +28,11 @@ las estaciones de tu región; `loc`, `lat` y `lon` solo hacen falta si quieres
 otro punto.
 
 Todo es dato medido salvo `[snowy_prevision]`, que es modelo y lo dice en su
-pie.
+pie. Ese widget cruza **ECMWF, GFS e ICON** —los tres modelos del consenso de
+snowy.es—: el valor lo da el primero que responde y los otros dos miden el
+acuerdo, que es lo que se pinta como probabilidad de lluvia (cuántos de los tres
+la predicen) y como confianza del día. Promediar modelos distintos daría un
+tiempo que ninguno predice.
 
 Los bloques aparecen escribiendo `/snowy` en el editor y **se previsualizan
 dentro del editor**: `ServerSideRender` llama al mismo `render_callback` que

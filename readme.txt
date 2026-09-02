@@ -28,7 +28,7 @@ shortcode y como bloque de Gutenberg:
 * Comparativa de varias estaciones enfrentadas.
 * Previsión de polvo sahariano por días.
 * Embalses de la región, con el porcentaje del conjunto y la variación semanal.
-* Previsión por días de una localidad.
+* Previsión por días de una localidad, con el consenso de ECMWF, GFS e ICON.
 * Cuánto ha cambiado el clima del lugar desde 1950, sobre la serie de ERA5-Land.
 
 Se puede filtrar por región y los datos se cachean para no golpear la API en
@@ -75,6 +75,8 @@ evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 = 2.5.0 =
 * Nuevos widgets: embalses, previsión por días y cambio climático del lugar.
+* La previsión cruza tres modelos (ECMWF, GFS e ICON) y publica el acuerdo entre
+  ellos: cuántos predicen lluvia y qué confianza tiene cada día.
 * Colocación automática de un widget en entradas o páginas, con filtro por
   categoría, sin editarlas una a una.
 * Los estilos ya no viajan en todas las páginas del sitio, solo en las que

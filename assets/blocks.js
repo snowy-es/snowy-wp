@@ -261,7 +261,7 @@
 		{
 			name: 'snowy/prevision',
 			title: __( 'Snowy · Previsión', 'snowy-wp' ),
-			description: __( 'Previsión por días de una localidad. Es modelo, no dato medido.', 'snowy-wp' ),
+			description: __( 'Previsión por días con el consenso de ECMWF, GFS e ICON. Es modelo, no dato medido.', 'snowy-wp' ),
 			keywords: [ 'snowy', 'prevision', 'tiempo', 'pronostico' ],
 			attributes: {
 				loc: { type: 'string', default: '' },

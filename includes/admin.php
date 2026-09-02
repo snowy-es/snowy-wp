@@ -148,7 +148,7 @@ const SNOWY_WP_WIDGETS = [
     'prevision' => [
         'code'    => '[snowy_prevision loc="logrono-espana"]',
         'name'    => 'Previsión por días',
-        'desc'    => 'Previsión de los próximos días para una localidad: cielo, máxima, mínima, probabilidad de lluvia y racha. Es el único widget que no es dato medido, y lo dice en su pie.',
+        'desc'    => 'Previsión de los próximos días para una localidad, con el consenso de ECMWF, GFS e ICON: los mismos tres modelos que cruza snowy.es. Cada día muestra cuántos modelos predicen lluvia y qué confianza hay. Es el único widget que no es dato medido, y lo dice en su pie.',
         'block'   => 'Snowy · Previsión',
         'ejemplo' => '[snowy_prevision loc="haro-espana" dias="7"]',
         'attrs'   => [
