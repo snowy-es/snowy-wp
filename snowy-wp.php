@@ -3,7 +3,7 @@
  * Plugin Name:       Snowy — datos meteorológicos en vivo
  * Plugin URI:        https://github.com/snowy-es/snowy-wp
  * Description:       Shortcodes y bloques con datos en vivo de la red de estaciones de Snowy: extremos del día, rachas de viento, avisos de AEMET y fichas de estación.
- * Version:           2.5.0
+ * Version:           2.5.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Snowy
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-const SNOWY_WP_VERSION = '2.5.0';
+const SNOWY_WP_VERSION = '2.5.1';
 const SNOWY_WP_SITE    = 'https://snowy.es';
 const SNOWY_WP_API     = 'https://api.snowy.es';
 const SNOWY_WP_CONTACT = 'hola@snowy.es';
