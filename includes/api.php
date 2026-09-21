@@ -21,18 +21,43 @@ function snowy_wp_auth_headers()
     return $key ? ['x-api-key' => $key] : [];
 }
 
+const SNOWY_WP_TIMEOUT  = 3;
+const SNOWY_WP_DOWN_TTL = 300;
+
 /**
  * Devuelve el cuerpo decodificado o null. Un fallo de la API nunca es una
  * excepcion aqui: las plantillas tienen que degradar sin romper la pagina.
+ *
+ * Un fallo del servidor deja una marca durante cinco minutos y, mientras dure,
+ * no se vuelve a llamar: los fallos no se cachean, y sin la marca cada visita
+ * esperaria el timeout entero de cada widget. Si no hay red se marca la API
+ * entera; si responde con error, solo esa ruta.
  */
-function snowy_wp_get($path, $timeout = 8)
+function snowy_wp_get($path, $timeout = SNOWY_WP_TIMEOUT)
 {
+    $all_down  = SNOWY_WP_CACHE_PREFIX . 'down';
+    $path_down = SNOWY_WP_CACHE_PREFIX . 'down_' . md5(strtok($path, '?'));
+
+    if (get_transient($all_down) || get_transient($path_down)) {
+        return null;
+    }
+
     $response = wp_remote_get(SNOWY_WP_API . $path, [
         'timeout' => $timeout,
         'headers' => snowy_wp_auth_headers(),
     ]);
 
-    if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+    if (is_wp_error($response)) {
+        set_transient($all_down, 1, SNOWY_WP_DOWN_TTL);
+        return null;
+    }
+
+    $code = wp_remote_retrieve_response_code($response);
+    if ($code === 429 || $code >= 500) {
+        set_transient($path_down, 1, SNOWY_WP_DOWN_TTL);
+        return null;
+    }
+    if ($code !== 200) {
         return null;
     }
 

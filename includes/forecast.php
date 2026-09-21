@@ -116,7 +116,7 @@ function snowy_wp_forecast_model($lat, $lon, $days, $model)
         'daily'         => SNOWY_WP_FORECAST_DAILY,
     ];
 
-    return snowy_wp_get('/weather/forecast?' . http_build_query($query), 6);
+    return snowy_wp_get('/weather/forecast?' . http_build_query($query));
 }
 
 /**
