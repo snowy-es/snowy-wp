@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.5.2
+Stable tag: 2.5.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,6 +72,11 @@ y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 == Changelog ==
+
+= 2.5.3 =
+* En móvil, las tablas de ranking (lluvia, temperatura, viento) ya no se
+  desplazan en horizontal: cada fila muestra el nombre y la red a la izquierda
+  y el valor a la derecha.
 
 = 2.5.2 =
 * Si la API de Snowy falla, la página ya no la espera: el fallo se recuerda

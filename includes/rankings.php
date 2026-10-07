@@ -129,7 +129,7 @@ function snowy_wp_render_ranking($stations, $metric, $titulo, $etiqueta, $tag)
             <span class="snowy-wp-tag"><?php echo esc_html($etiqueta); ?></span>
         </div>
         <div class="snowy-wp-scroll">
-        <table class="snowy-wp-table">
+        <table class="snowy-wp-table snowy-wp-ranking">
             <thead><tr>
                 <th><?php esc_html_e('Estación', 'snowy-wp'); ?></th>
                 <th><?php echo esc_html($metric['columna']); ?></th>
@@ -142,7 +142,7 @@ function snowy_wp_render_ranking($stations, $metric, $titulo, $etiqueta, $tag)
                     <td class="snowy-wp-val"><?php
                         echo esc_html(snowy_wp_format_metric(snowy_wp_field($s, $metric['campo']), $metric));
                     ?></td>
-                    <td><?php echo snowy_wp_network_badge($s['network'] ?? ''); ?></td>
+                    <td class="snowy-wp-ranking__net"><?php echo snowy_wp_network_badge($s['network'] ?? ''); ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
