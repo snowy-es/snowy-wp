@@ -53,9 +53,15 @@ function snowy_wp_latest_release()
         }
     }
 
+    // Solo un zip publicado en las releases de este repo: el actualizador instala código
+    // en la web de quien usa el plugin, y no puede venir de otra dirección.
+    if (!snowy_wp_is_own_release_zip($zip)) {
+        return [];
+    }
+
     $release = [
         'version' => ltrim((string) $data['tag_name'], 'vV'),
-        'zip'     => $zip ?: ($data['zipball_url'] ?? ''),
+        'zip'     => $zip,
         'url'     => $data['html_url'] ?? '',
         'notas'   => (string) ($data['body'] ?? ''),
         'fecha'   => substr((string) ($data['published_at'] ?? ''), 0, 10),
@@ -158,3 +164,9 @@ function snowy_wp_fix_update_folder($source, $remote_source, $upgrader, $args = 
     return $source;
 }
 add_filter('upgrader_source_selection', 'snowy_wp_fix_update_folder', 10, 4);
+
+function snowy_wp_is_own_release_zip($url)
+{
+    $prefix = 'https://github.com/' . SNOWY_WP_REPO . '/releases/download/';
+    return is_string($url) && strpos($url, $prefix) === 0 && substr($url, -4) === '.zip';
+}
