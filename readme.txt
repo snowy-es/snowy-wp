@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.6.0
+Stable tag: 2.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,10 @@ shortcode y como bloque de Gutenberg:
 * Embalses de la región, con el porcentaje del conjunto y la variación semanal.
 * Previsión por días de una localidad, con el consenso de ECMWF, GFS e ICON.
 * Cuánto ha cambiado el clima del lugar desde 1950, sobre la serie de ERA5-Land.
+* Clima de un punto o de una región entera (comunidad o provincia): calendario
+  del año, mes a mes, si el último año fue extremo, serie anual con tendencia,
+  franjas climáticas, veranos por décadas, antes y ahora, y la lluvia del año
+  frente a la normal.
 
 Se puede filtrar por región y los datos se cachean para no golpear la API en
 cada visita. Si la API no responde, los widgets no pintan nada en vez de romper
@@ -115,6 +119,25 @@ evita que un artículo de hace un mes muestre la temperatura de hoy.
 Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 
 == Changelog ==
+
+= 2.7.0 =
+* Ocho widgets de clima, cada uno con shortcode, bloque y plantilla:
+  `[snowy_clima_calendario]`, `[snowy_clima_meses]`, `[snowy_clima_extremo]`,
+  `[snowy_clima_serie]`, `[snowy_clima_franjas]`, `[snowy_clima_veranos]`,
+  `[snowy_clima_cambios]` y `[snowy_clima_lluvia]`.
+* Todos admiten `region` (código ISO 3166-2 del catálogo de la API, como ES-RI
+  para La Rioja): pintan la media de toda la región, ponderada por superficie,
+  en vez de un punto. Sin región, `ubicacion`, `lat` y `lon` como hasta ahora.
+* Gráficas en SVG pintadas en el servidor, con una tabla de datos para lectores
+  de pantalla y las cifras en HTML para que nunca bajen de 12 px.
+* Variables CSS nuevas para las escalas de datos: `--snowy-scale-1` a
+  `--snowy-scale-10`, `--snowy-scale-neutral`, `--snowy-warm`, `--snowy-cold`,
+  `--snowy-series` y `--snowy-trend`.
+* Caché de 12 horas para el año en curso y de 7 días para la serie histórica.
+* `[snowy_clima]` admite `region` y pide las vistas ligeras de la API
+  (`/climate/summary` y `/climate/profile`) en vez de la celda entera; si el
+  servidor todavía no las tiene, vuelve a la celda.
+* Filtros nuevos: `snowy_wp_climate_data` y `snowy_wp_station_name`.
 
 = 2.6.0 =
 * Variables CSS públicas con el prefijo `--snowy-` para vestir los widgets desde
@@ -207,6 +230,10 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 * Versión interna con los cinco shortcodes y sus bloques.
 
 == Upgrade Notice ==
+
+= 2.7.0 =
+Añade ocho widgets de clima para un punto o una región entera. Los widgets que
+ya tienes no cambian.
 
 = 2.6.0 =
 Cambia el aspecto por defecto de los widgets: pasan a llevar el diseño de

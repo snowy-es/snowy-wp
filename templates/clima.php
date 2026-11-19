@@ -97,9 +97,13 @@ if (!defined('ABSPATH')) {
             <?php endforeach; ?>
         </dl>
     <?php endif; ?>
+    <?php if (!empty($credit)) : ?>
+        <?php echo $credit; ?>
+    <?php else : ?>
     <p class="snowy-wp-credit"><?php printf(
-        /* translators: %s: enlace a snowy.es */
-        esc_html__('Serie de ERA5-Land procesada por %s. Cada celda cubre unos diez kilómetros de terreno.', 'snowy-wp'),
-        '<a href="' . esc_url(SNOWY_WP_SITE . '/clima') . '" target="_blank" rel="noopener"><strong>Snowy</strong></a>'
-    ); ?></p>
+            /* translators: %s: enlace a snowy.es */
+            esc_html__('Serie de ERA5-Land procesada por %s. Cada celda cubre unos diez kilómetros de terreno.', 'snowy-wp'),
+            '<a href="' . esc_url(SNOWY_WP_SITE . '/clima') . '" target="_blank" rel="noopener"><strong>Snowy</strong></a>'
+        ); ?></p>
+    <?php endif; ?>
 </div>
