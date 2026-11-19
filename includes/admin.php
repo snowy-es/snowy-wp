@@ -8,232 +8,245 @@ if (!defined('ABSPATH')) {
  * Catalogo de piezas disponibles. Es la fuente de la pagina de ayuda del admin
  * y evita que la lista se desincronice de lo que el plugin registra de verdad.
  */
-const SNOWY_WP_WIDGETS = [
-    'avisos' => [
-        'code'  => '[snowy_avisos]',
-        'name'  => 'Avisos de AEMET',
-        'desc'  => 'Avisos vigentes para hoy, mañana y pasado, con nivel y horario. Si no hay ninguno, lo dice.',
-        'attrs' => [
-            'modo' => 'vivo (por defecto) o snapshot para congelar los avisos dentro de un artículo.',
-            'nivel' => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+function snowy_wp_widgets_help()
+{
+    return [
+        'avisos' => [
+            'code'  => '[snowy_avisos]',
+            'name'  => __('Avisos de AEMET', 'snowy-wp'),
+            'desc'  => __('Avisos vigentes para hoy, mañana y pasado, con nivel y horario. Si no hay ninguno, lo dice.', 'snowy-wp'),
+            'attrs' => [
+                'modo' => __('vivo (por defecto) o snapshot para congelar los avisos dentro de un artículo.', 'snowy-wp'),
+                'nivel' => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
+            'block'   => __('Snowy · Avisos de AEMET', 'snowy-wp'),
+            'ejemplo' => '[snowy_avisos modo="snapshot"]',
         ],
-        'block'   => 'Snowy · Avisos de AEMET',
-        'ejemplo' => '[snowy_avisos modo="snapshot"]',
-    ],
-    'extremos' => [
-        'code'  => '[snowy_extremos limite="8"]',
-        'name'  => 'Extremos del día',
-        'desc'  => 'Las estaciones más cálidas y más frías de hoy.',
-        'attrs' => [
-            'limite' => 'Cuántas estaciones se muestran en cada columna. Por defecto 8.',
-            'nivel' => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'extremos' => [
+            'code'  => '[snowy_extremos limite="8"]',
+            'name'  => __('Extremos del día', 'snowy-wp'),
+            'desc'  => __('Las estaciones más cálidas y más frías de hoy.', 'snowy-wp'),
+            'attrs' => [
+                'limite' => __('Cuántas estaciones se muestran en cada columna. Por defecto 8.', 'snowy-wp'),
+                'nivel' => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
+            'block'   => __('Snowy · Extremos del día', 'snowy-wp'),
+            'ejemplo' => '[snowy_extremos limite="5" nivel="h2"]',
         ],
-        'block'   => 'Snowy · Extremos del día',
-        'ejemplo' => '[snowy_extremos limite="5" nivel="h2"]',
-    ],
-    'estaciones' => [
-        'code'  => '[snowy_estaciones]',
-        'name'  => 'Todas las estaciones',
-        'desc'  => 'Tabla completa con temperatura actual, máxima, mínima y humedad.',
-        'attrs' => [
-            'ids'    => 'Identificadores separados por comas para mostrar solo unas cuantas. Vacío las muestra todas.',
-            'titulo' => 'Encabezado propio. Vacío usa el de la región configurada.',
-            'modo'   => 'vivo (por defecto) o snapshot para congelar la tabla dentro de un artículo.',
-            'nivel' => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'estaciones' => [
+            'code'  => '[snowy_estaciones]',
+            'name'  => __('Todas las estaciones', 'snowy-wp'),
+            'desc'  => __('Tabla completa con temperatura actual, máxima, mínima y humedad.', 'snowy-wp'),
+            'attrs' => [
+                'ids'    => __('Identificadores separados por comas para mostrar solo unas cuantas. Vacío las muestra todas.', 'snowy-wp'),
+                'titulo' => __('Encabezado propio. Vacío usa el de la región configurada.', 'snowy-wp'),
+                'modo'   => __('vivo (por defecto) o snapshot para congelar la tabla dentro de un artículo.', 'snowy-wp'),
+                'nivel' => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
+            'block'   => __('Snowy · Estaciones', 'snowy-wp'),
+            'ejemplo' => '[snowy_estaciones ids="9115X,ILOGRO41" titulo="Nuestras estaciones"]',
         ],
-        'block'   => 'Snowy · Estaciones',
-        'ejemplo' => '[snowy_estaciones ids="9115X,ILOGRO41" titulo="Nuestras estaciones"]',
-    ],
-    'viento' => [
-        'code'  => '[snowy_viento limite="8"]',
-        'name'  => 'Rachas de viento',
-        'desc'  => 'Ranking de rachas máximas registradas hoy.',
-        'attrs' => [
-            'limite' => 'Cuántas estaciones se muestran. Por defecto 8.',
-            'nivel' => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'viento' => [
+            'code'  => '[snowy_viento limite="8"]',
+            'name'  => __('Rachas de viento', 'snowy-wp'),
+            'desc'  => __('Ranking de rachas máximas registradas hoy.', 'snowy-wp'),
+            'attrs' => [
+                'limite' => __('Cuántas estaciones se muestran. Por defecto 8.', 'snowy-wp'),
+                'nivel' => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
+            'block'   => __('Snowy · Rachas de viento', 'snowy-wp'),
+            'ejemplo' => '[snowy_viento limite="10"]',
         ],
-        'block'   => 'Snowy · Rachas de viento',
-        'ejemplo' => '[snowy_viento limite="10"]',
-    ],
-    'aire' => [
-        'code'  => '[snowy_aire]',
-        'name'  => 'Calidad del aire',
-        'desc'  => 'Índice europeo con su nivel, más PM2,5, PM10, ozono y NO₂. Se ubica solo en el centro de tus estaciones.',
-        'attrs' => [
-            'lat' => 'Latitud del punto a consultar. Vacío usa el centro de la región configurada.',
-            'lon' => 'Longitud del punto a consultar.',
-            'nivel' => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'aire' => [
+            'code'  => '[snowy_aire]',
+            'name'  => __('Calidad del aire', 'snowy-wp'),
+            'desc'  => __('Índice europeo con su nivel, más PM2,5, PM10, ozono y NO₂. Se ubica solo en el centro de tus estaciones.', 'snowy-wp'),
+            'attrs' => [
+                'lat' => __('Latitud del punto a consultar. Vacío usa el centro de la región configurada.', 'snowy-wp'),
+                'lon' => __('Longitud del punto a consultar.', 'snowy-wp'),
+                'nivel' => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
+            'block'   => __('Snowy · Calidad del aire', 'snowy-wp'),
+            'ejemplo' => '[snowy_aire]',
         ],
-        'block'   => 'Snowy · Calidad del aire',
-        'ejemplo' => '[snowy_aire]',
-    ],
-    'polen' => [
-        'code'  => '[snowy_polen]',
-        'name'  => 'Polen en el aire',
-        'desc'  => 'Gramíneas, olivo, abedul, aliso, artemisa y ambrosía, con su nivel de riesgo. Solo lista los que tienen presencia.',
-        'attrs' => [
-            'todos' => 'si para listar también los que están a cero. Por defecto no.',
-            'lat'   => 'Latitud del punto. Vacío usa el centro de la región configurada.',
-            'lon'   => 'Longitud del punto.',
-            'nivel' => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'polen' => [
+            'code'  => '[snowy_polen]',
+            'name'  => __('Polen en el aire', 'snowy-wp'),
+            'desc'  => __('Gramíneas, olivo, abedul, aliso, artemisa y ambrosía, con su nivel de riesgo. Solo lista los que tienen presencia.', 'snowy-wp'),
+            'attrs' => [
+                'todos' => __('si para listar también los que están a cero. Por defecto no.', 'snowy-wp'),
+                'lat'   => __('Latitud del punto. Vacío usa el centro de la región configurada.', 'snowy-wp'),
+                'lon'   => __('Longitud del punto.', 'snowy-wp'),
+                'nivel' => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
+            'block'   => __('Snowy · Polen', 'snowy-wp'),
+            'ejemplo' => '[snowy_polen todos="si"]',
         ],
-        'block'   => 'Snowy · Polen',
-        'ejemplo' => '[snowy_polen todos="si"]',
-    ],
-    'lluvia' => [
-        'code'    => '[snowy_lluvia]',
-        'name'    => 'Lluvia acumulada',
-        'desc'    => 'Acumulados del día, solo de las estaciones que han recogido algo. Si no ha llovido en ninguna, lo dice.',
-        'block'   => 'Snowy · Lluvia acumulada',
-        'ejemplo' => '[snowy_lluvia limite="10"]',
-        'attrs'   => [
-            'limite' => 'Cuántas estaciones se muestran. Por defecto 10.',
-            'nivel'  => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'lluvia' => [
+            'code'    => '[snowy_lluvia]',
+            'name'    => __('Lluvia acumulada', 'snowy-wp'),
+            'desc'    => __('Acumulados del día, solo de las estaciones que han recogido algo. Si no ha llovido en ninguna, lo dice.', 'snowy-wp'),
+            'block'   => __('Snowy · Lluvia acumulada', 'snowy-wp'),
+            'ejemplo' => '[snowy_lluvia limite="10"]',
+            'attrs'   => [
+                'limite' => __('Cuántas estaciones se muestran. Por defecto 10.', 'snowy-wp'),
+                'nivel'  => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
         ],
-    ],
-    'ranking' => [
-        'code'    => '[snowy_ranking variable="racha"]',
-        'name'    => 'Ranking por variable',
-        'desc'    => 'La misma tabla para cualquier magnitud de la red, ordenada como corresponda a cada una.',
-        'block'   => 'Snowy · Ranking',
-        'ejemplo' => '[snowy_ranking variable="humedad" limite="10" titulo="Las más húmedas"]',
-        'attrs'   => [
-            'variable' => 'temperatura, maxima, minima, lluvia, racha, humedad o presion.',
-            'limite'   => 'Cuántas estaciones se muestran. Por defecto 8.',
-            'orden'    => 'asc o desc para invertir el orden natural de la variable.',
-            'titulo'   => 'Encabezado propio.',
-            'nivel'    => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'ranking' => [
+            'code'    => '[snowy_ranking variable="racha"]',
+            'name'    => __('Ranking por variable', 'snowy-wp'),
+            'desc'    => __('La misma tabla para cualquier magnitud de la red, ordenada como corresponda a cada una.', 'snowy-wp'),
+            'block'   => __('Snowy · Ranking', 'snowy-wp'),
+            'ejemplo' => '[snowy_ranking variable="humedad" limite="10" titulo="Las más húmedas"]',
+            'attrs'   => [
+                'variable' => __('temperatura, maxima, minima, lluvia, racha, humedad o presion.', 'snowy-wp'),
+                'limite'   => __('Cuántas estaciones se muestran. Por defecto 8.', 'snowy-wp'),
+                'orden'    => __('asc o desc para invertir el orden natural de la variable.', 'snowy-wp'),
+                'titulo'   => __('Encabezado propio.', 'snowy-wp'),
+                'nivel'    => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
         ],
-    ],
-    'comparador' => [
-        'code'    => '[snowy_comparador ids="9115X,ILOGRO41"]',
-        'name'    => 'Comparativa de estaciones',
-        'desc'    => 'Dos o más estaciones en columnas, con temperatura, extremos, humedad, racha y lluvia. Para contrastar montaña y valle dentro de un artículo.',
-        'block'   => 'Snowy · Comparativa',
-        'ejemplo' => '[snowy_comparador ids="9115X,ILOGRO41" titulo="Sierra frente a valle"]',
-        'attrs'   => [
-            'ids'    => 'Identificadores separados por comas. Hacen falta al menos dos.',
-            'titulo' => 'Encabezado propio.',
-            'nivel'  => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'comparador' => [
+            'code'    => '[snowy_comparador ids="9115X,ILOGRO41"]',
+            'name'    => __('Comparativa de estaciones', 'snowy-wp'),
+            'desc'    => __('Dos o más estaciones en columnas, con temperatura, extremos, humedad, racha y lluvia. Para contrastar montaña y valle dentro de un artículo.', 'snowy-wp'),
+            'block'   => __('Snowy · Comparativa', 'snowy-wp'),
+            'ejemplo' => '[snowy_comparador ids="9115X,ILOGRO41" titulo="Sierra frente a valle"]',
+            'attrs'   => [
+                'ids'    => __('Identificadores separados por comas. Hacen falta al menos dos.', 'snowy-wp'),
+                'titulo' => __('Encabezado propio.', 'snowy-wp'),
+                'nivel'  => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
         ],
-    ],
-    'calima' => [
-        'code'    => '[snowy_calima]',
-        'name'    => 'Polvo sahariano',
-        'desc'    => 'Intensidad prevista de calima por días. Si no se espera polvo, lo dice en una frase.',
-        'block'   => 'Snowy · Polvo sahariano',
-        'ejemplo' => '[snowy_calima dias="5"]',
-        'attrs'   => [
-            'dias'  => 'Cuántos días se resumen, hasta 5. Por defecto 4.',
-            'lat'   => 'Latitud del punto. Vacío usa el centro de la región configurada.',
-            'lon'   => 'Longitud del punto.',
-            'nivel' => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'calima' => [
+            'code'    => '[snowy_calima]',
+            'name'    => __('Polvo sahariano', 'snowy-wp'),
+            'desc'    => __('Intensidad prevista de calima por días. Si no se espera polvo, lo dice en una frase.', 'snowy-wp'),
+            'block'   => __('Snowy · Polvo sahariano', 'snowy-wp'),
+            'ejemplo' => '[snowy_calima dias="5"]',
+            'attrs'   => [
+                'dias'  => __('Cuántos días se resumen, hasta 5. Por defecto 4.', 'snowy-wp'),
+                'lat'   => __('Latitud del punto. Vacío usa el centro de la región configurada.', 'snowy-wp'),
+                'lon'   => __('Longitud del punto.', 'snowy-wp'),
+                'nivel' => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
         ],
-    ],
-    'embalses' => [
-        'code'    => '[snowy_embalses]',
-        'name'    => 'Embalses',
-        'desc'    => 'Agua embalsada de la región: el porcentaje del conjunto arriba y el desglose por embalse debajo, con la variación de la semana.',
-        'block'   => 'Snowy · Embalses',
-        'ejemplo' => '[snowy_embalses limite="10" cuenca="Ebro"]',
-        'attrs'   => [
-            'region' => 'Comunidad autónoma. Vacío usa la región configurada en los ajustes.',
-            'cuenca' => 'Filtra por cuenca hidrográfica, por ejemplo Ebro.',
-            'limite' => 'Cuántos embalses se listan. 0 o vacío los lista todos.',
-            'lluvia' => 'no para ocultar la lluvia prevista sobre la cuenca. Por defecto se muestra.',
-            'titulo' => 'Encabezado propio.',
-            'nivel'  => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'embalses' => [
+            'code'    => '[snowy_embalses]',
+            'name'    => __('Embalses', 'snowy-wp'),
+            'desc'    => __('Agua embalsada de la región: el porcentaje del conjunto arriba y el desglose por embalse debajo, con la variación de la semana.', 'snowy-wp'),
+            'block'   => __('Snowy · Embalses', 'snowy-wp'),
+            'ejemplo' => '[snowy_embalses limite="10" cuenca="Ebro"]',
+            'attrs'   => [
+                'region' => __('Comunidad autónoma. Vacío usa la región configurada en los ajustes.', 'snowy-wp'),
+                'cuenca' => __('Filtra por cuenca hidrográfica, por ejemplo Ebro.', 'snowy-wp'),
+                'limite' => __('Cuántos embalses se listan. 0 o vacío los lista todos.', 'snowy-wp'),
+                'lluvia' => __('no para ocultar la lluvia prevista sobre la cuenca. Por defecto se muestra.', 'snowy-wp'),
+                'titulo' => __('Encabezado propio.', 'snowy-wp'),
+                'nivel'  => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
         ],
-    ],
-    'prevision' => [
-        'code'    => '[snowy_prevision loc="logrono-espana"]',
-        'name'    => 'Previsión por días',
-        'desc'    => 'Previsión de los próximos días para una localidad, con el consenso de ECMWF, GFS e ICON: los mismos tres modelos que cruza snowy.es. Cada día muestra cuántos modelos predicen lluvia y qué confianza hay. Es el único widget que no es dato medido, y lo dice en su pie.',
-        'block'   => 'Snowy · Previsión',
-        'ejemplo' => '[snowy_prevision loc="haro-espana" dias="7"]',
-        'attrs'   => [
-            'loc'    => 'Identificador de la localidad en snowy.es, el de su dirección: snowy.es/tiempo/logrono-espana.',
-            'lat'    => 'Alternativa a loc: latitud del punto.',
-            'lon'    => 'Longitud del punto.',
-            'dias'   => 'Cuántos días se muestran, hasta 10. Por defecto 5.',
-            'nombre' => 'Nombre del lugar a mostrar, si el de la localidad no encaja.',
-            'titulo' => 'Encabezado propio.',
-            'nivel'  => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'prevision' => [
+            'code'    => '[snowy_prevision loc="logrono-espana"]',
+            'name'    => __('Previsión por días', 'snowy-wp'),
+            'desc'    => __('Previsión de los próximos días para una localidad, con el consenso de ECMWF, GFS e ICON: los mismos tres modelos que cruza snowy.es. Cada día muestra cuántos modelos predicen lluvia y qué confianza hay. Es el único widget que no es dato medido, y lo dice en su pie.', 'snowy-wp'),
+            'block'   => __('Snowy · Previsión', 'snowy-wp'),
+            'ejemplo' => '[snowy_prevision loc="haro-espana" dias="7"]',
+            'attrs'   => [
+                'loc'    => __('Identificador de la localidad en snowy.es, el de su dirección: snowy.es/tiempo/logrono-espana.', 'snowy-wp'),
+                'lat'    => __('Alternativa a loc: latitud del punto.', 'snowy-wp'),
+                'lon'    => __('Longitud del punto.', 'snowy-wp'),
+                'dias'   => __('Cuántos días se muestran, hasta 10. Por defecto 5.', 'snowy-wp'),
+                'nombre' => __('Nombre del lugar a mostrar, si el de la localidad no encaja.', 'snowy-wp'),
+                'titulo' => __('Encabezado propio.', 'snowy-wp'),
+                'nivel'  => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
         ],
-    ],
-    'clima' => [
-        'code'    => '[snowy_clima]',
-        'name'    => 'Cambio climático del lugar',
-        'desc'    => 'Cuánto se ha calentado el punto desde 1950 sobre la serie de ERA5-Land, con los días de calor y de helada de antes y de ahora, y los récords.',
-        'block'   => 'Snowy · Cambio climático',
-        'ejemplo' => '[snowy_clima loc="logrono-espana" records="no"]',
-        'attrs'   => [
-            'loc'     => 'Identificador de la localidad en snowy.es. Vacío usa el centro de tus estaciones.',
-            'lat'     => 'Alternativa a loc: latitud del punto.',
-            'lon'     => 'Longitud del punto.',
-            'records' => 'no para ocultar los récords históricos. Por defecto se muestran.',
-            'nombre'  => 'Nombre del lugar a mostrar.',
-            'titulo'  => 'Encabezado propio.',
-            'nivel'   => 'Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.',
+        'clima' => [
+            'code'    => '[snowy_clima]',
+            'name'    => __('Cambio climático del lugar', 'snowy-wp'),
+            'desc'    => __('Cuánto se ha calentado el punto desde 1950 sobre la serie de ERA5-Land, con los días de calor y de helada de antes y de ahora, y los récords.', 'snowy-wp'),
+            'block'   => __('Snowy · Cambio climático', 'snowy-wp'),
+            'ejemplo' => '[snowy_clima loc="logrono-espana" records="no"]',
+            'attrs'   => [
+                'loc'     => __('Identificador de la localidad en snowy.es. Vacío usa el centro de tus estaciones.', 'snowy-wp'),
+                'lat'     => __('Alternativa a loc: latitud del punto.', 'snowy-wp'),
+                'lon'     => __('Longitud del punto.', 'snowy-wp'),
+                'records' => __('no para ocultar los récords históricos. Por defecto se muestran.', 'snowy-wp'),
+                'nombre'  => __('Nombre del lugar a mostrar.', 'snowy-wp'),
+                'titulo'  => __('Encabezado propio.', 'snowy-wp'),
+                'nivel'   => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
         ],
-    ],
-    'estacion' => [
-        'code'  => '[snowy_estacion id="9115X"]',
-        'name'  => 'Ficha de una estación',
-        'desc'  => 'Tarjeta con el dato de una estación concreta, para incrustar dentro de un artículo.',
-        'attrs' => [
-            'id'     => 'Identificador de la estación. Los tienes en la tabla de abajo.',
-            'nombre' => 'Alternativa a id: el nombre exacto de la estación.',
-            'grafico' => 'no para ocultar la evolución de las últimas 24 horas. Por defecto se muestra.',
+        'estacion' => [
+            'code'  => '[snowy_estacion id="9115X"]',
+            'name'  => __('Ficha de una estación', 'snowy-wp'),
+            'desc'  => __('Tarjeta con el dato de una estación concreta, para incrustar dentro de un artículo.', 'snowy-wp'),
+            'attrs' => [
+                'id'     => __('Identificador de la estación. Los tienes en la tabla de abajo.', 'snowy-wp'),
+                'nombre' => __('Alternativa a id: el nombre exacto de la estación.', 'snowy-wp'),
+                'grafico' => __('no para ocultar la evolución de las últimas 24 horas. Por defecto se muestra.', 'snowy-wp'),
+                'nivel'   => __('Nivel del encabezado: h2, h3, h4 o p para quitarlo. Vacío usa el de los ajustes.', 'snowy-wp'),
+            ],
+            'block'   => __('Snowy · Ficha de estación', 'snowy-wp'),
+            'ejemplo' => '[snowy_estacion id="9115X"]',
         ],
-        'block'   => 'Snowy · Ficha de estación',
-        'ejemplo' => '[snowy_estacion id="9115X"]',
-    ],
-];
+    ];
+}
 
-const SNOWY_WP_DISPLAY_HELP = [
-    'cabecera="no"'      => 'Quita la cabecera con el título, para cuando el widget va bajo un encabezado tuyo.',
-    'variante="compacta"' => 'Menos relleno y letra algo menor, para barras laterales y columnas estrechas.',
-    'esquema="oscuro"'   => 'claro, oscuro o auto. Cambia el esquema solo de ese widget.',
-    'clase="mi-clase"'   => 'Clases CSS propias en la caja del widget, separadas por espacios.',
-];
+function snowy_wp_display_help()
+{
+    return [
+        'cabecera="no"'      => __('Quita la cabecera con el título, para cuando el widget va bajo un encabezado tuyo.', 'snowy-wp'),
+        'variante="compacta"' => __('Menos relleno y letra algo menor, para barras laterales y columnas estrechas.', 'snowy-wp'),
+        'esquema="oscuro"'   => __('claro, oscuro o auto. Cambia el esquema solo de ese widget.', 'snowy-wp'),
+        'clase="mi-clase"'   => __('Clases CSS propias en la caja del widget, separadas por espacios.', 'snowy-wp'),
+    ];
+}
 
-const SNOWY_WP_TOKENS_HELP = [
-    '--snowy-accent'       => ['Enlaces, iconos, gráficos y detalles. También desde los ajustes.', '#2254d3'],
-    '--snowy-text'         => ['Texto principal.', '#0c183b'],
-    '--snowy-text-soft'    => ['Texto de los resúmenes.', '#3d4662'],
-    '--snowy-muted'        => ['Metadato bajo el título, etiquetas, cabeceras de tabla y atribución.', '#585f74'],
-    '--snowy-faint'        => ['Texto secundario: fechas, unidades, mínimas.', '#6d7489'],
-    '--snowy-line'         => ['Bordes de la caja y separadores.', '#d3d7e4'],
-    '--snowy-line-soft'    => ['Separador entre filas y sobre la atribución.', '#e5e7ef'],
-    '--snowy-surface'      => ['Fondo de la caja.', '#fff'],
-    '--snowy-surface-alt'  => ['Fondo de la fila al pasar el ratón.', '#f8f9fc'],
-    '--snowy-chip'         => ['Fondo de etiquetas neutras y de las barras.', '#ebeef4'],
-    '--snowy-official-bg'  => ['Fondo de la etiqueta de red oficial.', '#e9eefb'],
-    '--snowy-official-text' => ['Texto de la etiqueta de red oficial.', '#2254d3'],
-    '--snowy-up'           => ['Flecha de subida.', '#2254d3'],
-    '--snowy-down'         => ['Flecha de bajada.', '#c24e0a'],
-    '--snowy-wet'          => ['Lluvia: probabilidad destacada en la previsión y acumulados.', '#7c3aed'],
-    '--snowy-radius'       => ['Redondeo de las esquinas. También desde los ajustes.', '6px'],
-    '--snowy-font'         => ['Tipografía de los widgets. También desde los ajustes.', 'Snowy Sans'],
-    '--snowy-font-heading' => ['Tipografía de títulos y cifras grandes, con la tipografía de Snowy.', 'Snowy Serif'],
-    '--snowy-shadow'       => ['Sombra de la caja. none la quita.', 'sombra fina'],
-];
+function snowy_wp_tokens_help()
+{
+    return [
+        '--snowy-accent'       => [__('Enlaces, iconos, gráficos y detalles. También desde los ajustes.', 'snowy-wp'), '#2254d3'],
+        '--snowy-text'         => [__('Texto principal.', 'snowy-wp'), '#0c183b'],
+        '--snowy-text-soft'    => [__('Texto de los resúmenes.', 'snowy-wp'), '#3d4662'],
+        '--snowy-muted'        => [__('Metadato bajo el título, etiquetas, cabeceras de tabla y atribución.', 'snowy-wp'), '#585f74'],
+        '--snowy-faint'        => [__('Texto secundario: fechas, unidades, mínimas.', 'snowy-wp'), '#6d7489'],
+        '--snowy-line'         => [__('Bordes de la caja y separadores.', 'snowy-wp'), '#d3d7e4'],
+        '--snowy-line-soft'    => [__('Separador entre filas y sobre la atribución.', 'snowy-wp'), '#e5e7ef'],
+        '--snowy-surface'      => [__('Fondo de la caja.', 'snowy-wp'), '#fff'],
+        '--snowy-surface-alt'  => [__('Fondo de la fila al pasar el ratón.', 'snowy-wp'), '#f8f9fc'],
+        '--snowy-chip'         => [__('Fondo de etiquetas neutras y de las barras.', 'snowy-wp'), '#ebeef4'],
+        '--snowy-official-bg'  => [__('Fondo de la etiqueta de red oficial.', 'snowy-wp'), '#e9eefb'],
+        '--snowy-official-text' => [__('Texto de la etiqueta de red oficial.', 'snowy-wp'), '#2254d3'],
+        '--snowy-up'           => [__('Flecha de subida.', 'snowy-wp'), '#2254d3'],
+        '--snowy-down'         => [__('Flecha de bajada.', 'snowy-wp'), '#c24e0a'],
+        '--snowy-wet'          => [__('Lluvia: probabilidad destacada en la previsión y acumulados.', 'snowy-wp'), '#7c3aed'],
+        '--snowy-radius'       => [__('Redondeo de las esquinas. También desde los ajustes.', 'snowy-wp'), '6px'],
+        '--snowy-font'         => [__('Tipografía de los widgets. También desde los ajustes.', 'snowy-wp'), 'Snowy Sans'],
+        '--snowy-font-heading' => [__('Tipografía de títulos y cifras grandes, con la tipografía de Snowy.', 'snowy-wp'), 'Snowy Serif'],
+        '--snowy-shadow'       => [__('Sombra de la caja. none la quita.', 'snowy-wp'), __('sombra fina', 'snowy-wp')],
+    ];
+}
 
-const SNOWY_WP_HOOKS_HELP = [
-    'snowy_wp_widget_data'        => 'Filtro. Los datos de cualquier widget antes de pintarlo. Recibe $data, $widget y $atts.',
-    'snowy_wp_widget_data_{widget}' => 'Filtro. Igual, solo para un widget: snowy_wp_widget_data_embalses.',
-    'snowy_wp_widget_html'        => 'Filtro. El HTML final de cualquier widget. Recibe $html, $widget, $data y $atts.',
-    'snowy_wp_widget_html_{widget}' => 'Filtro. Igual, solo para un widget.',
-    'snowy_wp_widget_classes'     => 'Filtro. Las clases de la caja del widget. Recibe $classes, $widget y $atts.',
-    'snowy_wp_locate_template'    => 'Filtro. La ruta de la plantilla elegida. Recibe $path y $widget.',
-    'snowy_wp_before_widget'      => 'Acción. Justo antes del HTML del widget, dentro de lo que devuelve.',
-    'snowy_wp_after_widget'       => 'Acción. Justo después.',
-    'snowy_wp_css_tokens'         => 'Filtro. Las variables que el plugin escribe en :root desde los ajustes.',
-    'snowy_wp_css'                => 'Filtro. La hoja completa que se imprime.',
-    'snowy_wp_load_css'           => 'Filtro. false para no imprimir ninguna hoja, igual que la casilla de los ajustes.',
-    'snowy_wp_api_base'           => 'Filtro. La URL base de la API, para entornos de pruebas. También con la constante SNOWY_WP_API en wp-config.php.',
-];
+function snowy_wp_hooks_help()
+{
+    return [
+        'snowy_wp_widget_data'        => __('Filtro. Los datos de cualquier widget antes de pintarlo. Recibe $data, $widget y $atts.', 'snowy-wp'),
+        'snowy_wp_widget_data_{widget}' => __('Filtro. Igual, solo para un widget: snowy_wp_widget_data_embalses.', 'snowy-wp'),
+        'snowy_wp_widget_html'        => __('Filtro. El HTML final de cualquier widget. Recibe $html, $widget, $data y $atts.', 'snowy-wp'),
+        'snowy_wp_widget_html_{widget}' => __('Filtro. Igual, solo para un widget.', 'snowy-wp'),
+        'snowy_wp_widget_classes'     => __('Filtro. Las clases de la caja del widget. Recibe $classes, $widget y $atts.', 'snowy-wp'),
+        'snowy_wp_locate_template'    => __('Filtro. La ruta de la plantilla elegida. Recibe $path y $widget.', 'snowy-wp'),
+        'snowy_wp_before_widget'      => __('Acción. Justo antes del HTML del widget, dentro de lo que devuelve.', 'snowy-wp'),
+        'snowy_wp_after_widget'       => __('Acción. Justo después.', 'snowy-wp'),
+        'snowy_wp_css_tokens'         => __('Filtro. Las variables que el plugin escribe en :root desde los ajustes.', 'snowy-wp'),
+        'snowy_wp_css'                => __('Filtro. La hoja completa que se imprime.', 'snowy-wp'),
+        'snowy_wp_load_css'           => __('Filtro. false para no imprimir ninguna hoja, igual que la casilla de los ajustes.', 'snowy-wp'),
+        'snowy_wp_api_base'           => __('Filtro. La URL base de la API, para entornos de pruebas. También con la constante SNOWY_WP_API en wp-config.php. Tiene que ser https, salvo en localhost y dominios .localhost o .test; si no, se usa la de producción.', 'snowy-wp'),
+    ];
+}
 
 function snowy_wp_admin_menu()
 {
@@ -295,7 +308,7 @@ function snowy_wp_admin_page()
                 <th><?php esc_html_e('Qué muestra y qué admite', 'snowy-wp'); ?></th>
             </tr></thead>
             <tbody>
-            <?php foreach (SNOWY_WP_WIDGETS as $w) : ?>
+            <?php foreach (snowy_wp_widgets_help() as $w) : ?>
                 <tr>
                     <td>
                         <code style="display:block;padding:.4rem;background:#f6f7f7;user-select:all"><?php echo esc_html($w['code']); ?></code>
@@ -404,7 +417,7 @@ function snowy_wp_admin_page()
         <h3><?php esc_html_e('Atributos de presentación', 'snowy-wp'); ?></h3>
         <p style="max-width:900px"><?php esc_html_e('Valen para todos los shortcodes; en los bloques están en el panel Apariencia y la clase en Avanzado.', 'snowy-wp'); ?></p>
         <ul style="max-width:900px;list-style:disc;margin-left:1.5rem;color:#646970">
-            <?php foreach (SNOWY_WP_DISPLAY_HELP as $attr => $help) : ?>
+            <?php foreach (snowy_wp_display_help() as $attr => $help) : ?>
                 <li><code><?php echo esc_html($attr); ?></code> — <?php echo esc_html($help); ?></li>
             <?php endforeach; ?>
         </ul>
@@ -422,7 +435,7 @@ function snowy_wp_admin_page()
                 <th style="width:220px"><?php esc_html_e('Por defecto', 'snowy-wp'); ?></th>
             </tr></thead>
             <tbody>
-            <?php foreach (SNOWY_WP_TOKENS_HELP as $token => $row) : ?>
+            <?php foreach (snowy_wp_tokens_help() as $token => $row) : ?>
                 <tr>
                     <td><code style="user-select:all"><?php echo esc_html($token); ?></code></td>
                     <td><?php echo esc_html($row[0]); ?></td>
@@ -447,7 +460,7 @@ function snowy_wp_admin_page()
         <h3><?php esc_html_e('Filtros y acciones', 'snowy-wp'); ?></h3>
         <table class="widefat striped" style="max-width:980px">
             <tbody>
-            <?php foreach (SNOWY_WP_HOOKS_HELP as $hook => $help) : ?>
+            <?php foreach (snowy_wp_hooks_help() as $hook => $help) : ?>
                 <tr>
                     <td style="width:290px"><code style="user-select:all"><?php echo esc_html($hook); ?></code></td>
                     <td><?php echo esc_html($help); ?></td>

@@ -2,7 +2,7 @@
 Contributors: snowyes
 Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
-Tested up to: 6.7
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 2.6.0
 License: GPLv2 or later
@@ -59,8 +59,8 @@ panel Apariencia. Para desarrolladores hay filtros sobre los datos
 (`snowy_wp_api_base`). La lista completa está en Widgets Snowy > Personalizar el
 aspecto.
 
-La atribución de cada widget no se puede quitar: es la condición de uso de los
-datos.
+Cada widget lleva su atribución, y es obligatoria por la licencia de los datos:
+quien la quite con una plantilla o un filtro incumple las condiciones de su clave.
 
 = Hace falta una clave de API =
 
@@ -100,6 +100,19 @@ API no puede tumbar tu web.
 Sí. Con `modo="snapshot"` los datos se guardan la primera vez que se renderiza
 y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
+
+== Recursos de terceros ==
+
+* Snowy Sans (`assets/fonts/SnowySans-*.woff2`) es Geist
+  (https://github.com/vercel/geist-font), de The Geist Project Authors,
+  renombrada, recortada al alfabeto latino y con dos alternativas de letra
+  fijadas. Licencia SIL Open Font License 1.1, en `assets/fonts/SnowySans-OFL.txt`.
+* Snowy Serif (`assets/fonts/SnowySerif.woff2`) es Fraunces
+  (https://github.com/undercasetype/Fraunces), de The Fraunces Project Authors,
+  renombrada, recortada al alfabeto latino y con sus ejes de suavidad fijados.
+  Licencia SIL Open Font License 1.1, en `assets/fonts/SnowySerif-OFL.txt`.
+
+Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 
 == Changelog ==
 
@@ -192,3 +205,12 @@ evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 = 1.0.0 =
 * Versión interna con los cinco shortcodes y sus bloques.
+
+== Upgrade Notice ==
+
+= 2.6.0 =
+Cambia el aspecto por defecto de los widgets: pasan a llevar el diseño de
+snowy.es, con sus colores y su tipografía (Snowy Sans y Snowy Serif, servidas
+desde el plugin). Si prefieres que sigan usando la letra de tu tema, elige «La
+de mi tema» en Ajustes > Snowy > Tipografía. Colores, redondeo y sombra se
+pueden ajustar ahí o con las variables CSS `--snowy-*`.

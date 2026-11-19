@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
     <?php if ($show_head) : ?>
     <p class="snowy-wp-card-eyebrow"><?php esc_html_e('Dato en vivo · red de Snowy', 'snowy-wp'); ?></p>
     <?php endif; ?>
-    <h4 class="snowy-wp-card-title"><?php echo snowy_wp_station_link($station); ?></h4>
+    <<?php echo esc_attr($tag); ?> class="snowy-wp-card-title"><?php echo snowy_wp_station_link($station); ?></<?php echo esc_attr($tag); ?>>
     <div class="snowy-wp-card-grid">
         <div><span><?php esc_html_e('Ahora', 'snowy-wp'); ?></span><strong><?php echo esc_html(snowy_wp_temp($station['current'] ?? null)); ?></strong></div>
         <div><span><?php esc_html_e('Máxima hoy', 'snowy-wp'); ?></span><strong><?php echo esc_html(snowy_wp_temp($station['today']['tmax'] ?? null)); ?></strong></div>

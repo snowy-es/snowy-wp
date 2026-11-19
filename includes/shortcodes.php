@@ -128,7 +128,7 @@ add_shortcode('snowy_viento', 'snowy_wp_shortcode_viento');
  */
 function snowy_wp_shortcode_estacion($atts = [])
 {
-    $atts = snowy_wp_atts(['id' => '', 'nombre' => '', 'grafico' => 'si'], $atts, 'snowy_estacion');
+    $atts = snowy_wp_atts(['id' => '', 'nombre' => '', 'grafico' => 'si', 'nivel' => ''], $atts, 'snowy_estacion');
     $stations = snowy_wp_stations();
     snowy_wp_use_styles();
 

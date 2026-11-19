@@ -30,5 +30,5 @@ if (!defined('ABSPATH')) {
         </table></div>
     </div>
     <?php endforeach; ?>
+    <?php echo snowy_wp_credit(); ?>
 </div>
-<?php echo snowy_wp_credit(); ?>

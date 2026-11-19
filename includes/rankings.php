@@ -129,6 +129,9 @@ function snowy_wp_render_ranking($stations, $metric, $titulo, $etiqueta, $tag, $
         'label'    => $etiqueta,
         'metric'   => $metric,
         'stations' => $stations,
+        'note'     => $metric['campo'] === 'precipitation'
+            ? __('Los acumulados dependen del pluviómetro de cada estación y no son directamente comparables entre redes. ', 'snowy-wp')
+            : '',
     ], $atts);
 }
 

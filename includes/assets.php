@@ -16,13 +16,14 @@ if (!defined('ABSPATH')) {
  */
 function snowy_wp_css()
 {
-    $clave = SNOWY_WP_CACHE_PREFIX . 'css_' . SNOWY_WP_VERSION;
+    $file  = SNOWY_WP_DIR . 'assets/snowy-wp.css';
+    $clave = SNOWY_WP_CACHE_PREFIX . 'css_' . SNOWY_WP_VERSION . '_' . (int) @filemtime($file);
     $css = get_transient($clave);
     if (is_string($css) && $css !== '') {
         return $css;
     }
 
-    $css = (string) @file_get_contents(SNOWY_WP_DIR . 'assets/snowy-wp.css');
+    $css = (string) @file_get_contents($file);
     if ($css === '') {
         return '';
     }
@@ -225,12 +226,6 @@ function snowy_wp_token_css()
     return $decls !== '' ? ':root{' . $decls . '}' : '';
 }
 
-/**
- * Las fuentes de Snowy van detras de la hoja porque tienen que ganar a la regla
- * base, que con la fuente del tema deja font-family sin valor. Leen las
- * variables publicas con la familia como reserva y no escriben nada en :root:
- * un tema que defina --snowy-font o --snowy-font-heading sigue mandando.
- */
 function snowy_wp_font_css()
 {
     $font = snowy_wp_font();
@@ -359,6 +354,21 @@ function snowy_wp_head_styles()
     snowy_wp_print_styles();
 }
 add_action('wp_head', 'snowy_wp_head_styles', 20);
+
+const SNOWY_WP_FONT_PRELOAD = ['SnowySans-400.woff2', 'SnowySerif.woff2'];
+
+function snowy_wp_preload_fonts()
+{
+    if (is_admin() || snowy_wp_font() !== 'snowy' || !snowy_wp_css_enabled() || !snowy_wp_query_has_widget()) {
+        return;
+    }
+
+    $base = plugins_url('assets/fonts/', SNOWY_WP_FILE);
+    foreach (SNOWY_WP_FONT_PRELOAD as $file) {
+        printf('<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url($base . $file));
+    }
+}
+add_action('wp_head', 'snowy_wp_preload_fonts', 2);
 
 /**
  * Red para el widget que aparece fuera del contenido: una barra lateral, una

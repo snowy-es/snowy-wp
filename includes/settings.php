@@ -30,29 +30,39 @@ add_action('admin_init', 'snowy_wp_register_settings');
  * Al guardar se vacia la cache: cambiar la region o la clave y seguir viendo
  * los datos anteriores durante diez minutos parece que los ajustes no funcionan.
  */
+function snowy_wp_setting_string($input, $key)
+{
+    return isset($input[$key]) && is_scalar($input[$key]) ? (string) $input[$key] : '';
+}
+
 function snowy_wp_sanitize_settings($input)
 {
+    $input = is_array($input) ? $input : [];
+    $s     = static function ($key) use ($input) {
+        return snowy_wp_setting_string($input, $key);
+    };
+
     $clean = [
-        'api_key'      => sanitize_text_field($input['api_key'] ?? ''),
-        'region'       => sanitize_text_field($input['region'] ?? ''),
-        'stations_url' => esc_url_raw($input['stations_url'] ?? ''),
-        'heading_level' => SNOWY_WP_HEADING_LEVELS[$input['heading_level'] ?? ''] ?? 'h3',
-        'accent'        => empty($input['accent_reset']) && preg_match('/^#[0-9a-fA-F]{6}$/', $input['accent'] ?? '') ? $input['accent'] : '',
-        'radius'        => isset($input['radius']) && is_numeric($input['radius'])
-            ? (string) max(0, min(SNOWY_WP_RADIUS_MAX, (int) $input['radius']))
+        'api_key'      => sanitize_text_field($s('api_key')),
+        'region'       => sanitize_text_field($s('region')),
+        'stations_url' => esc_url_raw($s('stations_url')),
+        'heading_level' => SNOWY_WP_HEADING_LEVELS[$s('heading_level')] ?? 'h3',
+        'accent'        => empty($input['accent_reset']) && preg_match('/^#[0-9a-fA-F]{6}$/', $s('accent')) ? $s('accent') : '',
+        'radius'        => is_numeric($s('radius'))
+            ? (string) max(0, min(SNOWY_WP_RADIUS_MAX, (int) $s('radius')))
             : '',
-        'font'          => array_key_exists($input['font'] ?? '', SNOWY_WP_FONTS) ? $input['font'] : 'snowy',
-        'scheme'        => SNOWY_WP_SCHEMES[$input['scheme'] ?? ''] ?? 'light',
+        'font'          => array_key_exists($s('font'), SNOWY_WP_FONTS) ? $s('font') : 'snowy',
+        'scheme'        => SNOWY_WP_SCHEMES[$s('scheme')] ?? 'light',
         'attribution'  => !empty($input['attribution']),
         'css_siempre'  => !empty($input['css_siempre']),
         'css_disabled' => !empty($input['css_disabled']),
         // El shortcode se guarda tal cual porque es lo que se va a ejecutar; lo
         // que decide que se puede ejecutar es do_shortcode, que solo atiende a
         // los que hay registrados.
-        'auto_shortcode'  => wp_kses_post($input['auto_shortcode'] ?? ''),
-        'auto_donde'      => SNOWY_WP_PLACEMENT_TARGETS[$input['auto_donde'] ?? ''] ?? 'post',
-        'auto_posicion'   => SNOWY_WP_PLACEMENT_POSITIONS[$input['auto_posicion'] ?? ''] ?? 'despues',
-        'auto_categorias' => sanitize_text_field($input['auto_categorias'] ?? ''),
+        'auto_shortcode'  => wp_kses_post($s('auto_shortcode')),
+        'auto_donde'      => SNOWY_WP_PLACEMENT_TARGETS[$s('auto_donde')] ?? 'post',
+        'auto_posicion'   => SNOWY_WP_PLACEMENT_POSITIONS[$s('auto_posicion')] ?? 'despues',
+        'auto_categorias' => sanitize_text_field($s('auto_categorias')),
     ];
 
     snowy_wp_flush_cache();
