@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.7.0
+Stable tag: 2.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,10 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 
 == Changelog ==
 
+= 2.7.1 =
+* Los bloques aceptan el nivel del título (`nivel`), como ya hacían los shortcodes: opción
+  «Nivel del título» en el panel Apariencia.
+
 = 2.7.0 =
 * Ocho widgets de clima, cada uno con shortcode, bloque y plantilla:
   `[snowy_clima_calendario]`, `[snowy_clima_meses]`, `[snowy_clima_extremo]`,
@@ -230,6 +234,9 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 * Versión interna con los cinco shortcodes y sus bloques.
 
 == Upgrade Notice ==
+
+= 2.7.1 =
+Los bloques pueden elegir el nivel de su título. Nada cambia si no lo tocas.
 
 = 2.7.0 =
 Añade ocho widgets de clima para un punto o una región entera. Los widgets que

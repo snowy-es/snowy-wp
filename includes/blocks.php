@@ -15,6 +15,7 @@ const SNOWY_WP_BLOCK_DISPLAY = [
     'cabecera' => ['type' => 'string', 'default' => 'si'],
     'variante' => ['type' => 'string', 'default' => ''],
     'esquema'  => ['type' => 'string', 'default' => ''],
+    'nivel'    => ['type' => 'string', 'default' => ''],
 ];
 
 const SNOWY_WP_BLOCK_PLACE = [

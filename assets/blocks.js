@@ -459,6 +459,7 @@
 		cabecera: { type: 'string', default: 'si' },
 		variante: { type: 'string', default: '' },
 		esquema: { type: 'string', default: '' },
+		nivel: { type: 'string', default: '' },
 	};
 
 	var APARIENCIA = [
@@ -488,6 +489,18 @@
 				{ label: __( 'Claro', 'snowy-wp' ), value: 'claro' },
 				{ label: __( 'Oscuro', 'snowy-wp' ), value: 'oscuro' },
 				{ label: __( 'Automático', 'snowy-wp' ), value: 'auto' },
+			],
+		},
+		{
+			type: 'select',
+			attr: 'nivel',
+			label: __( 'Nivel del título', 'snowy-wp' ),
+			help: __( 'Para que encaje con los títulos de tu página.', 'snowy-wp' ),
+			options: [
+				{ label: __( 'El de los ajustes', 'snowy-wp' ), value: '' },
+				{ label: 'H2', value: 'h2' },
+				{ label: 'H3', value: 'h3' },
+				{ label: 'H4', value: 'h4' },
 			],
 		},
 	];
