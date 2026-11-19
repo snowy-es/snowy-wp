@@ -75,6 +75,9 @@ const SNOWY_WP_TTL_FALLBACK = DAY_IN_SECONDS;
  * dia. Si la API deja de responder, el widget sigue pintando ese dato con su
  * antiguedad en vez de desaparecer de la pagina: una caida de media hora no
  * deberia dejar un hueco en un articulo publicado.
+ *
+ * Solo null es un fallo. Una lista vacia es una respuesta valida (un dia sin
+ * avisos) y se guarda como tal: tratarla como fallo pintaba los avisos de ayer.
  */
 function snowy_wp_cached($key, $ttl, callable $fetch)
 {
@@ -88,7 +91,7 @@ function snowy_wp_cached($key, $ttl, callable $fetch)
 
     $fresh = $fetch();
 
-    if ($fresh === null || $fresh === []) {
+    if ($fresh === null) {
         $last = get_transient($fallback);
 
         return is_array($last) && isset($last['data']) ? $last['data'] : [];

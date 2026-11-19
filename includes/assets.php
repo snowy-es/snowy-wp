@@ -69,16 +69,9 @@ function snowy_wp_print_styles()
         return;
     }
 
-    $css = snowy_wp_css();
+    $css = snowy_wp_css_with_accent();
     if ($css === '') {
         return;
-    }
-
-    // El acento se inyecta como variable para que quien instala el plugin pueda
-    // vestirlo con su color sin tocar la hoja de estilos.
-    $accent = snowy_wp_accent();
-    if ($accent) {
-        $css = sprintf(':root{--snowy-accent:%s}', $accent) . $css;
     }
 
     $impresa = true;
@@ -97,20 +90,30 @@ function snowy_wp_enqueue_styles()
         return;
     }
 
-    $css = snowy_wp_css();
+    $css = snowy_wp_css_with_accent();
     if ($css === '') {
         return;
     }
 
     wp_register_style('snowy-wp', false, [], SNOWY_WP_VERSION);
     wp_enqueue_style('snowy-wp');
+    wp_add_inline_style('snowy-wp', $css);
+}
 
-    $accent = snowy_wp_accent();
-    if ($accent) {
-        $css = sprintf(':root{--snowy-accent:%s}', $accent) . $css;
+/**
+ * La hoja con el acento delante, como variable, para que quien instala el plugin
+ * pueda vestirlo con su color sin tocar los estilos.
+ */
+function snowy_wp_css_with_accent()
+{
+    $css = snowy_wp_css();
+    if ($css === '') {
+        return '';
     }
 
-    wp_add_inline_style('snowy-wp', $css);
+    $accent = snowy_wp_accent();
+
+    return $accent ? sprintf(':root{--snowy-accent:%s}', $accent) . $css : $css;
 }
 
 /**
