@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.5.3
+Stable tag: 2.5.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,6 +72,11 @@ y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 == Changelog ==
+
+= 2.5.4 =
+* Un día sin avisos de AEMET ya no muestra los del día anterior: una lista
+  vacía es una respuesta válida y se guarda como tal, no como un fallo de la API.
+* El actualizador solo instala el zip publicado en las releases de este repo.
 
 = 2.5.3 =
 * En móvil, las tablas de ranking (lluvia, temperatura, viento) ya no se
