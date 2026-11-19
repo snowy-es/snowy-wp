@@ -11,6 +11,12 @@ if (!defined('ABSPATH')) {
  */
 const SNOWY_WP_BLOCK_MODE = ['type' => 'string', 'default' => 'vivo'];
 
+const SNOWY_WP_BLOCK_DISPLAY = [
+    'cabecera' => ['type' => 'string', 'default' => 'si'],
+    'variante' => ['type' => 'string', 'default' => ''],
+    'esquema'  => ['type' => 'string', 'default' => ''],
+];
+
 const SNOWY_WP_BLOCKS = [
     'snowy/avisos' => [
         'cb'    => 'snowy_wp_shortcode_avisos',
@@ -122,8 +128,14 @@ function snowy_wp_register_blocks()
         register_block_type($name, [
             'api_version'     => 2,
             'editor_script'   => 'snowy-wp-blocks',
-            'attributes'      => $conf['attrs'],
+            'attributes'      => $conf['attrs'] + SNOWY_WP_BLOCK_DISPLAY,
             'render_callback' => static function ($attributes) use ($conf) {
+                $attributes = (array) $attributes;
+                if (!empty($attributes['className'])) {
+                    $attributes['clase'] = $attributes['className'];
+                }
+                unset($attributes['className']);
+
                 return call_user_func($conf['cb'], $attributes);
             },
         ]);

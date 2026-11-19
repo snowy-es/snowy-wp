@@ -12,8 +12,7 @@ if (!defined('ABSPATH')) {
  */
 function snowy_wp_shortcode_extremos($atts = [])
 {
-    $atts = shortcode_atts(['limite' => 8, 'nivel' => ''], (array) $atts, 'snowy_extremos');
-    $tag = snowy_wp_heading_tag($atts['nivel']);
+    $atts = snowy_wp_atts(['limite' => 8, 'nivel' => ''], $atts, 'snowy_extremos');
     snowy_wp_use_styles();
 
     $stations = snowy_wp_stations();
@@ -34,56 +33,24 @@ function snowy_wp_shortcode_extremos($atts = [])
     $hot   = array_slice($withMax, 0, $limit);
     $cold  = array_slice($withMin, 0, $limit);
 
-    ob_start(); ?>
-    <div class="snowy-wp-extremos snowy-wp-wrap">
-        <div class="snowy-wp-wrap">
-            <div class="snowy-wp-head">
-                <<?php echo esc_attr($tag); ?>><?php esc_html_e('Las más cálidas de hoy', 'snowy-wp'); ?></<?php echo esc_attr($tag); ?>>
-                <span class="snowy-wp-tag"><?php esc_html_e('máximas', 'snowy-wp'); ?></span>
-            </div>
-            <div class="snowy-wp-scroll"><table class="snowy-wp-table">
-                <thead><tr>
-                    <th><?php esc_html_e('Estación', 'snowy-wp'); ?></th>
-                    <th><?php esc_html_e('Máxima', 'snowy-wp'); ?></th>
-                    <th><?php esc_html_e('Red', 'snowy-wp'); ?></th>
-                </tr></thead>
-                <tbody>
-                <?php foreach ($hot as $s) : ?>
-                    <tr>
-                        <td><?php echo snowy_wp_station_link($s); ?></td>
-                        <td class="snowy-wp-val"><?php echo esc_html(snowy_wp_temp($s['today']['tmax'])); ?></td>
-                        <td><?php echo snowy_wp_network_badge($s['network'] ?? ''); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table></div>
-        </div>
-        <div class="snowy-wp-wrap">
-            <div class="snowy-wp-head">
-                <<?php echo esc_attr($tag); ?>><?php esc_html_e('Las más frías de hoy', 'snowy-wp'); ?></<?php echo esc_attr($tag); ?>>
-                <span class="snowy-wp-tag"><?php esc_html_e('mínimas', 'snowy-wp'); ?></span>
-            </div>
-            <div class="snowy-wp-scroll"><table class="snowy-wp-table">
-                <thead><tr>
-                    <th><?php esc_html_e('Estación', 'snowy-wp'); ?></th>
-                    <th><?php esc_html_e('Mínima', 'snowy-wp'); ?></th>
-                    <th><?php esc_html_e('Red', 'snowy-wp'); ?></th>
-                </tr></thead>
-                <tbody>
-                <?php foreach ($cold as $s) : ?>
-                    <tr>
-                        <td><?php echo snowy_wp_station_link($s); ?></td>
-                        <td class="snowy-wp-val"><?php echo esc_html(snowy_wp_temp($s['today']['tmin'])); ?></td>
-                        <td><?php echo snowy_wp_network_badge($s['network'] ?? ''); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table></div>
-        </div>
-    </div>
-    <?php echo snowy_wp_credit(); ?>
-    <?php
-    return ob_get_clean();
+    return snowy_wp_render_widget('extremos', [
+        'columns' => [
+            [
+                'title'    => __('Las más cálidas de hoy', 'snowy-wp'),
+                'label'    => __('máximas', 'snowy-wp'),
+                'column'   => __('Máxima', 'snowy-wp'),
+                'field'    => 'tmax',
+                'stations' => $hot,
+            ],
+            [
+                'title'    => __('Las más frías de hoy', 'snowy-wp'),
+                'label'    => __('mínimas', 'snowy-wp'),
+                'column'   => __('Mínima', 'snowy-wp'),
+                'field'    => 'tmin',
+                'stations' => $cold,
+            ],
+        ],
+    ], $atts, ['snowy-wp-extremos', 'snowy-wp-wrap']);
 }
 add_shortcode('snowy_extremos', 'snowy_wp_shortcode_extremos');
 
@@ -92,9 +59,8 @@ add_shortcode('snowy_extremos', 'snowy_wp_shortcode_extremos');
  */
 function snowy_wp_shortcode_estaciones($atts = [])
 {
-    $atts = shortcode_atts(['ids' => '', 'modo' => 'vivo', 'titulo' => '', 'nivel' => ''], (array) $atts, 'snowy_estaciones');
+    $atts = snowy_wp_atts(['ids' => '', 'modo' => 'vivo', 'titulo' => '', 'nivel' => ''], $atts, 'snowy_estaciones');
     $frozen = $atts['modo'] === 'snapshot';
-    $tag = snowy_wp_heading_tag($atts['nivel']);
     snowy_wp_use_styles();
 
 
@@ -124,38 +90,12 @@ function snowy_wp_shortcode_estaciones($atts = [])
             snowy_wp_region_label()
         );
 
-    ob_start(); ?>
-    <div class="snowy-wp-wrap">
-    <div class="snowy-wp-head">
-        <<?php echo esc_attr($tag); ?>><?php echo esc_html($title); ?></<?php echo esc_attr($tag); ?>>
-        <span class="snowy-wp-tag"><?php echo esc_html($frozen ? __('dato histórico', 'snowy-wp') : __('en vivo', 'snowy-wp')); ?></span>
-    </div>
-    <div class="snowy-wp-scroll"><table class="snowy-wp-table snowy-wp-estaciones">
-        <thead><tr>
-            <th><?php esc_html_e('Estación', 'snowy-wp'); ?></th>
-            <th><?php esc_html_e('Ahora', 'snowy-wp'); ?></th>
-            <th><?php esc_html_e('Máx.', 'snowy-wp'); ?></th>
-            <th><?php esc_html_e('Mín.', 'snowy-wp'); ?></th>
-            <th><?php esc_html_e('Humedad', 'snowy-wp'); ?></th>
-            <th><?php esc_html_e('Red', 'snowy-wp'); ?></th>
-        </tr></thead>
-        <tbody>
-        <?php foreach ($stations as $s) : ?>
-            <tr>
-                <td><?php echo snowy_wp_station_link($s); ?></td>
-                <td class="snowy-wp-val"><?php echo esc_html(snowy_wp_temp($s['current'] ?? null)); ?></td>
-                <td><?php echo esc_html(snowy_wp_temp($s['today']['tmax'] ?? null)); ?></td>
-                <td><?php echo esc_html(snowy_wp_temp($s['today']['tmin'] ?? null)); ?></td>
-                <td><?php echo isset($s['humidity']) && $s['humidity'] !== null ? esc_html($s['humidity']) . ' %' : '—'; ?></td>
-                <td><?php echo snowy_wp_network_badge($s['network'] ?? ''); ?></td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table></div>
-    <?php echo $frozen ? snowy_wp_snapshot_note($ts) : snowy_wp_credit(); ?>
-    </div>
-    <?php
-    return ob_get_clean();
+    return snowy_wp_render_widget('estaciones', [
+        'title'    => $title,
+        'stations' => $stations,
+        'frozen'   => $frozen,
+        'ts'       => $ts,
+    ], $atts);
 }
 add_shortcode('snowy_estaciones', 'snowy_wp_shortcode_estaciones');
 
@@ -164,8 +104,7 @@ add_shortcode('snowy_estaciones', 'snowy_wp_shortcode_estaciones');
  */
 function snowy_wp_shortcode_viento($atts = [])
 {
-    $atts = shortcode_atts(['limite' => 8, 'nivel' => ''], (array) $atts, 'snowy_viento');
-    $tag = snowy_wp_heading_tag($atts['nivel']);
+    $atts = snowy_wp_atts(['limite' => 8, 'nivel' => ''], $atts, 'snowy_viento');
     snowy_wp_use_styles();
 
     $stations = array_filter(snowy_wp_stations(), static fn($s) => isset($s['today']['gustMax']) && $s['today']['gustMax'] !== null);
@@ -176,32 +115,10 @@ function snowy_wp_shortcode_viento($atts = [])
     usort($stations, static fn($a, $b) => $b['today']['gustMax'] <=> $a['today']['gustMax']);
     $stations = array_slice($stations, 0, max(1, (int) $atts['limite']));
 
-    ob_start(); ?>
-    <div class="snowy-wp-wrap">
-    <div class="snowy-wp-head">
-        <<?php echo esc_attr($tag); ?>><?php esc_html_e('Rachas más fuertes de hoy', 'snowy-wp'); ?></<?php echo esc_attr($tag); ?>>
-        <span class="snowy-wp-tag"><?php esc_html_e('viento', 'snowy-wp'); ?></span>
-    </div>
-    <div class="snowy-wp-scroll"><table class="snowy-wp-table">
-        <thead><tr>
-            <th><?php esc_html_e('Estación', 'snowy-wp'); ?></th>
-            <th><?php esc_html_e('Racha máxima', 'snowy-wp'); ?></th>
-            <th><?php esc_html_e('Red', 'snowy-wp'); ?></th>
-        </tr></thead>
-        <tbody>
-        <?php foreach ($stations as $s) : ?>
-            <tr>
-                <td><?php echo snowy_wp_station_link($s); ?></td>
-                <td class="snowy-wp-val"><?php echo esc_html(snowy_wp_speed($s['today']['gustMax'])); ?></td>
-                <td><?php echo snowy_wp_network_badge($s['network'] ?? ''); ?></td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table></div>
-    <?php echo snowy_wp_credit(); ?>
-    </div>
-    <?php
-    return ob_get_clean();
+    return snowy_wp_render_widget('viento', [
+        'title'    => __('Rachas más fuertes de hoy', 'snowy-wp'),
+        'stations' => $stations,
+    ], $atts);
 }
 add_shortcode('snowy_viento', 'snowy_wp_shortcode_viento');
 
@@ -211,7 +128,7 @@ add_shortcode('snowy_viento', 'snowy_wp_shortcode_viento');
  */
 function snowy_wp_shortcode_estacion($atts = [])
 {
-    $atts = shortcode_atts(['id' => '', 'nombre' => '', 'grafico' => 'si'], (array) $atts, 'snowy_estacion');
+    $atts = snowy_wp_atts(['id' => '', 'nombre' => '', 'grafico' => 'si', 'nivel' => ''], $atts, 'snowy_estacion');
     $stations = snowy_wp_stations();
     snowy_wp_use_styles();
 
@@ -235,38 +152,12 @@ function snowy_wp_shortcode_estacion($atts = [])
         return '';
     }
 
-    ob_start(); ?>
-    <aside class="snowy-wp-card">
-        <p class="snowy-wp-card-eyebrow"><?php esc_html_e('Dato en vivo · red de Snowy', 'snowy-wp'); ?></p>
-        <h4 class="snowy-wp-card-title"><?php echo snowy_wp_station_link($found); ?></h4>
-        <div class="snowy-wp-card-grid">
-            <div><span><?php esc_html_e('Ahora', 'snowy-wp'); ?></span><strong><?php echo esc_html(snowy_wp_temp($found['current'] ?? null)); ?></strong></div>
-            <div><span><?php esc_html_e('Máxima hoy', 'snowy-wp'); ?></span><strong><?php echo esc_html(snowy_wp_temp($found['today']['tmax'] ?? null)); ?></strong></div>
-            <div><span><?php esc_html_e('Mínima hoy', 'snowy-wp'); ?></span><strong><?php echo esc_html(snowy_wp_temp($found['today']['tmin'] ?? null)); ?></strong></div>
-            <div><span><?php esc_html_e('Racha máx.', 'snowy-wp'); ?></span><strong><?php echo esc_html(snowy_wp_speed($found['today']['gustMax'] ?? null)); ?></strong></div>
-        </div>
-        <?php
-        $points = $atts['grafico'] !== 'no'
+    return snowy_wp_render_widget('estacion', [
+        'station' => $found,
+        'points'  => $atts['grafico'] !== 'no'
             ? snowy_wp_evolution($found['network'] ?? '', $found['stationId'] ?? '')
-            : null;
-        ?>
-        <?php if ($points) : ?>
-            <div class="snowy-wp-card-spark">
-                <?php echo snowy_wp_sparkline($points); ?>
-                <p class="snowy-wp-spark-caption"><?php echo snowy_wp_sparkline_caption($points, SNOWY_WP_SPARK_HOURS); ?></p>
-            </div>
-        <?php endif; ?>
-        <p class="snowy-wp-card-foot">
-            <?php echo snowy_wp_network_badge($found['network'] ?? ''); ?>
-            <?php printf(
-                /* translators: %s: enlace a snowy.es */
-                esc_html__('· medido por %s', 'snowy-wp'),
-                '<a href="' . esc_url(SNOWY_WP_SITE) . '" target="_blank" rel="noopener"><strong>Snowy</strong></a>'
-            ); ?>
-        </p>
-    </aside>
-    <?php
-    return ob_get_clean();
+            : null,
+    ], $atts, ['snowy-wp-card']);
 }
 add_shortcode('snowy_estacion', 'snowy_wp_shortcode_estacion');
 
@@ -278,9 +169,8 @@ add_shortcode('snowy_estacion', 'snowy_wp_shortcode_estacion');
  */
 function snowy_wp_shortcode_avisos($atts = [])
 {
-    $atts = shortcode_atts(['modo' => 'vivo', 'nivel' => ''], (array) $atts, 'snowy_avisos');
+    $atts = snowy_wp_atts(['modo' => 'vivo', 'nivel' => ''], $atts, 'snowy_avisos');
     $frozen = $atts['modo'] === 'snapshot';
-    $tag = snowy_wp_heading_tag($atts['nivel']);
     snowy_wp_use_styles();
 
 
@@ -294,63 +184,11 @@ function snowy_wp_shortcode_avisos($atts = [])
         $ts = null;
     }
 
-    $region = snowy_wp_region_label();
-
-    ob_start(); ?>
-    <div class="snowy-wp-wrap">
-        <div class="snowy-wp-head">
-            <<?php echo esc_attr($tag); ?>><?php printf(
-                /* translators: %s: nombre de la region configurada */
-                esc_html__('Avisos de AEMET en %s', 'snowy-wp'),
-                esc_html($region)
-            ); ?></<?php echo esc_attr($tag); ?>>
-            <span class="snowy-wp-tag"><?php
-                echo esc_html($frozen
-                    ? __('aviso histórico', 'snowy-wp')
-                    : ($days ? __('vigentes', 'snowy-wp') : __('sin avisos', 'snowy-wp')));
-            ?></span>
-        </div>
-        <?php if (!$days) : ?>
-            <p class="snowy-wp-empty"><?php printf(
-                /* translators: %s: nombre de la region configurada */
-                esc_html__('No hay avisos activos en %s para los próximos tres días.', 'snowy-wp'),
-                '<strong>' . esc_html($region) . '</strong>'
-            ); ?></p>
-        <?php else : ?>
-            <?php foreach ($days as $day) : ?>
-                <p class="snowy-wp-day"><?php echo esc_html($day['label']); ?></p>
-                <div class="snowy-wp-scroll"><table class="snowy-wp-table">
-                    <thead><tr>
-                        <th><?php esc_html_e('Nivel', 'snowy-wp'); ?></th>
-                        <th><?php esc_html_e('Fenómeno', 'snowy-wp'); ?></th>
-                        <th><?php esc_html_e('Zona', 'snowy-wp'); ?></th>
-                        <th><?php esc_html_e('Horario', 'snowy-wp'); ?></th>
-                    </tr></thead>
-                    <tbody>
-                    <?php foreach ($day['items'] as $a) : ?>
-                        <tr>
-                            <td><?php echo snowy_wp_risk_badge($a['riskLevel'] ?? ''); ?></td>
-                            <td class="snowy-wp-val"><?php echo esc_html($a['type'] ?? '—'); ?></td>
-                            <td><?php echo esc_html($a['zone'] ?? '—'); ?></td>
-                            <td><?php echo esc_html(snowy_wp_hazard_window($a)); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table></div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-        <?php if ($frozen) : ?>
-            <?php echo snowy_wp_snapshot_note($ts); ?>
-        <?php else : ?>
-            <p class="snowy-wp-credit"><?php printf(
-                /* translators: 1: enlace a Snowy, 2: enlace a la web de avisos de AEMET */
-                esc_html__('Avisos oficiales de AEMET, recogidos por %1$s. La fuente que manda siempre es %2$s.', 'snowy-wp'),
-                '<a href="' . esc_url(SNOWY_WP_SITE) . '" target="_blank" rel="noopener"><strong>Snowy</strong></a>',
-                '<a href="https://www.aemet.es/es/eltiempo/prediccion/avisos" target="_blank" rel="noopener nofollow">AEMET</a>'
-            ); ?></p>
-        <?php endif; ?>
-    </div>
-    <?php
-    return ob_get_clean();
+    return snowy_wp_render_widget('avisos', [
+        'region' => snowy_wp_region_label(),
+        'days'   => $days,
+        'frozen' => $frozen,
+        'ts'     => $ts,
+    ], $atts);
 }
 add_shortcode('snowy_avisos', 'snowy_wp_shortcode_avisos');

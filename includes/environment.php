@@ -108,8 +108,7 @@ function snowy_wp_pollen_level($value)
  */
 function snowy_wp_shortcode_aire($atts = [])
 {
-    $atts = shortcode_atts(['lat' => '', 'lon' => '', 'nivel' => ''], (array) $atts, 'snowy_aire');
-    $tag = snowy_wp_heading_tag($atts['nivel']);
+    $atts = snowy_wp_atts(['lat' => '', 'lon' => '', 'nivel' => ''], $atts, 'snowy_aire');
     snowy_wp_use_styles();
 
     $point = snowy_wp_air_point($atts);
@@ -123,43 +122,16 @@ function snowy_wp_shortcode_aire($atts = [])
         return '';
     }
 
-    $level = SNOWY_WP_AIR_LEVELS[$now['level'] ?? ''] ?? null;
-
-    ob_start(); ?>
-    <div class="snowy-wp-wrap">
-        <div class="snowy-wp-head">
-            <<?php echo esc_attr($tag); ?>><?php printf(
-                /* translators: %s: nombre de la region configurada */
-                esc_html__('Calidad del aire en %s', 'snowy-wp'),
-                esc_html(snowy_wp_region_label())
-            ); ?></<?php echo esc_attr($tag); ?>>
-            <span class="snowy-wp-tag"><?php esc_html_e('en vivo', 'snowy-wp'); ?></span>
-        </div>
-        <div class="snowy-wp-air">
-            <div class="snowy-wp-air-index <?php echo esc_attr($level['class'] ?? ''); ?>">
-                <strong><?php echo esc_html((int) $now['aqi']); ?></strong>
-                <span><?php echo esc_html($level ? $level['label'] : __('Sin clasificar', 'snowy-wp')); ?></span>
-            </div>
-            <dl class="snowy-wp-card-grid">
-                <?php foreach (SNOWY_WP_POLLUTANTS as $key => $p) : ?>
-                    <?php if (isset($now[$key]) && $now[$key] !== null) : ?>
-                        <div>
-                            <dt><?php echo esc_html($p['label']); ?></dt>
-                            <dd><?php echo esc_html(number_format((float) $now[$key], 1, ',', '.')); ?>
-                                <small><?php echo esc_html($p['unit']); ?></small></dd>
-                        </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </dl>
-        </div>
-        <p class="snowy-wp-credit"><?php printf(
-            /* translators: %s: enlace a snowy.es */
-            esc_html__('Índice europeo de calidad del aire, servido por %s.', 'snowy-wp'),
-            '<a href="' . esc_url(SNOWY_WP_SITE) . '" target="_blank" rel="noopener"><strong>Snowy</strong></a>'
-        ); ?></p>
-    </div>
-    <?php
-    return ob_get_clean();
+    return snowy_wp_render_widget('aire', [
+        'title'      => sprintf(
+            /* translators: %s: nombre de la region configurada */
+            __('Calidad del aire en %s', 'snowy-wp'),
+            snowy_wp_region_label()
+        ),
+        'now'        => $now,
+        'level'      => SNOWY_WP_AIR_LEVELS[$now['level'] ?? ''] ?? null,
+        'pollutants' => SNOWY_WP_POLLUTANTS,
+    ], $atts);
 }
 add_shortcode('snowy_aire', 'snowy_wp_shortcode_aire');
 
@@ -171,8 +143,7 @@ add_shortcode('snowy_aire', 'snowy_wp_shortcode_aire');
  */
 function snowy_wp_shortcode_polen($atts = [])
 {
-    $atts = shortcode_atts(['lat' => '', 'lon' => '', 'todos' => 'no', 'nivel' => ''], (array) $atts, 'snowy_polen');
-    $tag = snowy_wp_heading_tag($atts['nivel']);
+    $atts = snowy_wp_atts(['lat' => '', 'lon' => '', 'todos' => 'no', 'nivel' => ''], $atts, 'snowy_polen');
     snowy_wp_use_styles();
 
     $point = snowy_wp_air_point($atts);
@@ -199,53 +170,9 @@ function snowy_wp_shortcode_polen($atts = [])
         $rows[] = ['label' => $label, 'value' => (float) $value, 'level' => snowy_wp_pollen_level((float) $value)];
     }
 
-    if (!$rows) {
-        ob_start(); ?>
-        <div class="snowy-wp-wrap">
-            <div class="snowy-wp-head">
-                <<?php echo esc_attr($tag); ?>><?php esc_html_e('Polen', 'snowy-wp'); ?></<?php echo esc_attr($tag); ?>>
-                <span class="snowy-wp-tag"><?php esc_html_e('sin presencia', 'snowy-wp'); ?></span>
-            </div>
-            <p class="snowy-wp-empty"><?php esc_html_e('No hay presencia apreciable de ninguno de los pólenes que se vigilan.', 'snowy-wp'); ?></p>
-        </div>
-        <?php
-        return ob_get_clean();
-    }
-
     usort($rows, static fn($a, $b) => $b['value'] <=> $a['value']);
 
-    ob_start(); ?>
-    <div class="snowy-wp-wrap">
-        <div class="snowy-wp-head">
-            <<?php echo esc_attr($tag); ?>><?php esc_html_e('Polen en el aire', 'snowy-wp'); ?></<?php echo esc_attr($tag); ?>>
-            <span class="snowy-wp-tag"><?php esc_html_e('hoy', 'snowy-wp'); ?></span>
-        </div>
-        <div class="snowy-wp-scroll">
-        <table class="snowy-wp-table">
-            <thead><tr>
-                <th><?php esc_html_e('Tipo', 'snowy-wp'); ?></th>
-                <th><?php esc_html_e('Nivel', 'snowy-wp'); ?></th>
-                <th><?php esc_html_e('Granos/m³', 'snowy-wp'); ?></th>
-            </tr></thead>
-            <tbody>
-            <?php foreach ($rows as $r) : ?>
-                <tr>
-                    <td><?php echo esc_html($r['label']); ?></td>
-                    <td><span class="snowy-wp-risk <?php echo esc_attr($r['level']['class']); ?>"><?php echo esc_html($r['level']['label']); ?></span></td>
-                    <td class="snowy-wp-val"><?php echo esc_html(number_format($r['value'], 1, ',', '.')); ?></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-        </div>
-        <p class="snowy-wp-credit"><?php printf(
-            /* translators: %s: enlace a snowy.es */
-            esc_html__('Concentraciones de polen servidas por %s. Orientativas: no sustituyen al parte aerobiológico oficial.', 'snowy-wp'),
-            '<a href="' . esc_url(SNOWY_WP_SITE) . '" target="_blank" rel="noopener"><strong>Snowy</strong></a>'
-        ); ?></p>
-    </div>
-    <?php
-    return ob_get_clean();
+    return snowy_wp_render_widget('polen', ['rows' => $rows], $atts);
 }
 add_shortcode('snowy_polen', 'snowy_wp_shortcode_polen');
 
@@ -289,8 +216,7 @@ function snowy_wp_dust($lat, $lon)
  */
 function snowy_wp_shortcode_calima($atts = [])
 {
-    $atts = shortcode_atts(['lat' => '', 'lon' => '', 'dias' => 4, 'nivel' => ''], (array) $atts, 'snowy_calima');
-    $tag = snowy_wp_heading_tag($atts['nivel']);
+    $atts = snowy_wp_atts(['lat' => '', 'lon' => '', 'dias' => 4, 'nivel' => ''], $atts, 'snowy_calima');
     snowy_wp_use_styles();
 
     $point = snowy_wp_air_point($atts);
@@ -325,46 +251,9 @@ function snowy_wp_shortcode_calima($atts = [])
     }
 
     $dias = array_slice($dias, 0, max(1, min(5, (int) $atts['dias'])), true);
-    $pico = max($dias);
-
-    ob_start(); ?>
-    <div class="snowy-wp-wrap">
-        <div class="snowy-wp-head">
-            <<?php echo esc_attr($tag); ?>><?php esc_html_e('Polvo sahariano', 'snowy-wp'); ?></<?php echo esc_attr($tag); ?>>
-            <span class="snowy-wp-tag"><?php
-                echo esc_html($pico < 10 ? __('sin calima prevista', 'snowy-wp') : __('previsión', 'snowy-wp'));
-            ?></span>
-        </div>
-        <?php if ($pico < 10) : ?>
-            <p class="snowy-wp-empty"><?php esc_html_e('No se espera polvo en suspensión en los próximos días.', 'snowy-wp'); ?></p>
-        <?php else : ?>
-            <div class="snowy-wp-scroll">
-            <table class="snowy-wp-table">
-                <thead><tr>
-                    <th><?php esc_html_e('Día', 'snowy-wp'); ?></th>
-                    <th><?php esc_html_e('Intensidad', 'snowy-wp'); ?></th>
-                    <th><?php esc_html_e('Máximo', 'snowy-wp'); ?></th>
-                </tr></thead>
-                <tbody>
-                <?php foreach ($dias as $fecha => $valor) : ?>
-                    <?php $level = snowy_wp_dust_level($valor); ?>
-                    <tr>
-                        <td><?php echo esc_html(wp_date('l j', strtotime($fecha))); ?></td>
-                        <td><span class="snowy-wp-risk <?php echo esc_attr($level['class']); ?>"><?php echo esc_html($level['label']); ?></span></td>
-                        <td class="snowy-wp-val"><?php echo esc_html(number_format($valor, 0, ',', '.')); ?> µg/m³</td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-            </div>
-        <?php endif; ?>
-        <p class="snowy-wp-credit"><?php printf(
-            /* translators: %s: enlace a snowy.es */
-            esc_html__('Previsión de polvo en suspensión servida por %s.', 'snowy-wp'),
-            '<a href="' . esc_url(SNOWY_WP_SITE) . '" target="_blank" rel="noopener"><strong>Snowy</strong></a>'
-        ); ?></p>
-    </div>
-    <?php
-    return ob_get_clean();
+    return snowy_wp_render_widget('calima', [
+        'days' => $dias,
+        'peak' => max($dias),
+    ], $atts);
 }
 add_shortcode('snowy_calima', 'snowy_wp_shortcode_calima');

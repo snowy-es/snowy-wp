@@ -5,6 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 const SNOWY_WP_CACHE_PREFIX = 'snowy_wp_';
+const SNOWY_WP_API_PRODUCTION = 'https://api.snowy.es';
 const SNOWY_WP_TTL_STATIONS = 600;
 const SNOWY_WP_TTL_HAZARDS  = 900;
 const SNOWY_WP_TTL_LIVE     = 300;
@@ -21,6 +22,39 @@ function snowy_wp_auth_headers()
     return $key ? ['x-api-key' => $key] : [];
 }
 
+function snowy_wp_api_base()
+{
+    $base = untrailingslashit(trim((string) apply_filters('snowy_wp_api_base', (string) SNOWY_WP_API)));
+
+    return snowy_wp_api_base_is_valid($base) ? $base : SNOWY_WP_API_PRODUCTION;
+}
+
+function snowy_wp_api_base_is_valid($base)
+{
+    $parts = wp_parse_url($base);
+    if (!is_array($parts) || empty($parts['host']) || empty($parts['scheme']) || preg_match('/\s/', $base)) {
+        return false;
+    }
+
+    $scheme = strtolower($parts['scheme']);
+    if ($scheme === 'https') {
+        return true;
+    }
+    if ($scheme !== 'http') {
+        return false;
+    }
+
+    $host = strtolower(trim($parts['host'], '[]'));
+
+    return in_array($host, ['localhost', '127.0.0.1', '::1'], true)
+        || (bool) preg_match('/\.(localhost|test)$/', $host);
+}
+
+function snowy_wp_data_prefix()
+{
+    return SNOWY_WP_CACHE_PREFIX . substr(md5(snowy_wp_api_base()), 0, 8) . '_';
+}
+
 const SNOWY_WP_TIMEOUT  = 3;
 const SNOWY_WP_DOWN_TTL = 300;
 
@@ -35,14 +69,14 @@ const SNOWY_WP_DOWN_TTL = 300;
  */
 function snowy_wp_get($path, $timeout = SNOWY_WP_TIMEOUT)
 {
-    $all_down  = SNOWY_WP_CACHE_PREFIX . 'down';
-    $path_down = SNOWY_WP_CACHE_PREFIX . 'down_' . md5(strtok($path, '?'));
+    $all_down  = snowy_wp_data_prefix() . 'down';
+    $path_down = snowy_wp_data_prefix() . 'down_' . md5(strtok($path, '?'));
 
     if (get_transient($all_down) || get_transient($path_down)) {
         return null;
     }
 
-    $response = wp_remote_get(SNOWY_WP_API . $path, [
+    $response = wp_remote_get(snowy_wp_api_base() . $path, [
         'timeout' => $timeout,
         'headers' => snowy_wp_auth_headers(),
     ]);
@@ -81,8 +115,8 @@ const SNOWY_WP_TTL_FALLBACK = DAY_IN_SECONDS;
  */
 function snowy_wp_cached($key, $ttl, callable $fetch)
 {
-    $name     = SNOWY_WP_CACHE_PREFIX . $key;
-    $fallback = SNOWY_WP_CACHE_PREFIX . 'last_' . $key;
+    $name     = snowy_wp_data_prefix() . $key;
+    $fallback = snowy_wp_data_prefix() . 'last_' . $key;
 
     $cached = get_transient($name);
     if (is_array($cached)) {
@@ -109,7 +143,7 @@ function snowy_wp_cached($key, $ttl, callable $fetch)
  */
 function snowy_wp_data_time($key)
 {
-    $last = get_transient(SNOWY_WP_CACHE_PREFIX . 'last_' . $key);
+    $last = get_transient(snowy_wp_data_prefix() . 'last_' . $key);
 
     return is_array($last) && isset($last['ts']) ? (int) $last['ts'] : null;
 }

@@ -141,7 +141,7 @@ function snowy_wp_signed($value, $decimals, $unit)
  */
 function snowy_wp_shortcode_clima($atts = [])
 {
-    $atts = shortcode_atts([
+    $atts = snowy_wp_atts([
         'loc'      => '',
         'lat'      => '',
         'lon'      => '',
@@ -149,7 +149,7 @@ function snowy_wp_shortcode_clima($atts = [])
         'records'  => 'si',
         'titulo'   => '',
         'nivel'    => '',
-    ], (array) $atts, 'snowy_clima');
+    ], $atts, 'snowy_clima');
 
     snowy_wp_use_styles();
 
@@ -163,7 +163,6 @@ function snowy_wp_shortcode_clima($atts = [])
         return '';
     }
 
-    $tag    = snowy_wp_heading_tag($atts['nivel']);
     $nombre = $atts['nombre'] !== '' ? $atts['nombre'] : ($point['name'] !== '' ? $point['name'] : snowy_wp_region_label());
     $titulo = $atts['titulo'] !== ''
         ? $atts['titulo']
@@ -181,106 +180,17 @@ function snowy_wp_shortcode_clima($atts = [])
         ? $clima['ahora'] - $clima['antes']
         : null;
 
-    ob_start(); ?>
-    <div class="snowy-wp-wrap">
-        <div class="snowy-wp-head">
-            <<?php echo esc_attr($tag); ?>><?php echo esc_html($titulo); ?></<?php echo esc_attr($tag); ?>>
-            <span class="snowy-wp-tag"><?php printf(
-                /* translators: 1: primer año de la serie, 2: ultimo año */
-                esc_html__('%1$s-%2$s', 'snowy-wp'),
-                esc_html($clima['desde']),
-                esc_html($clima['hasta'])
-            ); ?></span>
-        </div>
-        <div class="snowy-wp-total">
-            <div class="snowy-wp-total-figure">
-                <strong><?php echo esc_html(snowy_wp_signed($total, 1, '°C')); ?></strong>
-                <span><?php esc_html_e('desde el inicio de la serie', 'snowy-wp'); ?></span>
-            </div>
-            <div class="snowy-wp-total-body">
-                <p class="snowy-wp-total-meta">
-                    <?php printf(
-                        /* translators: %s: variacion de temperatura por decada */
-                        esc_html__('La temperatura media sube %s.', 'snowy-wp'),
-                        '<strong>' . esc_html(snowy_wp_signed($decada, 2, '°C')) . '</strong> ' . esc_html__('por década', 'snowy-wp')
-                    ); ?>
-                    <?php echo esc_html(empty($clima['tendencia']['significant'])
-                        ? __('La tendencia todavía no es estadísticamente firme.', 'snowy-wp')
-                        : __('La tendencia es estadísticamente firme.', 'snowy-wp')); ?>
-                </p>
-                <?php if ($salto !== null) : ?>
-                    <p class="snowy-wp-total-meta"><?php printf(
-                        /* translators: 1: media de la ultima decada, 2: media de las tres primeras decadas */
-                        esc_html__('La última década promedia %1$s, frente a %2$s de las tres primeras.', 'snowy-wp'),
-                        '<strong>' . esc_html(number_format($clima['ahora'], 1, ',', '.') . ' °C') . '</strong>',
-                        esc_html(number_format($clima['antes'], 1, ',', '.') . ' °C')
-                    ); ?></p>
-                <?php endif; ?>
-            </div>
-        </div>
-        <?php if ($clima['indices']) : ?>
-            <div class="snowy-wp-scroll"><table class="snowy-wp-table">
-                <thead><tr>
-                    <th><?php esc_html_e('Días al año', 'snowy-wp'); ?></th>
-                    <th><?php printf(
-                        /* translators: 1: primer año, 2: año treinta de la serie */
-                        esc_html__('%1$s-%2$s', 'snowy-wp'),
-                        esc_html($clima['desde']),
-                        esc_html($clima['desde'] + 29)
-                    ); ?></th>
-                    <th><?php printf(
-                        /* translators: 1: hace diez años, 2: ultimo año */
-                        esc_html__('%1$s-%2$s', 'snowy-wp'),
-                        esc_html($clima['hasta'] - 9),
-                        esc_html($clima['hasta'])
-                    ); ?></th>
-                    <th><?php esc_html_e('Cambio', 'snowy-wp'); ?></th>
-                </tr></thead>
-                <tbody>
-                <?php foreach (SNOWY_WP_CLIMATE_INDICES as $key => $label) : ?>
-                    <?php
-                    $fila = $clima['indices'][$key] ?? null;
-                    if (!$fila || $fila['antes'] === null || $fila['ahora'] === null) {
-                        continue;
-                    }
-                    $cambio = $fila['ahora'] - $fila['antes'];
-                    ?>
-                    <tr>
-                        <td><?php echo esc_html($label); ?></td>
-                        <td><?php echo esc_html(number_format($fila['antes'], 1, ',', '.')); ?></td>
-                        <td class="snowy-wp-val"><?php echo esc_html(number_format($fila['ahora'], 1, ',', '.')); ?></td>
-                        <td><span class="snowy-wp-trend <?php echo esc_attr($cambio > 0 ? 'is-up' : ($cambio < 0 ? 'is-down' : '')); ?>">
-                            <?php echo esc_html(snowy_wp_signed($cambio, 1, __('días', 'snowy-wp'))); ?>
-                        </span></td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table></div>
-        <?php endif; ?>
-        <?php if ($atts['records'] !== 'no' && $clima['records']) : ?>
-            <dl class="snowy-wp-card-grid snowy-wp-records">
-                <?php foreach (SNOWY_WP_CLIMATE_RECORDS as $key => $meta) : ?>
-                    <?php
-                    $record = $clima['records'][$key] ?? null;
-                    if (!$record || !isset($record[0], $record[1])) {
-                        continue;
-                    }
-                    ?>
-                    <div>
-                        <dt><?php echo esc_html($meta['label']); ?></dt>
-                        <dd><?php echo esc_html(number_format((float) $record[1], 1, ',', '.') . ' ' . $meta['unit']); ?>
-                            <small><?php echo esc_html(wp_date('j M Y', strtotime($record[0]))); ?></small></dd>
-                    </div>
-                <?php endforeach; ?>
-            </dl>
-        <?php endif; ?>
-        <p class="snowy-wp-credit"><?php printf(
-            /* translators: %s: enlace a snowy.es */
-            esc_html__('Serie de ERA5-Land procesada por %s. Cada celda cubre unos diez kilómetros de terreno.', 'snowy-wp'),
-            '<a href="' . esc_url(SNOWY_WP_SITE . '/clima') . '" target="_blank" rel="noopener"><strong>Snowy</strong></a>'
-        ); ?></p>
-    </div>
-    <?php
-    return ob_get_clean();
+    return snowy_wp_render_widget('clima', [
+        'title'        => $titulo,
+        'name'         => $nombre,
+        'point'        => $point,
+        'climate'      => $clima,
+        'per_decade'   => $decada,
+        'change'       => $total,
+        'jump'         => $salto,
+        'indices'      => SNOWY_WP_CLIMATE_INDICES,
+        'records'      => SNOWY_WP_CLIMATE_RECORDS,
+        'show_records' => $atts['records'] !== 'no',
+    ], $atts);
 }
 add_shortcode('snowy_clima', 'snowy_wp_shortcode_clima');

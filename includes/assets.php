@@ -16,13 +16,14 @@ if (!defined('ABSPATH')) {
  */
 function snowy_wp_css()
 {
-    $clave = SNOWY_WP_CACHE_PREFIX . 'css_' . SNOWY_WP_VERSION;
+    $file  = SNOWY_WP_DIR . 'assets/snowy-wp.css';
+    $clave = SNOWY_WP_CACHE_PREFIX . 'css_' . SNOWY_WP_VERSION . '_' . (int) @filemtime($file);
     $css = get_transient($clave);
     if (is_string($css) && $css !== '') {
         return $css;
     }
 
-    $css = (string) @file_get_contents(SNOWY_WP_DIR . 'assets/snowy-wp.css');
+    $css = (string) @file_get_contents($file);
     if ($css === '') {
         return '';
     }
@@ -100,20 +101,175 @@ function snowy_wp_enqueue_styles()
     wp_add_inline_style('snowy-wp', $css);
 }
 
-/**
- * La hoja con el acento delante, como variable, para que quien instala el plugin
- * pueda vestirlo con su color sin tocar los estilos.
- */
+const SNOWY_WP_PALETTES = [
+    'light' => [
+        'ink'          => '#0c183b',
+        'ink-2'        => '#3d4662',
+        'label'        => '#585f74',
+        'mute'         => '#6d7489',
+        'line'         => '#d3d7e4',
+        'line-soft'    => '#e5e7ef',
+        'bg'           => '#fff',
+        'soft'         => '#f8f9fc',
+        'chip'         => '#ebeef4',
+        'accent'       => '#2254d3',
+        'official-bg'  => '#e9eefb',
+        'official-ink' => '#2254d3',
+        'up'           => '#2254d3',
+        'down'         => '#c24e0a',
+        'wet'          => '#7c3aed',
+        'shadow'       => '0 1px 2px hsl(225 40% 30% / .06),0 1px 1px hsl(225 40% 30% / .04)',
+        'yellow-bg'    => '#fff8d6',
+        'yellow-ink'   => '#775103',
+        'yellow'       => '#f0c000',
+        'orange-bg'    => '#ffefdb',
+        'orange-ink'   => '#914308',
+        'orange'       => '#ff8c00',
+        'red-bg'       => '#fde7e7',
+        'red-ink'      => '#8a1418',
+        'red'          => '#d8181b',
+        'net-official' => '#e87da6',
+        'net-other'    => '#8a8f98',
+    ],
+    'dark' => [
+        'ink'          => '#f1f3f9',
+        'ink-2'        => '#c5c7cf',
+        'label'        => '#a0a7ba',
+        'mute'         => '#999ca6',
+        'line'         => '#2d3349',
+        'line-soft'    => '#23293c',
+        'bg'           => '#141929',
+        'soft'         => '#171c2b',
+        'chip'         => '#1f2538',
+        'accent'       => '#6e97f7',
+        'official-bg'  => '#18243f',
+        'official-ink' => '#a1bbf7',
+        'up'           => '#6e97f7',
+        'down'         => '#f58747',
+        'wet'          => '#a78bfa',
+        'shadow'       => '0 1px 2px hsl(224 40% 3% / .5),0 1px 1px hsl(224 40% 3% / .35)',
+        'yellow-bg'    => '#392e0e',
+        'yellow-ink'   => '#fbde6a',
+        'yellow'       => '#f9ce1f',
+        'orange-bg'    => '#3d250f',
+        'orange-ink'   => '#ffbf70',
+        'orange'       => '#ff9f29',
+        'red-bg'       => '#3f1212',
+        'red-ink'      => '#f98b8b',
+        'red'          => '#f04242',
+        'net-official' => '#d55383',
+        'net-other'    => '#8a8f98',
+    ],
+];
+
+function snowy_wp_palette_decls($scheme)
+{
+    $decls = '';
+    foreach (SNOWY_WP_PALETTES[$scheme] as $name => $value) {
+        $decls .= '--sn-def-' . $name . ':' . $value . ';';
+    }
+
+    return $decls;
+}
+
+function snowy_wp_scheme_css()
+{
+    $light = snowy_wp_palette_decls('light');
+    $dark  = snowy_wp_palette_decls('dark');
+
+    $css = sprintf(
+        '.snowy-wp--light{%1$s}.snowy-wp--dark{%2$s}.snowy-wp--auto{%1$s}@media(prefers-color-scheme:dark){.snowy-wp--auto{%2$s}}',
+        $light,
+        $dark
+    );
+
+    $scheme = snowy_wp_scheme();
+    if ($scheme === 'dark') {
+        $css = ':root{' . $dark . '}' . $css;
+    } elseif ($scheme === 'auto') {
+        $css = '@media(prefers-color-scheme:dark){:root{' . $dark . '}}' . $css;
+    }
+
+    return $css;
+}
+
+function snowy_wp_token_css()
+{
+    $tokens = [];
+
+    $accent = snowy_wp_accent();
+    if ($accent) {
+        $tokens['--snowy-accent'] = $accent;
+    }
+
+    $radius = snowy_wp_radius();
+    if ($radius !== null) {
+        $tokens['--snowy-radius'] = $radius . 'px';
+    }
+
+    if (snowy_wp_font() === 'system') {
+        $tokens['--snowy-font'] = snowy_wp_font_stack();
+    }
+
+    $tokens = (array) apply_filters('snowy_wp_css_tokens', $tokens);
+
+    $decls = '';
+    foreach ($tokens as $name => $value) {
+        $name  = (string) $name;
+        $value = (string) $value;
+        if (!preg_match('/^--snowy-[a-z0-9-]+$/', $name) || preg_match('/[;{}<>]/', $value)) {
+            continue;
+        }
+        $decls .= $name . ':' . $value . ';';
+    }
+
+    return $decls !== '' ? ':root{' . $decls . '}' : '';
+}
+
+function snowy_wp_font_css()
+{
+    $font = snowy_wp_font();
+    if ($font === 'system') {
+        return '.snowy-wp-wrap.snowy-wp-wrap .snowy-wp-head>*,.snowy-wp-card.snowy-wp-card .snowy-wp-card-title{font-family:inherit}';
+    }
+    if ($font !== 'snowy') {
+        return '';
+    }
+
+    $base = plugins_url('assets/fonts/', SNOWY_WP_FILE);
+    $css  = '';
+    foreach (SNOWY_WP_FONT_FILES as $family => $files) {
+        foreach ($files as $weight => $file) {
+            $css .= sprintf(
+                '@font-face{font-family:"%s";src:url("%s") format("woff2");font-weight:%s;font-style:normal;font-display:swap}',
+                $family,
+                esc_url($base . $file),
+                $weight
+            );
+        }
+    }
+
+    $headings = '.snowy-wp-wrap.snowy-wp-wrap .snowy-wp-head>:not(.snowy-wp-tag),.snowy-wp-card.snowy-wp-card .snowy-wp-card-title,'
+        . '.snowy-wp-total-figure strong,.snowy-wp-air-index strong,.snowy-wp-card-grid strong,.snowy-wp-card-grid dd';
+
+    return $css
+        . '.snowy-wp-wrap.snowy-wp-wrap,.snowy-wp-card.snowy-wp-card{font-family:var(--snowy-font,' . SNOWY_WP_FONTS['snowy'] . ')}'
+        . $headings . '{font-family:var(--snowy-font-heading,' . SNOWY_WP_FONT_HEADING . ');font-optical-sizing:auto}'
+        . '.snowy-wp-card-grid dd small{font-family:var(--snowy-font,' . SNOWY_WP_FONTS['snowy'] . ')}';
+}
+
 function snowy_wp_css_with_accent()
 {
+    if (!snowy_wp_css_enabled()) {
+        return '';
+    }
+
     $css = snowy_wp_css();
     if ($css === '') {
         return '';
     }
 
-    $accent = snowy_wp_accent();
-
-    return $accent ? sprintf(':root{--snowy-accent:%s}', $accent) . $css : $css;
+    return (string) apply_filters('snowy_wp_css', snowy_wp_token_css() . snowy_wp_scheme_css() . $css . snowy_wp_font_css());
 }
 
 /**
@@ -198,6 +354,21 @@ function snowy_wp_head_styles()
     snowy_wp_print_styles();
 }
 add_action('wp_head', 'snowy_wp_head_styles', 20);
+
+const SNOWY_WP_FONT_PRELOAD = ['SnowySans-400.woff2', 'SnowySerif.woff2'];
+
+function snowy_wp_preload_fonts()
+{
+    if (is_admin() || snowy_wp_font() !== 'snowy' || !snowy_wp_css_enabled() || !snowy_wp_query_has_widget()) {
+        return;
+    }
+
+    $base = plugins_url('assets/fonts/', SNOWY_WP_FILE);
+    foreach (SNOWY_WP_FONT_PRELOAD as $file) {
+        printf('<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url($base . $file));
+    }
+}
+add_action('wp_head', 'snowy_wp_preload_fonts', 2);
 
 /**
  * Red para el widget que aparece fuera del contenido: una barra lateral, una
