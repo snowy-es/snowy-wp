@@ -17,6 +17,15 @@ const SNOWY_WP_BLOCK_DISPLAY = [
     'esquema'  => ['type' => 'string', 'default' => ''],
 ];
 
+const SNOWY_WP_BLOCK_PLACE = [
+    'region'    => ['type' => 'string', 'default' => ''],
+    'ubicacion' => ['type' => 'string', 'default' => ''],
+    'lat'       => ['type' => 'string', 'default' => ''],
+    'lon'       => ['type' => 'string', 'default' => ''],
+    'nombre'    => ['type' => 'string', 'default' => ''],
+    'titulo'    => ['type' => 'string', 'default' => ''],
+];
+
 const SNOWY_WP_BLOCKS = [
     'snowy/avisos' => [
         'cb'    => 'snowy_wp_shortcode_avisos',
@@ -94,10 +103,60 @@ const SNOWY_WP_BLOCKS = [
     'snowy/clima' => [
         'cb'    => 'snowy_wp_shortcode_clima',
         'attrs' => [
+            'region'  => ['type' => 'string', 'default' => ''],
             'loc'     => ['type' => 'string', 'default' => ''],
             'nombre'  => ['type' => 'string', 'default' => ''],
             'records' => ['type' => 'string', 'default' => 'si'],
             'titulo'  => ['type' => 'string', 'default' => ''],
+        ],
+    ],
+    'snowy/clima-calendario' => [
+        'cb'    => 'snowy_wp_shortcode_clima_calendario',
+        'attrs' => SNOWY_WP_BLOCK_PLACE + [
+            'anio' => ['type' => 'string', 'default' => ''],
+        ],
+    ],
+    'snowy/clima-meses' => [
+        'cb'    => 'snowy_wp_shortcode_clima_meses',
+        'attrs' => SNOWY_WP_BLOCK_PLACE + [
+            'anio' => ['type' => 'string', 'default' => ''],
+        ],
+    ],
+    'snowy/clima-extremo' => [
+        'cb'    => 'snowy_wp_shortcode_clima_extremo',
+        'attrs' => SNOWY_WP_BLOCK_PLACE + [
+            'anio' => ['type' => 'string', 'default' => ''],
+            'variable' => ['type' => 'string', 'default' => 'media'],
+        ],
+    ],
+    'snowy/clima-serie' => [
+        'cb'    => 'snowy_wp_shortcode_clima_serie',
+        'attrs' => SNOWY_WP_BLOCK_PLACE + [
+            'variable' => ['type' => 'string', 'default' => 'media'],
+        ],
+    ],
+    'snowy/clima-franjas' => [
+        'cb'    => 'snowy_wp_shortcode_clima_franjas',
+        'attrs' => SNOWY_WP_BLOCK_PLACE + [
+            'variable' => ['type' => 'string', 'default' => 'media'],
+            'cifra' => ['type' => 'string', 'default' => 'si'],
+        ],
+    ],
+    'snowy/clima-veranos' => [
+        'cb'    => 'snowy_wp_shortcode_clima_veranos',
+        'attrs' => SNOWY_WP_BLOCK_PLACE + [
+        ],
+    ],
+    'snowy/clima-cambios' => [
+        'cb'    => 'snowy_wp_shortcode_clima_cambios',
+        'attrs' => SNOWY_WP_BLOCK_PLACE + [
+            'variable' => ['type' => 'string', 'default' => 'media'],
+        ],
+    ],
+    'snowy/clima-lluvia' => [
+        'cb'    => 'snowy_wp_shortcode_clima_lluvia',
+        'attrs' => SNOWY_WP_BLOCK_PLACE + [
+            'anio' => ['type' => 'string', 'default' => ''],
         ],
     ],
     'snowy/polen' => [

@@ -41,6 +41,66 @@
 		},
 	};
 
+	var LUGAR_ATTRS = {
+		region: { type: 'string', default: '' },
+		ubicacion: { type: 'string', default: '' },
+		lat: { type: 'string', default: '' },
+		lon: { type: 'string', default: '' },
+		nombre: { type: 'string', default: '' },
+		titulo: { type: 'string', default: '' },
+	};
+
+	var LUGAR = [
+		{
+			type: 'text',
+			attr: 'region',
+			label: __( 'Región', 'snowy-wp' ),
+			help: __( 'Código de la comunidad o la provincia, como ES-RI para La Rioja o ES-LO para la provincia. Con región se pinta la media de toda ella.', 'snowy-wp' ),
+		},
+		{
+			type: 'text',
+			attr: 'ubicacion',
+			label: __( 'Localidad', 'snowy-wp' ),
+			help: __( 'Sin región: identificador de la localidad en snowy.es. Vacío usa el centro de la red.', 'snowy-wp' ),
+		},
+		{ type: 'text', attr: 'lat', label: __( 'Latitud', 'snowy-wp' ) },
+		{ type: 'text', attr: 'lon', label: __( 'Longitud', 'snowy-wp' ) },
+	];
+
+	var ANIO = { type: 'text', attr: 'anio', label: __( 'Año', 'snowy-wp' ), help: __( 'Vacío usa el año en curso.', 'snowy-wp' ) };
+
+	var VARIABLE = {
+		type: 'select',
+		attr: 'variable',
+		def: 'media',
+		label: __( 'Temperatura', 'snowy-wp' ),
+		options: [
+			{ label: __( 'Media diaria', 'snowy-wp' ), value: 'media' },
+			{ label: __( 'Media de máxima y mínima', 'snowy-wp' ), value: 'extremos' },
+			{ label: __( 'Máxima', 'snowy-wp' ), value: 'maxima' },
+			{ label: __( 'Mínima', 'snowy-wp' ), value: 'minima' },
+		],
+	};
+
+	var CLIMA = [
+		{ slug: 'calendario', title: __( 'Snowy · Clima: calendario del año', 'snowy-wp' ), description: __( 'Cada día del año frente a lo normal de su fecha.', 'snowy-wp' ), extra: [ ANIO ] },
+		{ slug: 'meses', title: __( 'Snowy · Clima: mes a mes', 'snowy-wp' ), description: __( 'La temperatura de cada mes del año frente a 1991-2020.', 'snowy-wp' ), extra: [ ANIO ] },
+		{ slug: 'extremo', title: __( 'Snowy · Clima: ¿año extremo?', 'snowy-wp' ), description: __( 'El último año completo dentro de la campana de 1991-2020.', 'snowy-wp' ), extra: [ { type: 'text', attr: 'anio', label: __( 'Año', 'snowy-wp' ), help: __( 'Vacío usa el último año completo.', 'snowy-wp' ) }, VARIABLE ] },
+		{ slug: 'serie', title: __( 'Snowy · Clima: serie anual', 'snowy-wp' ), description: __( 'La temperatura de cada año desde 1950 y su tendencia.', 'snowy-wp' ), extra: [ VARIABLE ] },
+		{
+			slug: 'franjas',
+			title: __( 'Snowy · Clima: franjas', 'snowy-wp' ),
+			description: __( 'Una franja por año, del azul al rojo, con lo que ha subido la temperatura.', 'snowy-wp' ),
+			extra: [
+				VARIABLE,
+				{ type: 'toggle', attr: 'cifra', def: 'si', label: __( 'Mostrar la cifra del cambio', 'snowy-wp' ), toValue: function ( on ) { return on ? 'si' : 'no'; }, fromValue: function ( v ) { return v !== 'no'; } },
+			],
+		},
+		{ slug: 'veranos', title: __( 'Snowy · Clima: veranos por décadas', 'snowy-wp' ), description: __( 'Qué parte de los días de verano fue cálida para su fecha en cada década.', 'snowy-wp' ) },
+		{ slug: 'cambios', title: __( 'Snowy · Clima: antes y ahora', 'snowy-wp' ), description: __( 'Temperatura, días de calor, noches tropicales y heladas: antes y ahora.', 'snowy-wp' ), extra: [ VARIABLE ] },
+		{ slug: 'lluvia', title: __( 'Snowy · Clima: lluvia del año', 'snowy-wp' ), description: __( 'La lluvia del año frente a la normal, en los pluviómetros de la región.', 'snowy-wp' ), extra: [ ANIO ] },
+	];
+
 	var BLOQUES = [
 		{
 			name: 'snowy/avisos',
@@ -288,6 +348,7 @@
 			description: __( 'Cuánto ha cambiado el clima del lugar desde 1950, sobre ERA5-Land.', 'snowy-wp' ),
 			keywords: [ 'snowy', 'clima', 'tendencia', 'era5' ],
 			attributes: {
+				region: { type: 'string', default: '' },
 				loc: { type: 'string', default: '' },
 				nombre: { type: 'string', default: '' },
 				records: { type: 'string', default: 'si' },
@@ -295,6 +356,7 @@
 			},
 			panel: __( 'Lugar', 'snowy-wp' ),
 			controls: [
+				LUGAR[ 0 ],
 				{
 					type: 'text',
 					attr: 'loc',
@@ -316,7 +378,25 @@
 				{ type: 'text', attr: 'titulo', label: __( 'Título', 'snowy-wp' ) },
 			],
 		},
-	];
+	].concat( CLIMA.map( function ( c ) {
+		var attributes = Object.assign( {}, LUGAR_ATTRS );
+		var controls = LUGAR.slice();
+		( c.extra || [] ).forEach( function ( e ) {
+			attributes[ e.attr ] = { type: 'string', default: e.def || '' };
+			controls.push( e );
+		} );
+		controls.push( { type: 'text', attr: 'nombre', label: __( 'Nombre a mostrar', 'snowy-wp' ) } );
+		controls.push( { type: 'text', attr: 'titulo', label: __( 'Título', 'snowy-wp' ) } );
+		return {
+			name: 'snowy/clima-' + c.slug,
+			title: c.title,
+			description: c.description,
+			keywords: [ 'snowy', 'clima', 'era5' ].concat( c.keywords || [] ),
+			attributes: attributes,
+			panel: __( 'Lugar', 'snowy-wp' ),
+			controls: controls,
+		};
+	} ) );
 
 	function render( control, props ) {
 		var value = props.attributes[ control.attr ];
