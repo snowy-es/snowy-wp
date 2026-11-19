@@ -21,6 +21,18 @@ function snowy_wp_auth_headers()
     return $key ? ['x-api-key' => $key] : [];
 }
 
+function snowy_wp_api_base()
+{
+    $base = (string) apply_filters('snowy_wp_api_base', (string) SNOWY_WP_API);
+    $base = untrailingslashit(trim($base));
+
+    if (!preg_match('#^https?://[^/\s]+#i', $base)) {
+        $base = untrailingslashit((string) SNOWY_WP_API);
+    }
+
+    return $base;
+}
+
 const SNOWY_WP_TIMEOUT  = 3;
 const SNOWY_WP_DOWN_TTL = 300;
 
@@ -42,7 +54,7 @@ function snowy_wp_get($path, $timeout = SNOWY_WP_TIMEOUT)
         return null;
     }
 
-    $response = wp_remote_get(SNOWY_WP_API . $path, [
+    $response = wp_remote_get(snowy_wp_api_base() . $path, [
         'timeout' => $timeout,
         'headers' => snowy_wp_auth_headers(),
     ]);

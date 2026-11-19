@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.5.4
+Stable tag: 2.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,33 @@ Se puede filtrar por región y los datos se cachean para no golpear la API en
 cada visita. Si la API no responde, los widgets no pintan nada en vez de romper
 la página.
 
+= Se adapta a tu web =
+
+El aspecto se puede cambiar a tres alturas, sin tocar el plugin:
+
+* Ajustes > Snowy: color de acento, redondeo de las esquinas, tipografía (la del
+  tema o la del sistema), esquema claro, oscuro o automático, y una casilla para
+  no cargar los estilos del plugin si tu tema los viste por su cuenta.
+* Variables CSS con el prefijo `--snowy-` (texto, bordes, fondos, acento,
+  redondeo, sombra, tipografía y colores de subida, bajada y lluvia), que se
+  definen en el tema sobre `:root` o sobre cualquier contenedor. Las clases
+  `snowy-wp--dark`, `snowy-wp--light` y `snowy-wp--auto` cambian el esquema de
+  una zona de la página.
+* Plantillas: copia `templates/<widget>.php` del plugin a
+  `<tu-tema>/snowy-wp/<widget>.php` y edítala. Se busca primero en el tema hijo.
+
+Cada shortcode admite además `cabecera="no"`, `variante="compacta"`,
+`esquema="claro|oscuro|auto"` y `clase="..."`, y los bloques los tienen en el
+panel Apariencia. Para desarrolladores hay filtros sobre los datos
+(`snowy_wp_widget_data`), el HTML (`snowy_wp_widget_html`), las clases
+(`snowy_wp_widget_classes`), la plantilla (`snowy_wp_locate_template`), la hoja
+(`snowy_wp_css`, `snowy_wp_css_tokens`, `snowy_wp_load_css`) y la URL de la API
+(`snowy_wp_api_base`). La lista completa está en Widgets Snowy > Personalizar el
+aspecto.
+
+La atribución de cada widget no se puede quitar: es la condición de uso de los
+datos.
+
 = Hace falta una clave de API =
 
 El plugin es libre, pero los datos no son públicos. Para usarlo necesitas una
@@ -52,6 +79,9 @@ Como alternativa a guardar la clave en la base de datos, se puede definir en
 `wp-config.php`, y entonces tiene prioridad sobre la de los ajustes:
 
 `define( 'SNOWY_API_KEY', 'sk_live_...' );`
+
+Para apuntar una instalación de pruebas a otra API, define `SNOWY_WP_API` en
+`wp-config.php` o usa el filtro `snowy_wp_api_base`.
 
 == Frequently Asked Questions ==
 
@@ -72,6 +102,19 @@ y a partir de ahí se pintan esos, con una nota indicando la fecha. Es lo que
 evita que un artículo de hace un mes muestre la temperatura de hoy.
 
 == Changelog ==
+
+= 2.6.0 =
+* Variables CSS públicas con el prefijo `--snowy-` para vestir los widgets desde
+  el tema, y esquema oscuro: por ajuste, por widget o con una clase.
+* Ajustes nuevos: redondeo, tipografía, esquema de color y no cargar los estilos.
+* Plantillas sobreescribibles desde el tema en `<tema>/snowy-wp/<widget>.php`,
+  para los catorce widgets.
+* Atributos `cabecera`, `variante`, `esquema` y `clase` en todos los shortcodes,
+  con su panel Apariencia en los bloques; los bloques respetan la clase CSS
+  adicional del editor.
+* Filtros sobre los datos, el HTML, las clases, la plantilla, la hoja y la URL
+  de la API; `SNOWY_WP_API` se puede definir en `wp-config.php`.
+* Con los ajustes por defecto, los widgets se pintan igual que en la 2.5.4.
 
 = 2.5.4 =
 * Un día sin avisos de AEMET ya no muestra los del día anterior: una lista

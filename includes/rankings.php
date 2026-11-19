@@ -120,38 +120,16 @@ function snowy_wp_ranked($metric, $orden, $limite, $solo_positivos = false)
     return array_slice($stations, 0, max(1, (int) $limite));
 }
 
-function snowy_wp_render_ranking($stations, $metric, $titulo, $etiqueta, $tag)
+function snowy_wp_render_ranking($stations, $metric, $titulo, $etiqueta, $tag, $atts = [])
 {
-    ob_start(); ?>
-    <div class="snowy-wp-wrap">
-        <div class="snowy-wp-head">
-            <<?php echo esc_attr($tag); ?>><?php echo esc_html($titulo); ?></<?php echo esc_attr($tag); ?>>
-            <span class="snowy-wp-tag"><?php echo esc_html($etiqueta); ?></span>
-        </div>
-        <div class="snowy-wp-scroll">
-        <table class="snowy-wp-table snowy-wp-ranking">
-            <thead><tr>
-                <th><?php esc_html_e('Estación', 'snowy-wp'); ?></th>
-                <th><?php echo esc_html($metric['columna']); ?></th>
-                <th><?php esc_html_e('Red', 'snowy-wp'); ?></th>
-            </tr></thead>
-            <tbody>
-            <?php foreach ($stations as $s) : ?>
-                <tr>
-                    <td><?php echo snowy_wp_station_link($s); ?></td>
-                    <td class="snowy-wp-val"><?php
-                        echo esc_html(snowy_wp_format_metric(snowy_wp_field($s, $metric['campo']), $metric));
-                    ?></td>
-                    <td class="snowy-wp-ranking__net"><?php echo snowy_wp_network_badge($s['network'] ?? ''); ?></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-        </div>
-        <?php echo snowy_wp_credit(); ?>
-    </div>
-    <?php
-    return ob_get_clean();
+    $atts = array_merge(SNOWY_WP_DISPLAY_DEFAULTS, ['nivel' => $tag], (array) $atts);
+
+    return snowy_wp_render_widget('ranking', [
+        'title'    => $titulo,
+        'label'    => $etiqueta,
+        'metric'   => $metric,
+        'stations' => $stations,
+    ], $atts);
 }
 
 /**
@@ -159,13 +137,13 @@ function snowy_wp_render_ranking($stations, $metric, $titulo, $etiqueta, $tag)
  */
 function snowy_wp_shortcode_ranking($atts = [])
 {
-    $atts = shortcode_atts([
+    $atts = snowy_wp_atts([
         'variable' => 'temperatura',
         'limite'   => 8,
         'orden'    => '',
         'titulo'   => '',
         'nivel'    => '',
-    ], (array) $atts, 'snowy_ranking');
+    ], $atts, 'snowy_ranking');
     snowy_wp_use_styles();
 
 
@@ -189,7 +167,8 @@ function snowy_wp_shortcode_ranking($atts = [])
         $metric,
         $titulo,
         $orden === 'asc' ? __('de menor a mayor', 'snowy-wp') : __('de mayor a menor', 'snowy-wp'),
-        snowy_wp_heading_tag($atts['nivel'])
+        $atts['nivel'],
+        $atts
     );
 }
 add_shortcode('snowy_ranking', 'snowy_wp_shortcode_ranking');
@@ -202,51 +181,27 @@ add_shortcode('snowy_ranking', 'snowy_wp_shortcode_ranking');
  */
 function snowy_wp_shortcode_lluvia($atts = [])
 {
-    $atts = shortcode_atts(['limite' => 10, 'nivel' => ''], (array) $atts, 'snowy_lluvia');
-    $metric = SNOWY_WP_METRICS['lluvia'];
-    $tag = snowy_wp_heading_tag($atts['nivel']);
+    $atts = snowy_wp_atts(['limite' => 10, 'nivel' => ''], $atts, 'snowy_lluvia');
     snowy_wp_use_styles();
 
-    $stations = snowy_wp_ranked($metric, 'desc', $atts['limite'], true);
+    $stations = snowy_wp_ranked(SNOWY_WP_METRICS['lluvia'], 'desc', $atts['limite'], true);
     $region = snowy_wp_region_label();
 
-    if (!$stations) {
-        ob_start(); ?>
-        <div class="snowy-wp-wrap">
-            <div class="snowy-wp-head">
-                <<?php echo esc_attr($tag); ?>><?php printf(
-                    /* translators: %s: nombre de la region configurada */
-                    esc_html__('Lluvia en %s', 'snowy-wp'),
-                    esc_html($region)
-                ); ?></<?php echo esc_attr($tag); ?>>
-                <span class="snowy-wp-tag"><?php esc_html_e('sin lluvia', 'snowy-wp'); ?></span>
-            </div>
-            <p class="snowy-wp-empty"><?php esc_html_e('Ninguna estación de la red ha recogido precipitación hoy.', 'snowy-wp'); ?></p>
-            <?php echo snowy_wp_credit(); ?>
-        </div>
-        <?php
-        return ob_get_clean();
-    }
-
-    $html = snowy_wp_render_ranking(
-        $stations,
-        $metric,
-        sprintf(
-            /* translators: %s: nombre de la region configurada */
-            __('Lluvia acumulada hoy en %s', 'snowy-wp'),
-            $region
-        ),
-        __('acumulado del día', 'snowy-wp'),
-        $tag
-    );
-
-    // La precipitacion no es homogenea entre redes y conviene decirlo: no es lo
-    // mismo un pluviometro calibrado que uno de aficionado sin mantenimiento.
-    return str_replace(
-        '<p class="snowy-wp-credit">',
-        '<p class="snowy-wp-credit">' . esc_html__('Los acumulados dependen del pluviómetro de cada estación y no son directamente comparables entre redes. ', 'snowy-wp'),
-        $html
-    );
+    return snowy_wp_render_widget('lluvia', [
+        'title'    => $stations
+            ? sprintf(
+                /* translators: %s: nombre de la region configurada */
+                __('Lluvia acumulada hoy en %s', 'snowy-wp'),
+                $region
+            )
+            : sprintf(
+                /* translators: %s: nombre de la region configurada */
+                __('Lluvia en %s', 'snowy-wp'),
+                $region
+            ),
+        'metric'   => SNOWY_WP_METRICS['lluvia'],
+        'stations' => $stations,
+    ], $atts);
 }
 add_shortcode('snowy_lluvia', 'snowy_wp_shortcode_lluvia');
 
@@ -255,7 +210,7 @@ add_shortcode('snowy_lluvia', 'snowy_wp_shortcode_lluvia');
  */
 function snowy_wp_shortcode_comparador($atts = [])
 {
-    $atts = shortcode_atts(['ids' => '', 'titulo' => '', 'nivel' => ''], (array) $atts, 'snowy_comparador');
+    $atts = snowy_wp_atts(['ids' => '', 'titulo' => '', 'nivel' => ''], $atts, 'snowy_comparador');
     $stations = snowy_wp_filter_ids(snowy_wp_stations(), $atts['ids']);
     snowy_wp_use_styles();
 
@@ -263,43 +218,15 @@ function snowy_wp_shortcode_comparador($atts = [])
         return '';
     }
 
-    $filas = ['temperatura', 'maxima', 'minima', 'humedad', 'racha', 'lluvia'];
-    $tag = snowy_wp_heading_tag($atts['nivel']);
+    $rows = [];
+    foreach (['temperatura', 'maxima', 'minima', 'humedad', 'racha', 'lluvia'] as $clave) {
+        $rows[$clave] = SNOWY_WP_METRICS[$clave];
+    }
 
-    ob_start(); ?>
-    <div class="snowy-wp-wrap">
-        <div class="snowy-wp-head">
-            <<?php echo esc_attr($tag); ?>><?php
-                echo esc_html($atts['titulo'] !== '' ? $atts['titulo'] : __('Comparativa de estaciones', 'snowy-wp'));
-            ?></<?php echo esc_attr($tag); ?>>
-            <span class="snowy-wp-tag"><?php esc_html_e('en vivo', 'snowy-wp'); ?></span>
-        </div>
-        <div class="snowy-wp-scroll">
-        <table class="snowy-wp-table snowy-wp-comparador">
-            <thead><tr>
-                <th></th>
-                <?php foreach ($stations as $s) : ?>
-                    <th><?php echo snowy_wp_station_link($s); ?></th>
-                <?php endforeach; ?>
-            </tr></thead>
-            <tbody>
-            <?php foreach ($filas as $clave) : ?>
-                <?php $m = SNOWY_WP_METRICS[$clave]; ?>
-                <tr>
-                    <th scope="row"><?php echo esc_html($m['columna']); ?></th>
-                    <?php foreach ($stations as $s) : ?>
-                        <td class="snowy-wp-val"><?php
-                            echo esc_html(snowy_wp_format_metric(snowy_wp_field($s, $m['campo']), $m));
-                        ?></td>
-                    <?php endforeach; ?>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-        </div>
-        <?php echo snowy_wp_credit(); ?>
-    </div>
-    <?php
-    return ob_get_clean();
+    return snowy_wp_render_widget('comparador', [
+        'title'    => $atts['titulo'] !== '' ? $atts['titulo'] : __('Comparativa de estaciones', 'snowy-wp'),
+        'stations' => $stations,
+        'rows'     => $rows,
+    ], $atts);
 }
 add_shortcode('snowy_comparador', 'snowy_wp_shortcode_comparador');

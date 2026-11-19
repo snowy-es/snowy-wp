@@ -61,7 +61,7 @@ function snowy_wp_speed($value, $decimals = 1)
  * Credito de la fuente. No es decorativo: es la condicion de uso de los datos,
  * por eso se pinta siempre aunque la atribucion ampliada este desactivada.
  */
-function snowy_wp_credit()
+function snowy_wp_credit($note = '')
 {
     $count  = count(snowy_wp_stations());
     $region = snowy_wp_region_label();
@@ -100,7 +100,7 @@ function snowy_wp_credit()
         );
     }
 
-    return '<p class="snowy-wp-credit">' . $text . ' ' . $when . '</p>';
+    return '<p class="snowy-wp-credit">' . esc_html($note) . $text . ' ' . $when . '</p>';
 }
 
 /**

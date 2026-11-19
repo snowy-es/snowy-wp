@@ -100,20 +100,127 @@ function snowy_wp_enqueue_styles()
     wp_add_inline_style('snowy-wp', $css);
 }
 
-/**
- * La hoja con el acento delante, como variable, para que quien instala el plugin
- * pueda vestirlo con su color sin tocar los estilos.
- */
+const SNOWY_WP_PALETTES = [
+    'light' => [
+        'ink'         => '#0f172a',
+        'ink-2'       => '#334155',
+        'label'       => '#475569',
+        'mute'        => '#64748b',
+        'line'        => '#e2e8f0',
+        'line-soft'   => '#f1f5f9',
+        'bg'          => '#fff',
+        'soft'        => '#f8fafc',
+        'chip'        => '#f1f5f9',
+        'accent'      => '#0369a1',
+        'official-bg' => '#e0f2fe',
+        'official-ink' => '#075985',
+        'up'          => '#0369a1',
+        'down'        => '#c2410c',
+        'wet'         => '#1d4ed8',
+        'shadow'      => '0 1px 2px rgba(15,23,42,.04),0 8px 24px -12px rgba(15,23,42,.12)',
+    ],
+    'dark' => [
+        'ink'         => '#e2e8f0',
+        'ink-2'       => '#cbd5e1',
+        'label'       => '#a3b1c6',
+        'mute'        => '#94a3b8',
+        'line'        => '#334155',
+        'line-soft'   => '#1e293b',
+        'bg'          => '#0f172a',
+        'soft'        => '#162033',
+        'chip'        => '#1e293b',
+        'accent'      => '#38bdf8',
+        'official-bg' => '#0c4a6e',
+        'official-ink' => '#bae6fd',
+        'up'          => '#38bdf8',
+        'down'        => '#fb923c',
+        'wet'         => '#7dd3fc',
+        'shadow'      => '0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5)',
+    ],
+];
+
+function snowy_wp_palette_decls($scheme)
+{
+    $decls = '';
+    foreach (SNOWY_WP_PALETTES[$scheme] as $name => $value) {
+        $decls .= '--sn-def-' . $name . ':' . $value . ';';
+    }
+
+    return $decls;
+}
+
+function snowy_wp_scheme_css()
+{
+    $light = snowy_wp_palette_decls('light');
+    $dark  = snowy_wp_palette_decls('dark');
+
+    $css = sprintf(
+        '.snowy-wp--light{%1$s}.snowy-wp--dark{%2$s}.snowy-wp--auto{%1$s}@media(prefers-color-scheme:dark){.snowy-wp--auto{%2$s}}',
+        $light,
+        $dark
+    );
+
+    $scheme = snowy_wp_scheme();
+    if ($scheme === 'dark') {
+        $css = ':root{' . $dark . '}' . $css;
+    } elseif ($scheme === 'auto') {
+        $css = '@media(prefers-color-scheme:dark){:root{' . $dark . '}}' . $css;
+    }
+
+    return $css;
+}
+
+function snowy_wp_token_css()
+{
+    $tokens = [];
+
+    $accent = snowy_wp_accent();
+    if ($accent) {
+        $tokens['--snowy-accent'] = $accent;
+    }
+
+    $radius = snowy_wp_radius();
+    if ($radius !== null) {
+        $tokens['--snowy-radius'] = $radius . 'px';
+    }
+
+    $font = snowy_wp_font_stack();
+    if ($font !== '') {
+        $tokens['--snowy-font'] = $font;
+    }
+
+    $tokens = (array) apply_filters('snowy_wp_css_tokens', $tokens);
+
+    $decls = '';
+    foreach ($tokens as $name => $value) {
+        $name  = (string) $name;
+        $value = (string) $value;
+        if (!preg_match('/^--snowy-[a-z0-9-]+$/', $name) || preg_match('/[;{}<>]/', $value)) {
+            continue;
+        }
+        $decls .= $name . ':' . $value . ';';
+    }
+
+    $css = $decls !== '' ? ':root{' . $decls . '}' : '';
+    if ($font !== '') {
+        $css .= '.snowy-wp-wrap.snowy-wp-wrap .snowy-wp-head>*,.snowy-wp-card.snowy-wp-card .snowy-wp-card-title{font-family:inherit}';
+    }
+
+    return $css;
+}
+
 function snowy_wp_css_with_accent()
 {
+    if (!snowy_wp_css_enabled()) {
+        return '';
+    }
+
     $css = snowy_wp_css();
     if ($css === '') {
         return '';
     }
 
-    $accent = snowy_wp_accent();
-
-    return $accent ? sprintf(':root{--snowy-accent:%s}', $accent) . $css : $css;
+    return (string) apply_filters('snowy_wp_css', snowy_wp_token_css() . snowy_wp_scheme_css() . $css);
 }
 
 /**

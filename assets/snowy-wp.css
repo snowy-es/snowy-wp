@@ -11,7 +11,7 @@
  * de contenido del tema sin recurrir a !important.
  */
 .snowy-wp-wrap.snowy-wp-wrap,
-.snowy-wp-card.snowy-wp-card{text-align:left;font-family:inherit}
+.snowy-wp-card.snowy-wp-card{text-align:left;font-family:var(--snowy-font)}
 /* La letra capital es el unico caso donde no basta con la especificidad: el
    selector tipico del tema (.contenido > p:first-of-type::first-letter) puntua
    por encima de cualquier combinacion de clases propias, y ningun tema deberia
@@ -31,13 +31,13 @@
 /* El color tambien se reclama: el tema pinta los enlaces del contenido de un
    azul que sobre blanco se queda en 3,1 de contraste, por debajo del minimo. */
 .snowy-wp-wrap.snowy-wp-wrap .snowy-wp-link,
-.snowy-wp-card.snowy-wp-card .snowy-wp-link{color:#0f172a;text-decoration:none}
+.snowy-wp-card.snowy-wp-card .snowy-wp-link{color:var(--sn-ink);text-decoration:none}
 .snowy-wp-wrap.snowy-wp-wrap .snowy-wp-link:hover,
-.snowy-wp-card.snowy-wp-card .snowy-wp-link:hover{color:var(--snowy-accent,#0369a1)}
+.snowy-wp-card.snowy-wp-card .snowy-wp-link:hover{color:var(--sn-accent)}
 /* Un enlace dentro de un parrafo no puede distinguirse solo por el color, asi
    que el subrayado de la atribucion se mantiene por encima del reset. */
 .snowy-wp-credit.snowy-wp-credit a,
-.snowy-wp-empty.snowy-wp-empty a{text-decoration:underline;color:var(--snowy-accent,#0369a1)}
+.snowy-wp-empty.snowy-wp-empty a{text-decoration:underline;color:var(--sn-accent,var(--snowy-accent,#0369a1))}
 .snowy-wp-wrap.snowy-wp-wrap h3,
 .snowy-wp-card.snowy-wp-card h4{text-transform:none;letter-spacing:-.01em}
 .snowy-wp-wrap.snowy-wp-wrap h3::after,
@@ -47,9 +47,27 @@
    overflow hidden del contenedor, que en movil se comia columnas enteras. */
 .snowy-wp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
-.snowy-wp-wrap{--sn-ink:#0f172a;--sn-mute:#64748b;--sn-line:#e2e8f0;--sn-accent:var(--snowy-accent,#0369a1);--sn-soft:#f8fafc;
-  border:1px solid var(--sn-line);border-radius:14px;background:#fff;overflow:hidden;margin:1.75rem 0;
-  box-shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px -12px rgba(15,23,42,.12)}
+.snowy-wp-wrap,.snowy-wp-card{
+  --sn-ink:var(--snowy-text,var(--sn-def-ink,#0f172a));
+  --sn-ink-2:var(--snowy-text-soft,var(--sn-def-ink-2,#334155));
+  --sn-label:var(--snowy-muted,var(--sn-def-label,#475569));
+  --sn-mute:var(--snowy-faint,var(--sn-def-mute,#64748b));
+  --sn-line:var(--snowy-line,var(--sn-def-line,#e2e8f0));
+  --sn-line-soft:var(--snowy-line-soft,var(--sn-def-line-soft,#f1f5f9));
+  --sn-bg:var(--snowy-surface,var(--sn-def-bg,#fff));
+  --sn-soft:var(--snowy-surface-alt,var(--sn-def-soft,#f8fafc));
+  --sn-chip:var(--snowy-chip,var(--sn-def-chip,#f1f5f9));
+  --sn-accent:var(--snowy-accent,var(--sn-def-accent,#0369a1));
+  --sn-official-bg:var(--snowy-official-bg,var(--sn-def-official-bg,#e0f2fe));
+  --sn-official-ink:var(--snowy-official-text,var(--sn-def-official-ink,#075985));
+  --sn-up:var(--snowy-up,var(--sn-def-up,#0369a1));
+  --sn-down:var(--snowy-down,var(--sn-def-down,#c2410c));
+  --sn-wet:var(--snowy-wet,var(--sn-def-wet,#1d4ed8));
+  --sn-radius:var(--snowy-radius,14px);
+  --sn-radius-inner:min(12px,var(--sn-radius));
+  --sn-shadow:var(--snowy-shadow,var(--sn-def-shadow,0 1px 2px rgba(15,23,42,.04),0 8px 24px -12px rgba(15,23,42,.12)))}
+.snowy-wp-wrap{border:1px solid var(--sn-line);border-radius:var(--sn-radius);background:var(--sn-bg);color:var(--sn-ink);
+  overflow:hidden;margin:1.75rem 0;box-shadow:var(--sn-shadow)}
 .snowy-wp-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;
   padding:.9rem 1.15rem;background:var(--sn-soft);border-bottom:1px solid var(--sn-line)}
 .snowy-wp-head h3{margin:0;font-size:1rem;font-weight:700;color:var(--sn-ink);letter-spacing:-.01em}
@@ -60,40 +78,40 @@
   border-right:1px solid var(--sn-line)}
 .snowy-wp-extremos>.snowy-wp-wrap:last-child{border-right:0}
 .snowy-wp-table{width:100%;border-collapse:collapse;margin:0;font-size:.93rem}
-.snowy-wp-table th{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:#475569;
+.snowy-wp-table th{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--sn-label);
   font-weight:600;text-align:left;padding:.6rem 1.15rem;border-bottom:1px solid var(--sn-line);white-space:nowrap}
-.snowy-wp-table td{padding:.62rem 1.15rem;border-bottom:1px solid #f1f5f9;color:var(--sn-ink);vertical-align:middle}
+.snowy-wp-table td{padding:.62rem 1.15rem;border-bottom:1px solid var(--sn-line-soft);color:var(--sn-ink);vertical-align:middle}
 .snowy-wp-table tbody tr:last-child td{border-bottom:0}
-.snowy-wp-table tbody tr:hover{background:#f8fafc}
+.snowy-wp-table tbody tr:hover{background:var(--sn-soft)}
 .snowy-wp-val{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
 .snowy-wp-net{display:inline-block;font-size:.68rem;padding:.16rem .5rem;border-radius:999px;
-  background:#f1f5f9;color:#475569;white-space:nowrap}
-.snowy-wp-net.is-official{background:#e0f2fe;color:#075985}
+  background:var(--sn-chip);color:var(--sn-label);white-space:nowrap}
+.snowy-wp-net.is-official{background:var(--sn-official-bg);color:var(--sn-official-ink)}
 .snowy-wp-link{color:var(--sn-ink);text-decoration:none;font-weight:600;
-  border-bottom:1px solid rgba(3,105,161,.28);transition:border-color .15s,color .15s}
+  border-bottom:1px solid rgba(3,105,161,.28);border-bottom-color:color-mix(in srgb,var(--sn-accent) 28%,transparent);transition:border-color .15s,color .15s}
 .snowy-wp-link:hover{color:var(--sn-accent);border-bottom-color:var(--sn-accent)}
-.snowy-wp-credit{font-size:.78rem;line-height:1.55;color:#475569;margin:0;
+.snowy-wp-credit{font-size:.78rem;line-height:1.55;color:var(--sn-label,var(--snowy-muted,#475569));margin:0;
   padding:.75rem 1.15rem;background:var(--sn-soft);border-top:1px solid var(--sn-line)}
-.snowy-wp-credit a{color:#0369a1;text-decoration:underline}
-.snowy-wp-card{border:1px solid #e2e8f0;border-left:4px solid var(--snowy-accent,#0369a1);border-radius:12px;
-  padding:1.05rem 1.25rem;margin:1.75rem 0;background:linear-gradient(180deg,#f8fafc,#fff)}
-.snowy-wp-card-eyebrow{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--snowy-accent,#0369a1);
+.snowy-wp-credit a{color:var(--sn-accent,var(--snowy-accent,#0369a1));text-decoration:underline}
+.snowy-wp-card{border:1px solid var(--sn-line);border-left:4px solid var(--sn-accent);border-radius:var(--sn-radius-inner);
+  padding:1.05rem 1.25rem;margin:1.75rem 0;color:var(--sn-ink);background:linear-gradient(180deg,var(--sn-soft),var(--sn-bg))}
+.snowy-wp-card-eyebrow{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--sn-accent);
   margin:0 0 .25rem;font-weight:700}
 .snowy-wp-card-title{margin:0 0 .85rem;font-size:1.15rem;font-weight:700}
 .snowy-wp-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:.85rem}
 .snowy-wp-card-grid span,.snowy-wp-card-grid dt{display:block;font-size:.7rem;text-transform:uppercase;
-  letter-spacing:.05em;color:#475569;margin-bottom:.12rem}
+  letter-spacing:.05em;color:var(--sn-label);margin-bottom:.12rem}
 .snowy-wp-card-grid strong,.snowy-wp-card-grid dd{margin:0;font-size:1.2rem;font-weight:700;
   font-variant-numeric:tabular-nums}
-.snowy-wp-card-foot{margin:.9rem 0 0;font-size:.76rem;color:#64748b}
+.snowy-wp-card-foot{margin:.9rem 0 0;font-size:.76rem;color:var(--sn-mute)}
 .snowy-wp-risk{display:inline-block;font-size:.7rem;font-weight:700;padding:.2rem .6rem;
-  border-radius:999px;background:#f1f5f9;color:#475569;white-space:nowrap}
+  border-radius:999px;background:var(--sn-chip);color:var(--sn-label);white-space:nowrap}
 .snowy-wp-risk.is-amarillo{background:#fef9c3;color:#854d0e}
 .snowy-wp-risk.is-naranja{background:#ffedd5;color:#9a3412}
 .snowy-wp-risk.is-rojo{background:#fee2e2;color:#991b1b}
 .snowy-wp-day{margin:0;padding:.6rem 1.15rem .1rem;font-size:.72rem;text-transform:uppercase;
-  letter-spacing:.07em;color:#475569;font-weight:700}
-.snowy-wp-empty{margin:0;padding:1.15rem;color:#0f172a;font-size:.95rem}
+  letter-spacing:.07em;color:var(--sn-label);font-weight:700}
+.snowy-wp-empty{margin:0;padding:1.15rem;color:var(--sn-ink);font-size:.95rem}
 .snowy-wp-frozen{background:#fffbeb;border-top-color:#fde68a;color:#854d0e}
 @media(max-width:640px){
   .snowy-wp-table{font-size:.88rem}
@@ -108,7 +126,7 @@
 @media(max-width:560px){
   .snowy-wp-ranking thead{display:none}
   .snowy-wp-ranking tbody tr{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;
-    column-gap:1rem;padding:.6rem .8rem;border-bottom:1px solid #f1f5f9}
+    column-gap:1rem;padding:.6rem .8rem;border-bottom:1px solid var(--sn-line-soft)}
   .snowy-wp-ranking tbody tr:last-child{border-bottom:0}
   .snowy-wp-table.snowy-wp-ranking td{padding:0;border:0}
   .snowy-wp-ranking td:first-child{grid-column:1;grid-row:1;line-height:1.3}
@@ -119,7 +137,7 @@
 
 .snowy-wp-air{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;padding:1.15rem}
 .snowy-wp-air-index{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-width:104px;padding:.75rem 1rem;border-radius:12px;background:#f1f5f9;color:#475569}
+  min-width:104px;padding:.75rem 1rem;border-radius:var(--sn-radius-inner);background:var(--sn-chip);color:var(--sn-label)}
 .snowy-wp-air-index strong{font-size:2.1rem;line-height:1;font-variant-numeric:tabular-nums}
 .snowy-wp-air-index span{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;
   font-weight:700;margin-top:.3rem;text-align:center}
@@ -130,7 +148,7 @@
 .snowy-wp-air-index.is-very-poor{background:#fee2e2;color:#991b1b}
 .snowy-wp-air-index.is-extreme{background:#f5d0fe;color:#701a75}
 .snowy-wp-air .snowy-wp-card-grid{flex:1;min-width:0;margin:0}
-.snowy-wp-air .snowy-wp-card-grid small{font-size:.68rem;font-weight:500;color:#64748b}
+.snowy-wp-air .snowy-wp-card-grid small{font-size:.68rem;font-weight:500;color:var(--sn-mute)}
 .snowy-wp-risk.is-good{background:#dcfce7;color:#166534}
 .snowy-wp-risk.is-fair{background:#ecfccb;color:#3f6212}
 .snowy-wp-risk.is-moderate{background:#fef9c3;color:#854d0e}
@@ -141,27 +159,27 @@
 /* Grafico de evolucion de la ficha de estacion */
 .snowy-wp-card-spark{margin:1rem 0 0}
 .snowy-wp-spark{display:block;width:100%;height:48px;overflow:visible}
-.snowy-wp-spark-line{fill:none;stroke:var(--snowy-accent,#0369a1);stroke-width:1.8;
+.snowy-wp-spark-line{fill:none;stroke:var(--sn-accent);stroke-width:1.8;
   stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
-.snowy-wp-spark-area{fill:var(--snowy-accent,#0369a1);opacity:.10;stroke:none}
-.snowy-wp-spark-caption{margin:.35rem 0 0;font-size:.7rem;color:#475569;
+.snowy-wp-spark-area{fill:var(--sn-accent);opacity:.10;stroke:none}
+.snowy-wp-spark-caption{margin:.35rem 0 0;font-size:.7rem;color:var(--sn-label);
   text-transform:uppercase;letter-spacing:.05em}
 
 /* Resumen de cabecera: la cifra grande a la izquierda y el detalle al lado.
    Lo comparten los embalses y el clima porque responden igual: un numero que
    se lee de un vistazo y dos lineas que lo explican. */
 .snowy-wp-total{display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;padding:1.15rem;
-  border-bottom:1px solid var(--sn-line,#e2e8f0)}
+  border-bottom:1px solid var(--sn-line)}
 .snowy-wp-total-figure{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-width:118px;padding:.75rem 1rem;border-radius:12px;background:#f1f5f9;color:#0f172a}
+  min-width:118px;padding:.75rem 1rem;border-radius:var(--sn-radius-inner);background:var(--sn-chip);color:var(--sn-ink)}
 .snowy-wp-total-figure strong{font-size:1.9rem;line-height:1;font-variant-numeric:tabular-nums}
 .snowy-wp-total-figure span{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;
-  font-weight:700;margin-top:.35rem;text-align:center;color:#475569}
+  font-weight:700;margin-top:.35rem;text-align:center;color:var(--sn-label)}
 .snowy-wp-total-body{flex:1;min-width:220px}
-.snowy-wp-total-meta{margin:0 0 .35rem;font-size:.86rem;line-height:1.5;color:#334155}
+.snowy-wp-total-meta{margin:0 0 .35rem;font-size:.86rem;line-height:1.5;color:var(--sn-ink-2)}
 .snowy-wp-total-meta:last-child{margin-bottom:0}
 .snowy-wp-bar{display:block;width:100%;max-width:220px;height:7px;margin:.35rem 0 .55rem;
-  border-radius:999px;background:#e2e8f0;overflow:hidden}
+  border-radius:999px;background:var(--sn-line);overflow:hidden}
 .snowy-wp-bar-fill{display:block;height:100%;border-radius:999px;background:#94a3b8}
 .snowy-wp-bar-fill.is-good{background:#22c55e}
 .snowy-wp-bar-fill.is-fair{background:#84cc16}
@@ -172,33 +190,33 @@
 /* La flecha de cambio no juzga: azul es mas y naranja es menos. Que eso sea
    bueno o malo depende de si se habla de agua embalsada o de dias de calor. */
 .snowy-wp-trend{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
-.snowy-wp-trend.is-up{color:#0369a1}
-.snowy-wp-trend.is-down{color:#c2410c}
+.snowy-wp-trend.is-up{color:var(--sn-up)}
+.snowy-wp-trend.is-down{color:var(--sn-down)}
 
 /* Prevision por dias */
 .snowy-wp-days{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:0;
   margin:0;padding:0;list-style:none}
 .snowy-wp-day-card{margin:0;padding:1.15rem .8rem;text-align:center;
-  border-right:1px solid var(--sn-line,#e2e8f0);border-bottom:1px solid var(--sn-line,#e2e8f0)}
+  border-right:1px solid var(--sn-line);border-bottom:1px solid var(--sn-line)}
 .snowy-wp-day-card:last-child{border-right:0}
 .snowy-wp-day-name{margin:0 0 .65rem;font-size:.72rem;line-height:1.35}
-.snowy-wp-day-name strong{display:block;text-transform:capitalize;color:#0f172a;font-size:.8rem}
-.snowy-wp-day-name span{color:#64748b}
-.snowy-wp-icon{width:34px;height:34px;fill:none;stroke:var(--snowy-accent,#0369a1);stroke-width:1.5;
+.snowy-wp-day-name strong{display:block;text-transform:capitalize;color:var(--sn-ink);font-size:.8rem}
+.snowy-wp-day-name span{color:var(--sn-mute)}
+.snowy-wp-icon{width:34px;height:34px;fill:none;stroke:var(--sn-accent);stroke-width:1.5;
   stroke-linecap:round;stroke-linejoin:round}
-.snowy-wp-day-sky{margin:.5rem 0 .65rem;font-size:.72rem;color:#475569;line-height:1.3;min-height:2.2em}
+.snowy-wp-day-sky{margin:.5rem 0 .65rem;font-size:.72rem;color:var(--sn-label);line-height:1.3;min-height:2.2em}
 .snowy-wp-day-temps{margin:0;font-variant-numeric:tabular-nums}
-.snowy-wp-day-temps strong{font-size:1.05rem;color:#0f172a}
-.snowy-wp-day-temps span{font-size:.86rem;color:#64748b;margin-left:.35rem}
-.snowy-wp-day-extra{margin:.55rem 0 0;font-size:.7rem;color:#64748b;display:flex;
+.snowy-wp-day-temps strong{font-size:1.05rem;color:var(--sn-ink)}
+.snowy-wp-day-temps span{font-size:.86rem;color:var(--sn-mute);margin-left:.35rem}
+.snowy-wp-day-extra{margin:.55rem 0 0;font-size:.7rem;color:var(--sn-mute);display:flex;
   flex-direction:column;gap:.1rem}
 /* Un cero de probabilidad no es una noticia: se lee cuando se busca, no antes. */
-.snowy-wp-day-rain.is-wet{color:#1d4ed8;font-weight:700}
+.snowy-wp-day-rain.is-wet{color:var(--sn-wet);font-weight:700}
 
 /* Records climaticos */
-.snowy-wp-records{padding:1.15rem;margin:0;border-bottom:1px solid var(--sn-line,#e2e8f0)}
+.snowy-wp-records{padding:1.15rem;margin:0;border-bottom:1px solid var(--sn-line)}
 .snowy-wp-records dd{font-size:1.05rem}
-.snowy-wp-records small{display:block;font-size:.68rem;font-weight:500;color:#64748b;
+.snowy-wp-records small{display:block;font-size:.68rem;font-weight:500;color:var(--sn-mute);
   text-transform:none;letter-spacing:0;margin-top:.1rem}
 /* En movil, un dia por linea. En rejilla, siete dias caian en dos columnas y
    cuatro filas —1.250 px y el ultimo dia solo, con medio hueco al lado—, que es
@@ -229,3 +247,19 @@
    insignias verdes iguales son ruido con forma de dato. */
 .snowy-wp-day-trust{margin:.6rem 0 0}
 .snowy-wp-day-trust .snowy-wp-risk{font-size:.63rem;padding:.15rem .45rem}
+
+.snowy-wp--compact.snowy-wp-wrap,.snowy-wp--compact .snowy-wp-wrap{margin:1rem 0}
+.snowy-wp-extremos.snowy-wp--compact>.snowy-wp-wrap{margin:0}
+.snowy-wp--compact .snowy-wp-head{padding:.55rem .85rem}
+.snowy-wp--compact .snowy-wp-head h2,.snowy-wp--compact .snowy-wp-head h3,
+.snowy-wp--compact .snowy-wp-head h4,.snowy-wp--compact .snowy-wp-head p{font-size:.92rem}
+.snowy-wp--compact .snowy-wp-table{font-size:.86rem}
+.snowy-wp--compact .snowy-wp-table th,.snowy-wp--compact .snowy-wp-table td{padding:.4rem .85rem}
+.snowy-wp--compact .snowy-wp-credit{padding:.5rem .85rem;font-size:.72rem}
+.snowy-wp--compact .snowy-wp-empty,.snowy-wp--compact .snowy-wp-records,
+.snowy-wp--compact .snowy-wp-air,.snowy-wp--compact .snowy-wp-total{padding:.8rem .85rem}
+.snowy-wp--compact .snowy-wp-total-figure{min-width:92px;padding:.5rem .75rem}
+.snowy-wp--compact .snowy-wp-total-figure strong{font-size:1.45rem}
+.snowy-wp--compact .snowy-wp-day-card{padding:.75rem .6rem}
+.snowy-wp--compact .snowy-wp-icon{width:28px;height:28px}
+.snowy-wp-card.snowy-wp--compact{padding:.8rem 1rem;margin:1rem 0}

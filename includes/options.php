@@ -17,7 +17,11 @@ const SNOWY_WP_DEFAULTS = [
     'attribution'     => true,
     'heading_level'   => 'h3',
     'accent'          => '',
+    'radius'          => '',
+    'font'            => 'inherit',
+    'scheme'          => 'light',
     'css_siempre'     => false,
+    'css_disabled'    => false,
     'auto_shortcode'  => '',
     'auto_donde'      => 'post',
     'auto_posicion'   => 'despues',
@@ -98,4 +102,35 @@ function snowy_wp_accent()
     $accent = trim((string) snowy_wp_option('accent'));
 
     return preg_match('/^#[0-9a-fA-F]{6}$/', $accent) ? $accent : '';
+}
+
+const SNOWY_WP_FONTS = [
+    'inherit' => '',
+    'system'  => 'system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif',
+];
+
+const SNOWY_WP_SCHEMES = ['light' => 'light', 'dark' => 'dark', 'auto' => 'auto'];
+
+const SNOWY_WP_RADIUS_MAX = 32;
+
+function snowy_wp_radius()
+{
+    $radius = snowy_wp_option('radius');
+
+    return is_numeric($radius) ? max(0, min(SNOWY_WP_RADIUS_MAX, (int) $radius)) : null;
+}
+
+function snowy_wp_font_stack()
+{
+    return SNOWY_WP_FONTS[(string) snowy_wp_option('font')] ?? '';
+}
+
+function snowy_wp_scheme()
+{
+    return SNOWY_WP_SCHEMES[(string) snowy_wp_option('scheme')] ?? 'light';
+}
+
+function snowy_wp_css_enabled()
+{
+    return (bool) apply_filters('snowy_wp_load_css', !snowy_wp_option('css_disabled'));
 }

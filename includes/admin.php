@@ -191,6 +191,49 @@ const SNOWY_WP_WIDGETS = [
     ],
 ];
 
+const SNOWY_WP_DISPLAY_HELP = [
+    'cabecera="no"'      => 'Quita la cabecera con el título, para cuando el widget va bajo un encabezado tuyo.',
+    'variante="compacta"' => 'Menos relleno y letra algo menor, para barras laterales y columnas estrechas.',
+    'esquema="oscuro"'   => 'claro, oscuro o auto. Cambia el esquema solo de ese widget.',
+    'clase="mi-clase"'   => 'Clases CSS propias en la caja del widget, separadas por espacios.',
+];
+
+const SNOWY_WP_TOKENS_HELP = [
+    '--snowy-accent'       => ['Enlaces, iconos, gráficos y detalles. También desde los ajustes.', '#0369a1'],
+    '--snowy-text'         => ['Texto principal.', '#0f172a'],
+    '--snowy-text-soft'    => ['Texto de los resúmenes.', '#334155'],
+    '--snowy-muted'        => ['Etiquetas, cabeceras de tabla y atribución.', '#475569'],
+    '--snowy-faint'        => ['Texto secundario: fechas, unidades, mínimas.', '#64748b'],
+    '--snowy-line'         => ['Bordes de la caja y separadores.', '#e2e8f0'],
+    '--snowy-line-soft'    => ['Separador entre filas.', '#f1f5f9'],
+    '--snowy-surface'      => ['Fondo de la caja.', '#fff'],
+    '--snowy-surface-alt'  => ['Fondo de cabecera y pie, y de la fila al pasar el ratón.', '#f8fafc'],
+    '--snowy-chip'         => ['Fondo de etiquetas neutras y de la cifra grande.', '#f1f5f9'],
+    '--snowy-official-bg'  => ['Fondo de la etiqueta de red oficial.', '#e0f2fe'],
+    '--snowy-official-text' => ['Texto de la etiqueta de red oficial.', '#075985'],
+    '--snowy-up'           => ['Flecha de subida.', '#0369a1'],
+    '--snowy-down'         => ['Flecha de bajada.', '#c2410c'],
+    '--snowy-wet'          => ['Probabilidad de lluvia destacada en la previsión.', '#1d4ed8'],
+    '--snowy-radius'       => ['Redondeo de las esquinas. También desde los ajustes.', '14px'],
+    '--snowy-font'         => ['Tipografía de los widgets. También desde los ajustes.', 'la del tema'],
+    '--snowy-shadow'       => ['Sombra de la caja. none la quita.', 'sombra suave'],
+];
+
+const SNOWY_WP_HOOKS_HELP = [
+    'snowy_wp_widget_data'        => 'Filtro. Los datos de cualquier widget antes de pintarlo. Recibe $data, $widget y $atts.',
+    'snowy_wp_widget_data_{widget}' => 'Filtro. Igual, solo para un widget: snowy_wp_widget_data_embalses.',
+    'snowy_wp_widget_html'        => 'Filtro. El HTML final de cualquier widget. Recibe $html, $widget, $data y $atts.',
+    'snowy_wp_widget_html_{widget}' => 'Filtro. Igual, solo para un widget.',
+    'snowy_wp_widget_classes'     => 'Filtro. Las clases de la caja del widget. Recibe $classes, $widget y $atts.',
+    'snowy_wp_locate_template'    => 'Filtro. La ruta de la plantilla elegida. Recibe $path y $widget.',
+    'snowy_wp_before_widget'      => 'Acción. Justo antes del HTML del widget, dentro de lo que devuelve.',
+    'snowy_wp_after_widget'       => 'Acción. Justo después.',
+    'snowy_wp_css_tokens'         => 'Filtro. Las variables que el plugin escribe en :root desde los ajustes.',
+    'snowy_wp_css'                => 'Filtro. La hoja completa que se imprime.',
+    'snowy_wp_load_css'           => 'Filtro. false para no imprimir ninguna hoja, igual que la casilla de los ajustes.',
+    'snowy_wp_api_base'           => 'Filtro. La URL base de la API, para entornos de pruebas. También con la constante SNOWY_WP_API en wp-config.php.',
+];
+
 function snowy_wp_admin_menu()
 {
     add_menu_page(
@@ -351,6 +394,72 @@ function snowy_wp_admin_page()
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <h2 id="snowy-wp-personalizar"><?php esc_html_e('Personalizar el aspecto', 'snowy-wp'); ?></h2>
+        <p style="max-width:900px">
+            <?php esc_html_e('El plugin se puede vestir a tres alturas, de menos a más trabajo: los ajustes, las variables CSS y las plantillas. Lo que se pinta siempre lleva su atribución, que es la condición de uso de los datos.', 'snowy-wp'); ?>
+        </p>
+
+        <h3><?php esc_html_e('Atributos de presentación', 'snowy-wp'); ?></h3>
+        <p style="max-width:900px"><?php esc_html_e('Valen para todos los shortcodes; en los bloques están en el panel Apariencia y la clase en Avanzado.', 'snowy-wp'); ?></p>
+        <ul style="max-width:900px;list-style:disc;margin-left:1.5rem;color:#646970">
+            <?php foreach (SNOWY_WP_DISPLAY_HELP as $attr => $help) : ?>
+                <li><code><?php echo esc_html($attr); ?></code> — <?php echo esc_html($help); ?></li>
+            <?php endforeach; ?>
+        </ul>
+
+        <h3><?php esc_html_e('Variables CSS', 'snowy-wp'); ?></h3>
+        <p style="max-width:900px"><?php printf(
+            /* translators: %s: ejemplo de regla CSS */
+            esc_html__('Defínelas en tu tema sobre :root o sobre cualquier contenedor, por ejemplo %s. Mandan sobre el esquema claro u oscuro, así que si tu tema tiene modo oscuro defínelas también allí.', 'snowy-wp'),
+            '<code>.entry-content{--snowy-accent:#b45309;--snowy-radius:4px}</code>'
+        ); ?></p>
+        <table class="widefat striped" style="max-width:980px">
+            <thead><tr>
+                <th style="width:290px"><?php esc_html_e('Variable', 'snowy-wp'); ?></th>
+                <th><?php esc_html_e('Qué cambia', 'snowy-wp'); ?></th>
+                <th style="width:220px"><?php esc_html_e('Por defecto', 'snowy-wp'); ?></th>
+            </tr></thead>
+            <tbody>
+            <?php foreach (SNOWY_WP_TOKENS_HELP as $token => $row) : ?>
+                <tr>
+                    <td><code style="user-select:all"><?php echo esc_html($token); ?></code></td>
+                    <td><?php echo esc_html($row[0]); ?></td>
+                    <td><code><?php echo esc_html($row[1]); ?></code></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        <p style="max-width:900px;color:#646970"><?php esc_html_e('Para un bloque oscuro dentro de una página clara, añade la clase snowy-wp--dark a cualquier contenedor; snowy-wp--light hace lo contrario y snowy-wp--auto sigue al dispositivo.', 'snowy-wp'); ?></p>
+
+        <h3><?php esc_html_e('Plantillas del tema', 'snowy-wp'); ?></h3>
+        <p style="max-width:900px"><?php printf(
+            /* translators: 1: ruta en el tema, 2: carpeta del plugin */
+            esc_html__('Para cambiar el HTML de un widget, copia su plantilla de %2$s a %1$s y edítala. Se busca primero en el tema hijo y después en el padre. Las plantillas reciben los datos ya preparados y las variables $classes, $tag, $show_head y $atts.', 'snowy-wp'),
+            '<code>wp-content/themes/&lt;tu-tema&gt;/snowy-wp/&lt;widget&gt;.php</code>',
+            '<code>wp-content/plugins/snowy-wp/templates/</code>'
+        ); ?></p>
+        <p style="max-width:900px;color:#646970"><?php esc_html_e('Plantillas disponibles:', 'snowy-wp'); ?>
+            <?php echo esc_html(implode(', ', array_map(static fn($f) => basename($f, '.php'), glob(SNOWY_WP_DIR . 'templates/*.php') ?: []))); ?>.
+        </p>
+
+        <h3><?php esc_html_e('Filtros y acciones', 'snowy-wp'); ?></h3>
+        <table class="widefat striped" style="max-width:980px">
+            <tbody>
+            <?php foreach (SNOWY_WP_HOOKS_HELP as $hook => $help) : ?>
+                <tr>
+                    <td style="width:290px"><code style="user-select:all"><?php echo esc_html($hook); ?></code></td>
+                    <td><?php echo esc_html($help); ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        <pre style="max-width:900px;background:#f6f7f7;padding:.75rem;overflow:auto"><?php echo esc_html("add_filter('snowy_wp_widget_data_embalses', function (\$data) {
+    \$data['title'] = 'Nuestros pantanos';
+    return \$data;
+});
+
+add_filter('snowy_wp_api_base', fn() => 'https://staging-api.ejemplo.es');"); ?></pre>
 
         <h2><?php esc_html_e('Composiciones listas', 'snowy-wp'); ?></h2>
         <p style="max-width:900px">

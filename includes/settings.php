@@ -38,8 +38,14 @@ function snowy_wp_sanitize_settings($input)
         'stations_url' => esc_url_raw($input['stations_url'] ?? ''),
         'heading_level' => SNOWY_WP_HEADING_LEVELS[$input['heading_level'] ?? ''] ?? 'h3',
         'accent'        => empty($input['accent_reset']) && preg_match('/^#[0-9a-fA-F]{6}$/', $input['accent'] ?? '') ? $input['accent'] : '',
+        'radius'        => isset($input['radius']) && is_numeric($input['radius'])
+            ? (string) max(0, min(SNOWY_WP_RADIUS_MAX, (int) $input['radius']))
+            : '',
+        'font'          => array_key_exists($input['font'] ?? '', SNOWY_WP_FONTS) ? $input['font'] : 'inherit',
+        'scheme'        => SNOWY_WP_SCHEMES[$input['scheme'] ?? ''] ?? 'light',
         'attribution'  => !empty($input['attribution']),
         'css_siempre'  => !empty($input['css_siempre']),
+        'css_disabled' => !empty($input['css_disabled']),
         // El shortcode se guarda tal cual porque es lo que se va a ejecutar; lo
         // que decide que se puede ejecutar es do_shortcode, que solo atiende a
         // los que hay registrados.
@@ -172,6 +178,41 @@ function snowy_wp_settings_page()
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row"><label for="snowy_wp_radius"><?php esc_html_e('Redondeo de las esquinas', 'snowy-wp'); ?></label></th>
+                    <td>
+                        <input type="number" class="small-text" id="snowy_wp_radius" min="0" max="<?php echo esc_attr(SNOWY_WP_RADIUS_MAX); ?>" step="1"
+                               name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[radius]"
+                               value="<?php echo esc_attr($options['radius']); ?>" placeholder="14"> px
+                        <p class="description"><?php esc_html_e('0 deja las cajas en ángulo recto. Vacío mantiene el redondeo de Snowy.', 'snowy-wp'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="snowy_wp_font"><?php esc_html_e('Tipografía', 'snowy-wp'); ?></label></th>
+                    <td>
+                        <select id="snowy_wp_font" name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[font]">
+                            <option value="inherit" <?php selected($options['font'], 'inherit'); ?>><?php esc_html_e('La de mi tema', 'snowy-wp'); ?></option>
+                            <option value="system" <?php selected($options['font'], 'system'); ?>><?php esc_html_e('La del sistema del lector', 'snowy-wp'); ?></option>
+                        </select>
+                        <p class="description"><?php esc_html_e('Con la del sistema, los widgets usan la letra nativa del dispositivo, también en los títulos.', 'snowy-wp'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="snowy_wp_scheme"><?php esc_html_e('Esquema de color', 'snowy-wp'); ?></label></th>
+                    <td>
+                        <select id="snowy_wp_scheme" name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[scheme]">
+                            <option value="light" <?php selected($options['scheme'], 'light'); ?>><?php esc_html_e('Claro', 'snowy-wp'); ?></option>
+                            <option value="dark" <?php selected($options['scheme'], 'dark'); ?>><?php esc_html_e('Oscuro', 'snowy-wp'); ?></option>
+                            <option value="auto" <?php selected($options['scheme'], 'auto'); ?>><?php esc_html_e('Automático, según el dispositivo', 'snowy-wp'); ?></option>
+                        </select>
+                        <p class="description"><?php esc_html_e('Cada widget puede cambiarlo con el atributo esquema o desde el panel del bloque.', 'snowy-wp'); ?></p>
+                        <p class="description"><?php printf(
+                            /* translators: %s: enlace a la ayuda de personalizacion */
+                            esc_html__('Variables CSS, plantillas propias en el tema y filtros: %s.', 'snowy-wp'),
+                            '<a href="' . esc_url(admin_url('admin.php?page=snowy-wp-widgets#snowy-wp-personalizar')) . '">' . esc_html__('Personalizar el aspecto', 'snowy-wp') . '</a>'
+                        ); ?></p>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row"><label for="snowy_wp_stations_url"><?php esc_html_e('Página de estaciones', 'snowy-wp'); ?></label></th>
                     <td>
                         <input type="url" class="regular-text" id="snowy_wp_stations_url"
@@ -226,6 +267,11 @@ function snowy_wp_settings_page()
                             <?php esc_html_e('Cargar los estilos en todas las páginas', 'snowy-wp'); ?>
                         </label>
                         <p class="description"><?php esc_html_e('Normalmente no hace falta: los estilos viajan solo con las páginas que llevan un widget. Actívalo si tu tema llama a los shortcodes desde una plantilla y ves los widgets sin formato.', 'snowy-wp'); ?></p>
+                        <label style="display:block;margin-top:.75rem">
+                            <input type="checkbox" name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[css_disabled]" value="1" <?php checked(!empty($options['css_disabled'])); ?>>
+                            <?php esc_html_e('No cargar los estilos del plugin', 'snowy-wp'); ?>
+                        </label>
+                        <p class="description"><?php esc_html_e('Para temas que visten los widgets por su cuenta: el plugin solo pinta el HTML, con sus clases, y no imprime ninguna hoja.', 'snowy-wp'); ?></p>
                     </td>
                 </tr>
             </table>

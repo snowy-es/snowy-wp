@@ -20,7 +20,7 @@ function snowy_wp_connection_status()
         return ['estado' => 'sin-clave', 'code' => 0, 'limite' => null, 'restantes' => null];
     }
 
-    $res = wp_remote_get(SNOWY_WP_API . '/stations/markers', [
+    $res = wp_remote_get(snowy_wp_api_base() . '/stations/markers', [
         'timeout' => 10,
         'headers' => snowy_wp_auth_headers(),
     ]);

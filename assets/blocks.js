@@ -366,7 +366,55 @@
 		} );
 	}
 
+	var SI_NO = {
+		toValue: function ( on ) {
+			return on ? 'si' : 'no';
+		},
+		fromValue: function ( v ) {
+			return v !== 'no';
+		},
+	};
+
+	var APARIENCIA_ATTRS = {
+		cabecera: { type: 'string', default: 'si' },
+		variante: { type: 'string', default: '' },
+		esquema: { type: 'string', default: '' },
+	};
+
+	var APARIENCIA = [
+		{
+			type: 'toggle',
+			attr: 'cabecera',
+			label: __( 'Mostrar la cabecera', 'snowy-wp' ),
+			help: __( 'Quítala si el widget va bajo un título tuyo.', 'snowy-wp' ),
+			toValue: SI_NO.toValue,
+			fromValue: SI_NO.fromValue,
+		},
+		{
+			type: 'select',
+			attr: 'variante',
+			label: __( 'Tamaño', 'snowy-wp' ),
+			options: [
+				{ label: __( 'Normal', 'snowy-wp' ), value: '' },
+				{ label: __( 'Compacto', 'snowy-wp' ), value: 'compacta' },
+			],
+		},
+		{
+			type: 'select',
+			attr: 'esquema',
+			label: __( 'Esquema de color', 'snowy-wp' ),
+			options: [
+				{ label: __( 'El de los ajustes', 'snowy-wp' ), value: '' },
+				{ label: __( 'Claro', 'snowy-wp' ), value: 'claro' },
+				{ label: __( 'Oscuro', 'snowy-wp' ), value: 'oscuro' },
+				{ label: __( 'Automático', 'snowy-wp' ), value: 'auto' },
+			],
+		},
+	];
+
 	BLOQUES.forEach( function ( b ) {
+		b.attributes = Object.assign( {}, b.attributes, APARIENCIA_ATTRS );
+
 		blocks.registerBlockType( b.name, {
 			apiVersion: 2,
 			title: b.title,
@@ -388,6 +436,13 @@
 							PanelBody,
 							{ title: b.panel },
 							b.controls.map( function ( c ) {
+								return render( c, props );
+							} )
+						),
+						el(
+							PanelBody,
+							{ title: __( 'Apariencia', 'snowy-wp' ), initialOpen: false },
+							APARIENCIA.map( function ( c ) {
 								return render( c, props );
 							} )
 						)
