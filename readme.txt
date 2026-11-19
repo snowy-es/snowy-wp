@@ -39,11 +39,11 @@ la página.
 
 El aspecto se puede cambiar a tres alturas, sin tocar el plugin:
 
-* Ajustes > Snowy: color de acento, redondeo de las esquinas, tipografía (la del
-  tema o la del sistema), esquema claro, oscuro o automático, y una casilla para
+* Ajustes > Snowy: color de acento, redondeo de las esquinas, tipografía (la de
+  Snowy, la del tema o la del sistema), esquema claro, oscuro o automático, y una casilla para
   no cargar los estilos del plugin si tu tema los viste por su cuenta.
 * Variables CSS con el prefijo `--snowy-` (texto, bordes, fondos, acento,
-  redondeo, sombra, tipografía y colores de subida, bajada y lluvia), que se
+  redondeo, sombra, tipografía de texto y de títulos, y colores de subida, bajada y lluvia), que se
   definen en el tema sobre `:root` o sobre cualquier contenedor. Las clases
   `snowy-wp--dark`, `snowy-wp--light` y `snowy-wp--auto` cambian el esquema de
   una zona de la página.
@@ -114,7 +114,13 @@ evita que un artículo de hace un mes muestre la temperatura de hoy.
   adicional del editor.
 * Filtros sobre los datos, el HTML, las clases, la plantilla, la hoja y la URL
   de la API; `SNOWY_WP_API` se puede definir en `wp-config.php`.
-* Con los ajustes por defecto, los widgets se pintan igual que en la 2.5.4.
+* Aspecto por defecto nuevo, el de snowy.es: azul cobalto, títulos y cifras
+  grandes en Snowy Serif y texto en Snowy Sans, el metadato bajo el título,
+  esquinas de 6 px, sombra fina, avisos con los colores de AEMET y punto de
+  color, red de cada estación con su punto y esquema oscuro con la paleta de
+  la web. La tipografía del tema o la del sistema siguen en los ajustes.
+* Las fuentes Snowy Sans (de Geist) y Snowy Serif (de Fraunces) van en
+  `assets/fonts` con su licencia SIL Open Font License 1.1.
 
 = 2.5.4 =
 * Un día sin avisos de AEMET ya no muestra los del día anterior: una lista

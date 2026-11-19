@@ -41,7 +41,7 @@ function snowy_wp_sanitize_settings($input)
         'radius'        => isset($input['radius']) && is_numeric($input['radius'])
             ? (string) max(0, min(SNOWY_WP_RADIUS_MAX, (int) $input['radius']))
             : '',
-        'font'          => array_key_exists($input['font'] ?? '', SNOWY_WP_FONTS) ? $input['font'] : 'inherit',
+        'font'          => array_key_exists($input['font'] ?? '', SNOWY_WP_FONTS) ? $input['font'] : 'snowy',
         'scheme'        => SNOWY_WP_SCHEMES[$input['scheme'] ?? ''] ?? 'light',
         'attribution'  => !empty($input['attribution']),
         'css_siempre'  => !empty($input['css_siempre']),
@@ -169,7 +169,7 @@ function snowy_wp_settings_page()
                     <td>
                         <input type="color" id="snowy_wp_accent"
                                name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[accent]"
-                               value="<?php echo esc_attr($options['accent'] ?: '#0369a1'); ?>">
+                               value="<?php echo esc_attr($options['accent'] ?: '#2254d3'); ?>">
                         <label style="margin-left:1rem">
                             <input type="checkbox" name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[accent_reset]" value="1">
                             <?php esc_html_e('Volver al azul de Snowy', 'snowy-wp'); ?>
@@ -182,7 +182,7 @@ function snowy_wp_settings_page()
                     <td>
                         <input type="number" class="small-text" id="snowy_wp_radius" min="0" max="<?php echo esc_attr(SNOWY_WP_RADIUS_MAX); ?>" step="1"
                                name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[radius]"
-                               value="<?php echo esc_attr($options['radius']); ?>" placeholder="14"> px
+                               value="<?php echo esc_attr($options['radius']); ?>" placeholder="6"> px
                         <p class="description"><?php esc_html_e('0 deja las cajas en ángulo recto. Vacío mantiene el redondeo de Snowy.', 'snowy-wp'); ?></p>
                     </td>
                 </tr>
@@ -190,10 +190,11 @@ function snowy_wp_settings_page()
                     <th scope="row"><label for="snowy_wp_font"><?php esc_html_e('Tipografía', 'snowy-wp'); ?></label></th>
                     <td>
                         <select id="snowy_wp_font" name="<?php echo esc_attr(SNOWY_WP_OPTION); ?>[font]">
+                            <option value="snowy" <?php selected($options['font'], 'snowy'); ?>><?php esc_html_e('La de Snowy', 'snowy-wp'); ?></option>
                             <option value="inherit" <?php selected($options['font'], 'inherit'); ?>><?php esc_html_e('La de mi tema', 'snowy-wp'); ?></option>
                             <option value="system" <?php selected($options['font'], 'system'); ?>><?php esc_html_e('La del sistema del lector', 'snowy-wp'); ?></option>
                         </select>
-                        <p class="description"><?php esc_html_e('Con la del sistema, los widgets usan la letra nativa del dispositivo, también en los títulos.', 'snowy-wp'); ?></p>
+                        <p class="description"><?php esc_html_e('La de Snowy es la de snowy.es: Snowy Sans para el texto y Snowy Serif para títulos y cifras grandes, servidas desde el plugin solo en las páginas con widgets. Con la de tu tema o la del sistema no se descarga ninguna fuente; con la del sistema, también los títulos usan la letra nativa del dispositivo.', 'snowy-wp'); ?></p>
                     </td>
                 </tr>
                 <tr>

@@ -102,40 +102,62 @@ function snowy_wp_enqueue_styles()
 
 const SNOWY_WP_PALETTES = [
     'light' => [
-        'ink'         => '#0f172a',
-        'ink-2'       => '#334155',
-        'label'       => '#475569',
-        'mute'        => '#64748b',
-        'line'        => '#e2e8f0',
-        'line-soft'   => '#f1f5f9',
-        'bg'          => '#fff',
-        'soft'        => '#f8fafc',
-        'chip'        => '#f1f5f9',
-        'accent'      => '#0369a1',
-        'official-bg' => '#e0f2fe',
-        'official-ink' => '#075985',
-        'up'          => '#0369a1',
-        'down'        => '#c2410c',
-        'wet'         => '#1d4ed8',
-        'shadow'      => '0 1px 2px rgba(15,23,42,.04),0 8px 24px -12px rgba(15,23,42,.12)',
+        'ink'          => '#0c183b',
+        'ink-2'        => '#3d4662',
+        'label'        => '#585f74',
+        'mute'         => '#6d7489',
+        'line'         => '#d3d7e4',
+        'line-soft'    => '#e5e7ef',
+        'bg'           => '#fff',
+        'soft'         => '#f8f9fc',
+        'chip'         => '#ebeef4',
+        'accent'       => '#2254d3',
+        'official-bg'  => '#e9eefb',
+        'official-ink' => '#2254d3',
+        'up'           => '#2254d3',
+        'down'         => '#c24e0a',
+        'wet'          => '#7c3aed',
+        'shadow'       => '0 1px 2px hsl(225 40% 30% / .06),0 1px 1px hsl(225 40% 30% / .04)',
+        'yellow-bg'    => '#fff8d6',
+        'yellow-ink'   => '#775103',
+        'yellow'       => '#f0c000',
+        'orange-bg'    => '#ffefdb',
+        'orange-ink'   => '#914308',
+        'orange'       => '#ff8c00',
+        'red-bg'       => '#fde7e7',
+        'red-ink'      => '#8a1418',
+        'red'          => '#d8181b',
+        'net-official' => '#e87da6',
+        'net-other'    => '#8a8f98',
     ],
     'dark' => [
-        'ink'         => '#e2e8f0',
-        'ink-2'       => '#cbd5e1',
-        'label'       => '#a3b1c6',
-        'mute'        => '#94a3b8',
-        'line'        => '#334155',
-        'line-soft'   => '#1e293b',
-        'bg'          => '#0f172a',
-        'soft'        => '#162033',
-        'chip'        => '#1e293b',
-        'accent'      => '#38bdf8',
-        'official-bg' => '#0c4a6e',
-        'official-ink' => '#bae6fd',
-        'up'          => '#38bdf8',
-        'down'        => '#fb923c',
-        'wet'         => '#7dd3fc',
-        'shadow'      => '0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5)',
+        'ink'          => '#f1f3f9',
+        'ink-2'        => '#c5c7cf',
+        'label'        => '#a0a7ba',
+        'mute'         => '#999ca6',
+        'line'         => '#2d3349',
+        'line-soft'    => '#23293c',
+        'bg'           => '#141929',
+        'soft'         => '#171c2b',
+        'chip'         => '#1f2538',
+        'accent'       => '#6e97f7',
+        'official-bg'  => '#18243f',
+        'official-ink' => '#a1bbf7',
+        'up'           => '#6e97f7',
+        'down'         => '#f58747',
+        'wet'          => '#a78bfa',
+        'shadow'       => '0 1px 2px hsl(224 40% 3% / .5),0 1px 1px hsl(224 40% 3% / .35)',
+        'yellow-bg'    => '#392e0e',
+        'yellow-ink'   => '#fbde6a',
+        'yellow'       => '#f9ce1f',
+        'orange-bg'    => '#3d250f',
+        'orange-ink'   => '#ffbf70',
+        'orange'       => '#ff9f29',
+        'red-bg'       => '#3f1212',
+        'red-ink'      => '#f98b8b',
+        'red'          => '#f04242',
+        'net-official' => '#d55383',
+        'net-other'    => '#8a8f98',
     ],
 ];
 
@@ -184,9 +206,8 @@ function snowy_wp_token_css()
         $tokens['--snowy-radius'] = $radius . 'px';
     }
 
-    $font = snowy_wp_font_stack();
-    if ($font !== '') {
-        $tokens['--snowy-font'] = $font;
+    if (snowy_wp_font() === 'system') {
+        $tokens['--snowy-font'] = snowy_wp_font_stack();
     }
 
     $tokens = (array) apply_filters('snowy_wp_css_tokens', $tokens);
@@ -201,12 +222,45 @@ function snowy_wp_token_css()
         $decls .= $name . ':' . $value . ';';
     }
 
-    $css = $decls !== '' ? ':root{' . $decls . '}' : '';
-    if ($font !== '') {
-        $css .= '.snowy-wp-wrap.snowy-wp-wrap .snowy-wp-head>*,.snowy-wp-card.snowy-wp-card .snowy-wp-card-title{font-family:inherit}';
+    return $decls !== '' ? ':root{' . $decls . '}' : '';
+}
+
+/**
+ * Las fuentes de Snowy van detras de la hoja porque tienen que ganar a la regla
+ * base, que con la fuente del tema deja font-family sin valor. Leen las
+ * variables publicas con la familia como reserva y no escriben nada en :root:
+ * un tema que defina --snowy-font o --snowy-font-heading sigue mandando.
+ */
+function snowy_wp_font_css()
+{
+    $font = snowy_wp_font();
+    if ($font === 'system') {
+        return '.snowy-wp-wrap.snowy-wp-wrap .snowy-wp-head>*,.snowy-wp-card.snowy-wp-card .snowy-wp-card-title{font-family:inherit}';
+    }
+    if ($font !== 'snowy') {
+        return '';
     }
 
-    return $css;
+    $base = plugins_url('assets/fonts/', SNOWY_WP_FILE);
+    $css  = '';
+    foreach (SNOWY_WP_FONT_FILES as $family => $files) {
+        foreach ($files as $weight => $file) {
+            $css .= sprintf(
+                '@font-face{font-family:"%s";src:url("%s") format("woff2");font-weight:%s;font-style:normal;font-display:swap}',
+                $family,
+                esc_url($base . $file),
+                $weight
+            );
+        }
+    }
+
+    $headings = '.snowy-wp-wrap.snowy-wp-wrap .snowy-wp-head>:not(.snowy-wp-tag),.snowy-wp-card.snowy-wp-card .snowy-wp-card-title,'
+        . '.snowy-wp-total-figure strong,.snowy-wp-air-index strong,.snowy-wp-card-grid strong,.snowy-wp-card-grid dd';
+
+    return $css
+        . '.snowy-wp-wrap.snowy-wp-wrap,.snowy-wp-card.snowy-wp-card{font-family:var(--snowy-font,' . SNOWY_WP_FONTS['snowy'] . ')}'
+        . $headings . '{font-family:var(--snowy-font-heading,' . SNOWY_WP_FONT_HEADING . ');font-optical-sizing:auto}'
+        . '.snowy-wp-card-grid dd small{font-family:var(--snowy-font,' . SNOWY_WP_FONTS['snowy'] . ')}';
 }
 
 function snowy_wp_css_with_accent()
@@ -220,7 +274,7 @@ function snowy_wp_css_with_accent()
         return '';
     }
 
-    return (string) apply_filters('snowy_wp_css', snowy_wp_token_css() . snowy_wp_scheme_css() . $css);
+    return (string) apply_filters('snowy_wp_css', snowy_wp_token_css() . snowy_wp_scheme_css() . $css . snowy_wp_font_css());
 }
 
 /**

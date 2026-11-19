@@ -18,7 +18,7 @@ const SNOWY_WP_DEFAULTS = [
     'heading_level'   => 'h3',
     'accent'          => '',
     'radius'          => '',
-    'font'            => 'inherit',
+    'font'            => 'snowy',
     'scheme'          => 'light',
     'css_siempre'     => false,
     'css_disabled'    => false,
@@ -105,8 +105,16 @@ function snowy_wp_accent()
 }
 
 const SNOWY_WP_FONTS = [
+    'snowy'   => '"Snowy Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
     'inherit' => '',
     'system'  => 'system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif',
+];
+
+const SNOWY_WP_FONT_HEADING = '"Snowy Serif",ui-serif,Georgia,serif';
+
+const SNOWY_WP_FONT_FILES = [
+    'Snowy Sans'  => ['400' => 'SnowySans-400.woff2', '500' => 'SnowySans-500.woff2', '600' => 'SnowySans-600.woff2', '700' => 'SnowySans-700.woff2'],
+    'Snowy Serif' => ['100 900' => 'SnowySerif.woff2'],
 ];
 
 const SNOWY_WP_SCHEMES = ['light' => 'light', 'dark' => 'dark', 'auto' => 'auto'];
@@ -120,9 +128,16 @@ function snowy_wp_radius()
     return is_numeric($radius) ? max(0, min(SNOWY_WP_RADIUS_MAX, (int) $radius)) : null;
 }
 
+function snowy_wp_font()
+{
+    $font = (string) snowy_wp_option('font');
+
+    return array_key_exists($font, SNOWY_WP_FONTS) ? $font : 'snowy';
+}
+
 function snowy_wp_font_stack()
 {
-    return SNOWY_WP_FONTS[(string) snowy_wp_option('font')] ?? '';
+    return SNOWY_WP_FONTS[snowy_wp_font()];
 }
 
 function snowy_wp_scheme()
