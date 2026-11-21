@@ -5,8 +5,8 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * La red americana no se nombra nunca por su nombre comercial de cara al
- * lector: se identifica por lo que es, una estacion de aficionado.
+ * La red americana no se nombra nunca de cara al lector: sus estaciones son de
+ * la red de Snowy, que es de donde las saca el lector.
  */
 const SNOWY_WP_NETWORK_LABELS = [
     'AEMET' => 'AEMET',
@@ -14,7 +14,7 @@ const SNOWY_WP_NETWORK_LABELS = [
 
 function snowy_wp_network_label($network)
 {
-    return SNOWY_WP_NETWORK_LABELS[$network] ?? __('estación de aficionado', 'snowy-wp');
+    return SNOWY_WP_NETWORK_LABELS[$network] ?? 'Snowy';
 }
 
 function snowy_wp_network_badge($network)
