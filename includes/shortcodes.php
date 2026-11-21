@@ -7,31 +7,19 @@ if (!defined('ABSPATH')) {
 /**
  * [snowy_extremos] — maximas y minimas del dia.
  *
- * Usa today.tmax / today.tmin, que son extremos ya cerrados y homogeneos entre
- * redes, a diferencia de la precipitacion.
+ * Las maximas y minimas de hoy del ranking del engine: solo estaciones con el
+ * resumen del dia en curso, sin lecturas marcadas por el control de calidad.
  */
 function snowy_wp_shortcode_extremos($atts = [])
 {
     $atts = snowy_wp_atts(['limite' => 8, 'nivel' => ''], $atts, 'snowy_extremos');
     snowy_wp_use_styles();
 
-    $stations = snowy_wp_stations();
-    if (!$stations) {
+    $hot  = snowy_wp_ranked(SNOWY_WP_METRICS['maxima'], 'desc', $atts['limite']);
+    $cold = snowy_wp_ranked(SNOWY_WP_METRICS['minima'], 'asc', $atts['limite']);
+    if (!$hot || !$cold) {
         return '';
     }
-
-    $withMax = array_filter($stations, static fn($s) => isset($s['today']['tmax']) && $s['today']['tmax'] !== null);
-    $withMin = array_filter($stations, static fn($s) => isset($s['today']['tmin']) && $s['today']['tmin'] !== null);
-    if (!$withMax || !$withMin) {
-        return '';
-    }
-
-    usort($withMax, static fn($a, $b) => $b['today']['tmax'] <=> $a['today']['tmax']);
-    usort($withMin, static fn($a, $b) => $a['today']['tmin'] <=> $b['today']['tmin']);
-
-    $limit = max(1, (int) $atts['limite']);
-    $hot   = array_slice($withMax, 0, $limit);
-    $cold  = array_slice($withMin, 0, $limit);
 
     return snowy_wp_render_widget('extremos', [
         'columns' => [
@@ -107,13 +95,10 @@ function snowy_wp_shortcode_viento($atts = [])
     $atts = snowy_wp_atts(['limite' => 8, 'nivel' => ''], $atts, 'snowy_viento');
     snowy_wp_use_styles();
 
-    $stations = array_filter(snowy_wp_stations(), static fn($s) => isset($s['today']['gustMax']) && $s['today']['gustMax'] !== null);
+    $stations = snowy_wp_ranked(SNOWY_WP_METRICS['racha'], 'desc', $atts['limite']);
     if (!$stations) {
         return '';
     }
-
-    usort($stations, static fn($a, $b) => $b['today']['gustMax'] <=> $a['today']['gustMax']);
-    $stations = array_slice($stations, 0, max(1, (int) $atts['limite']));
 
     return snowy_wp_render_widget('viento', [
         'title'    => __('Rachas más fuertes de hoy', 'snowy-wp'),

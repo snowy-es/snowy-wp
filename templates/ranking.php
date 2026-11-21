@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
             <tr>
                 <td><?php echo snowy_wp_station_link($s); ?></td>
                 <td class="snowy-wp-val"><?php
-                    echo esc_html(snowy_wp_format_metric(snowy_wp_field($s, $metric['campo']), $metric));
+                    echo esc_html(snowy_wp_format_metric(snowy_wp_field($s, 'valor'), $metric));
                 ?></td>
                 <td class="snowy-wp-ranking__net"><?php echo snowy_wp_network_badge($s['network'] ?? ''); ?></td>
             </tr>

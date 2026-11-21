@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.10.1
+Stable tag: 2.11.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,13 @@ evita que un artículo de hace un mes muestre la temperatura de hoy.
 Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 
 == Changelog ==
+
+= 2.11.0 =
+* Los rankings (`[snowy_ranking]`, `[snowy_lluvia]`, `[snowy_viento]` y `[snowy_extremos]`) salen del ranking del engine
+  (`/stations/ranking`, contrato 1.9.0) en vez de ordenar los marcadores en PHP. Descartan las
+  lecturas marcadas por el control de calidad y los valores imposibles, cuentan solo estaciones
+  vivas (o con el resumen de hoy en máxima, mínima y racha) y dan las mismas cifras que snowy.es.
+* La presión se ordena reducida al nivel del mar, comparable entre estaciones a distinta altura.
 
 = 2.10.1 =
 * En móvil, el nombre del día de la previsión ya no se parte («Miérco-les»): su columna pasa
