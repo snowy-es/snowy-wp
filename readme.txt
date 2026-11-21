@@ -121,7 +121,7 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 == Changelog ==
 
 = 2.11.0 =
-* Los rankings (`[snowy_ranking]` y `[snowy_lluvia]`) salen del ranking del engine
+* Los rankings (`[snowy_ranking]`, `[snowy_lluvia]`, `[snowy_viento]` y `[snowy_extremos]`) salen del ranking del engine
   (`/stations/ranking`, contrato 1.9.0) en vez de ordenar los marcadores en PHP. Descartan las
   lecturas marcadas por el control de calidad y los valores imposibles, cuentan solo estaciones
   vivas (o con el resumen de hoy en máxima, mínima y racha) y dan las mismas cifras que snowy.es.
