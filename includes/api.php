@@ -159,33 +159,25 @@ function snowy_wp_stations_key()
 
 function snowy_wp_stations()
 {
-    $region = trim((string) snowy_wp_option('region'));
+    return snowy_wp_cached(snowy_wp_stations_key(), SNOWY_WP_TTL_STATIONS, static function () {
+        $path = snowy_wp_regional_path('/stations/markers');
+        $stations = $path === null ? null : snowy_wp_get($path);
 
-    return snowy_wp_cached(snowy_wp_stations_key(), SNOWY_WP_TTL_STATIONS, static function () use ($region) {
-        $all = snowy_wp_get('/stations/markers');
-        if ($all === null) {
-            return null;
-        }
-        if ($region === '') {
-            return array_values($all);
-        }
-
-        return array_values(array_filter($all, static function ($s) use ($region) {
-            return isset($s['state']) && $s['state'] === $region;
-        }));
+        return $stations === null ? null : array_values($stations);
     });
 }
 
 /**
- * Avisos de AEMET agrupados por dia. La fuente devuelve tres dias para toda
- * España y el filtro por comunidad se aplica aqui.
+ * Avisos de AEMET de la region configurada, agrupados por dia. El engine
+ * decide a que region pertenece cada zona de aviso.
  */
 function snowy_wp_hazards()
 {
     $region = trim((string) snowy_wp_option('region'));
 
-    return snowy_wp_cached('hazards_' . md5($region), SNOWY_WP_TTL_HAZARDS, static function () use ($region) {
-        $all = snowy_wp_get('/hazards');
+    return snowy_wp_cached('hazards_' . md5($region), SNOWY_WP_TTL_HAZARDS, static function () {
+        $path = snowy_wp_regional_path('/hazards');
+        $all = $path === null ? null : snowy_wp_get($path);
         if ($all === null) {
             return null;
         }
@@ -198,9 +190,7 @@ function snowy_wp_hazards()
 
         $out = [];
         foreach ($days as $key => $label) {
-            $items = array_values(array_filter($all[$key] ?? [], static function ($a) use ($region) {
-                return $region === '' || (isset($a['ccaa']) && $a['ccaa'] === $region);
-            }));
+            $items = array_values($all[$key] ?? []);
             if ($items) {
                 $out[] = ['label' => $label, 'items' => $items];
             }

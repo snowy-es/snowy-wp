@@ -88,132 +88,53 @@ function snowy_wp_location($slug)
 }
 
 /**
- * Los tres modelos con los que snowy.es forma su consenso. El primero que
- * responde manda en los valores y los otros dos miden el acuerdo: promediar
- * modelos distintos produce un tiempo que ninguno predice.
- */
-const SNOWY_WP_CONSENSUS_MODELS = [
-    'ecmwf_ifs'        => 'ECMWF',
-    'gfs_global'       => 'GFS',
-    'dwd_icon_global'  => 'ICON',
-];
-
-const SNOWY_WP_FORECAST_DAILY = 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max';
-
-/**
- * Un modelo por encima del umbral de traza ya cuenta como que predice lluvia,
- * igual que en snowy.es.
- */
-const SNOWY_WP_RAIN_THRESHOLD = 0.1;
-
-function snowy_wp_forecast_model($lat, $lon, $days, $model)
-{
-    $query = [
-        'lat'           => $lat,
-        'lon'           => $lon,
-        'forecast_days' => $days,
-        'model'         => $model,
-        'daily'         => SNOWY_WP_FORECAST_DAILY,
-    ];
-
-    return snowy_wp_get('/weather/forecast?' . http_build_query($query));
-}
-
-/**
- * Previsión por días con el acuerdo entre modelos de cada uno.
- *
- * Se cachea el consenso ya calculado y no cada modelo por separado: lo que se
- * pinta es el conjunto, y guardar tres respuestas completas para volver a
- * recorrerlas en cada visita no aporta nada.
+ * Previsión por días con el consenso que calcula el engine: ECMWF, GFS e ICON,
+ * los mismos modelos y la misma fórmula de confianza que snowy.es.
  */
 function snowy_wp_forecast($lat, $lon, $days)
 {
-    return snowy_wp_cached('fc_' . md5("$lat|$lon|$days"), SNOWY_WP_TTL_FORECAST, static function () use ($lat, $lon, $days) {
-        $respuestas = [];
-        foreach (SNOWY_WP_CONSENSUS_MODELS as $model => $label) {
-            $data = snowy_wp_forecast_model($lat, $lon, $days, $model);
-            if (isset($data['daily']['time']) && $data['daily']['time']) {
-                $respuestas[$label] = $data['daily'];
-            }
-        }
+    return snowy_wp_cached('fc2_' . md5("$lat|$lon|$days"), SNOWY_WP_TTL_FORECAST, static function () use ($lat, $lon, $days) {
+        $consensus = snowy_wp_get('/weather/forecast/consensus?' . http_build_query([
+            'lat'  => $lat,
+            'lon'  => $lon,
+            'days' => $days,
+        ]));
 
-        return $respuestas ? snowy_wp_forecast_consensus($respuestas) : null;
+        return isset($consensus['days']) && $consensus['days'] ? snowy_wp_forecast_view($consensus) : null;
     });
 }
 
-function snowy_wp_forecast_consensus($respuestas)
+function snowy_wp_forecast_view($consensus)
 {
-    $labels = array_keys($respuestas);
-    $base   = $respuestas[$labels[0]];
-    $total  = count($respuestas);
-
     $dias = [];
-    foreach ($base['time'] as $i => $fecha) {
-        $maximas = [];
-        $conLluvia = 0;
-        foreach ($respuestas as $daily) {
-            if (isset($daily['temperature_2m_max'][$i]) && $daily['temperature_2m_max'][$i] !== null) {
-                $maximas[] = (float) $daily['temperature_2m_max'][$i];
-            }
-            if ((float) ($daily['precipitation_sum'][$i] ?? 0) > SNOWY_WP_RAIN_THRESHOLD) {
-                $conLluvia++;
-            }
-        }
-
-        $acuerdo = snowy_wp_temperature_agreement($maximas);
-        $lluvia  = $total ? (int) round(($conLluvia / $total) * 100) : 0;
-
+    foreach ($consensus['days'] as $day) {
         $dias[] = [
-            'fecha'      => $fecha,
-            'tmax'       => $base['temperature_2m_max'][$i] ?? null,
-            'tmin'       => $base['temperature_2m_min'][$i] ?? null,
-            'codigo'     => $base['weather_code'][$i] ?? 3,
-            'mm'         => $base['precipitation_sum'][$i] ?? null,
-            'racha'      => $base['wind_gusts_10m_max'][$i] ?? null,
-            'lluvia'     => $lluvia,
-            'conLluvia'  => $conLluvia,
-            'dispersion' => snowy_wp_spread($maximas),
-            'confianza'  => snowy_wp_confidence($acuerdo, $lluvia, $i),
+            'fecha'      => $day['date'],
+            'tmax'       => $day['temperatureMax'] ?? null,
+            'tmin'       => $day['temperatureMin'] ?? null,
+            'codigo'     => $day['weatherCode'] ?? 3,
+            'mm'         => $day['precipitation'] ?? null,
+            'racha'      => $day['windGust'] ?? null,
+            'lluvia'     => (int) ($day['rainAgreement'] ?? 0),
+            'conLluvia'  => (int) ($day['modelsWithRain'] ?? 0),
+            'dispersion' => (float) ($day['temperatureSpread'] ?? 0),
+            'confianza'  => snowy_wp_confidence_view($day['confidence'] ?? ''),
         ];
     }
 
-    return ['modelos' => $labels, 'total' => $total, 'dias' => $dias];
+    return [
+        'modelos' => $consensus['models'] ?? [],
+        'total'   => (int) ($consensus['totalModels'] ?? 0),
+        'dias'    => $dias,
+    ];
 }
 
-function snowy_wp_spread($valores)
+function snowy_wp_confidence_view($level)
 {
-    return count($valores) < 2 ? 0.0 : max($valores) - min($valores);
-}
-
-/**
- * Cuanto se parecen los modelos entre si, en porcentaje. Dos grados de
- * diferencia se llevan veinte puntos.
- */
-function snowy_wp_temperature_agreement($valores)
-{
-    if (count($valores) < 2) {
-        return 100;
-    }
-
-    return (int) max(0, round(100 - snowy_wp_spread($valores) * 10));
-}
-
-/**
- * Confianza del dia, con la misma formula que snowy.es: el acuerdo termico pesa
- * mas que el de lluvia, la lluvia solo suma cuando los modelos van todos a una
- * —da igual si es a llover o a no llover— y cada dia de distancia resta.
- */
-function snowy_wp_confidence($acuerdo, $lluvia, $dia)
-{
-    $penalizacion = min($dia * 5, 25);
-    $termica      = $acuerdo - $penalizacion;
-    $precipita    = ($lluvia >= 80 || $lluvia <= 20) ? 100 : 60;
-    $total        = $termica * 0.6 + $precipita * 0.4;
-
-    if ($total >= 80) {
+    if ($level === 'high') {
         return ['label' => __('Alta', 'snowy-wp'), 'class' => 'is-good'];
     }
-    if ($total >= 50) {
+    if ($level === 'medium') {
         return ['label' => __('Media', 'snowy-wp'), 'class' => 'is-moderate'];
     }
 
