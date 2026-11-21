@@ -198,6 +198,55 @@ function snowy_wp_climate_profile($place, $include = 'annual,trends')
     });
 }
 
+/**
+ * Clima de todos los municipios de una región en una sola llamada: calentamiento,
+ * heladas y días de calor de antes y de ahora, y el slug de snowy.es/clima.
+ */
+function snowy_wp_climate_places($region)
+{
+    $region = strtoupper(trim((string) $region));
+    if (!preg_match(SNOWY_WP_REGION_PATTERN, $region)) {
+        return [];
+    }
+
+    $place = ['query' => ['region' => $region]];
+
+    return snowy_wp_climate_fetch('/climate/places', $place, [], SNOWY_WP_TTL_CLIMATE, static function ($raw) {
+        if (empty($raw['places']) || !is_array($raw['places'])) {
+            return null;
+        }
+
+        $places = [];
+        foreach ($raw['places'] as $item) {
+            if (!is_array($item) || empty($item['name']) || !isset($item['lat'], $item['lon'])) {
+                continue;
+            }
+            $indices = [];
+            foreach ((array) ($item['indices'] ?? []) as $key => $index) {
+                $indices[(string) $key] = [
+                    'before' => isset($index['before']) ? (float) $index['before'] : null,
+                    'now'    => isset($index['now']) ? (float) $index['now'] : null,
+                ];
+            }
+            $places[] = [
+                'name'    => (string) $item['name'],
+                'slug'    => isset($item['slug']) ? (string) $item['slug'] : null,
+                'lat'     => (float) $item['lat'],
+                'lon'     => (float) $item['lon'],
+                'change'  => isset($item['change']) ? (float) $item['change'] : null,
+                'indices' => $indices,
+            ];
+        }
+
+        return $places ? [
+            'region'    => (string) ($raw['region'] ?? ''),
+            'change'    => (array) ($raw['change'] ?? []),
+            'beforeNow' => (array) ($raw['beforeNow'] ?? []),
+            'places'    => $places,
+        ] : null;
+    });
+}
+
 function snowy_wp_climate_year($place, $year)
 {
     $year = (int) $year;
