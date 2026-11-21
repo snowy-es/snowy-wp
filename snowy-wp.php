@@ -72,7 +72,6 @@ if (snowy_wp_legacy_is_active()) {
 
 require_once SNOWY_WP_DIR . 'includes/options.php';
 require_once SNOWY_WP_DIR . 'includes/api.php';
-require_once SNOWY_WP_DIR . 'includes/regions.php';
 require_once SNOWY_WP_DIR . 'includes/render.php';
 require_once SNOWY_WP_DIR . 'includes/templates.php';
 require_once SNOWY_WP_DIR . 'includes/assets.php';

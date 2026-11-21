@@ -126,8 +126,8 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
   asignada se queda en la suya aunque su punto caiga en otra.
 * `[snowy_prevision]` pide el consenso de ECMWF, GFS e ICON al engine
   (`/weather/forecast/consensus`) en una sola llamada, con la misma fórmula que antes.
-* El nombre de región guardado en los ajustes se pasa a código con `/regions?name=`; un
-  código ISO (`ES-RI`) también vale.
+* El nombre de región guardado en los ajustes se pasa a código con `/regions?name=`. Si no
+  se resuelve, estaciones y avisos tiran de la última copia buena y se vuelve a intentar.
 * Nueva función `snowy_wp_region_outline()` con el contorno simplificado de una región; guarda
   la última copia buena sin caducidad para que un tema no se quede sin él si la API falla.
 

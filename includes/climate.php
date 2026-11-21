@@ -52,6 +52,7 @@ const SNOWY_WP_CLIMATE_RECORDS = [
     'wettestDay' => ['label' => 'Día más lluvioso', 'unit' => 'mm'],
 ];
 
+const SNOWY_WP_REGION_PATTERN = '/^[A-Z]{2}-[A-Z0-9]{1,3}$/';
 
 function snowy_wp_climate_place($atts)
 {
