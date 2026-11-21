@@ -250,3 +250,59 @@ function snowy_wp_join_models($modelos)
 
     return implode(', ', $modelos) . ' ' . $union . ' ' . $ultimo;
 }
+
+const SNOWY_WP_TTL_SNOW_LINE = HOUR_IN_SECONDS;
+
+/**
+ * La cota de nieve de hoy y los cuatro días siguientes en una rejilla de 0,1° sobre la
+ * región (/snow/line): la más baja con precipitación de cada punto, la más baja del día y
+ * los litros. La calcula Snowy con la isocero de sus modelos.
+ */
+function snowy_wp_snow_line($region)
+{
+    $region = strtoupper(trim((string) $region));
+    if (!preg_match(SNOWY_WP_REGION_PATTERN, $region)) {
+        return [];
+    }
+
+    return snowy_wp_cached('snow_line_' . $region, SNOWY_WP_TTL_SNOW_LINE, static function () use ($region) {
+        $raw = snowy_wp_get('/snow/line?' . http_build_query(['region' => $region]), 25);
+        if (!is_array($raw) || empty($raw['days']) || !is_array($raw['days'])) {
+            return null;
+        }
+
+        $days = [];
+        foreach ($raw['days'] as $day) {
+            if (!is_array($day) || empty($day['date']) || empty($day['cells'])) {
+                continue;
+            }
+            $cells = [];
+            foreach ((array) $day['cells'] as $cell) {
+                if (!isset($cell['lat'], $cell['lon'])) {
+                    continue;
+                }
+                $cells[] = [
+                    'lat'       => (float) $cell['lat'],
+                    'lon'       => (float) $cell['lon'],
+                    'snowLine'  => isset($cell['snowLineM']) ? (int) $cell['snowLineM'] : null,
+                    'lowest'    => isset($cell['lowestM']) ? (int) $cell['lowestM'] : null,
+                    'precip'    => (float) ($cell['precipitationMm'] ?? 0),
+                ];
+            }
+            $days[] = [
+                'date'      => (string) $day['date'],
+                'lowestWet' => isset($day['lowestWetM']) ? (int) $day['lowestWetM'] : null,
+                'wetCells'  => (int) ($day['wetCells'] ?? 0),
+                'cells'     => $cells,
+            ];
+        }
+
+        return $days ? [
+            'region'         => (string) ($raw['region'] ?? $region),
+            'generatedAt'    => (string) ($raw['generatedAt'] ?? ''),
+            'gridDegrees'    => (float) ($raw['gridDegrees'] ?? 0.1),
+            'belowFreezingM' => (int) ($raw['belowFreezingM'] ?? 300),
+            'days'           => $days,
+        ] : null;
+    });
+}
