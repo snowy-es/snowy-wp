@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.10.0
+Stable tag: 2.10.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,10 @@ evita que un artículo de hace un mes muestre la temperatura de hoy.
 Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 
 == Changelog ==
+
+= 2.10.1 =
+* En móvil, el nombre del día de la previsión ya no se parte («Miérco-les»): su columna pasa
+  de 3,2 a 4,6 em.
 
 = 2.10.0 =
 * `snowy_wp_snow_line('ES-RI')` devuelve la cota de nieve de hoy y los cuatro días siguientes
@@ -260,6 +264,9 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 * Versión interna con los cinco shortcodes y sus bloques.
 
 == Upgrade Notice ==
+
+= 2.10.1 =
+Arreglo visual de la previsión en móvil.
 
 = 2.10.0 =
 Función nueva para la cota de nieve de una región. Nada cambia si no la usas.

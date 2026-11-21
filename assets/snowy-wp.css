@@ -248,7 +248,7 @@
   .snowy-wp-days{grid-template-columns:1fr}
   .snowy-wp-day-card{display:grid;align-items:center;gap:.3rem .6rem;text-align:left;
     padding:.85rem 1.15rem;
-    grid-template-columns:3.2em 28px minmax(0,1fr) auto;
+    grid-template-columns:4.6em 28px minmax(0,1fr) auto;
     grid-template-areas:"nombre icono cielo temps" "nombre icono extra confianza"}
   .snowy-wp-day-name{grid-area:nombre;margin:0;display:flex;flex-direction:column}
   .snowy-wp-day-card .snowy-wp-icon{grid-area:icono;width:28px;height:28px}
