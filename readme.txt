@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.8.0
+Stable tag: 2.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,12 @@ evita que un artículo de hace un mes muestre la temperatura de hoy.
 Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 
 == Changelog ==
+
+= 2.9.0 =
+* `snowy_wp_climate_places('ES-RI')` devuelve el clima de todos los municipios de una
+  región en una sola llamada (`/climate/places`): cuánto se han calentado, sus heladas y
+  días de calor de antes y de ahora, y el slug de su página en snowy.es/clima. Sustituye a
+  pedir `snowy_wp_climate_summary` municipio a municipio.
 
 = 2.8.0 =
 * Estaciones y avisos se piden ya filtrados por región (`?region=`): el plugin deja de
@@ -245,6 +251,9 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 * Versión interna con los cinco shortcodes y sus bloques.
 
 == Upgrade Notice ==
+
+= 2.9.0 =
+Función nueva para el clima de todos los municipios de una región. Nada cambia si no la usas.
 
 = 2.8.0 =
 Los widgets piden a la API los datos ya filtrados por región y el consenso ya
