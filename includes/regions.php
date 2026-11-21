@@ -47,8 +47,13 @@ function snowy_wp_regional_path($path)
     return $code === '' ? null : $path . '?' . http_build_query(['region' => $code]);
 }
 
+const SNOWY_WP_OUTLINE_OPTION = 'snowy_wp_outline_';
+
 /**
  * Contorno simplificado de una región (MultiPolygon de GeoJSON, en lon/lat).
+ * La última copia buena se guarda como opción, sin caducidad: un tema que
+ * recorta o dibuja con el contorno no puede quedarse sin él porque la API
+ * falle más de un día.
  */
 function snowy_wp_region_outline($code)
 {
@@ -56,11 +61,22 @@ function snowy_wp_region_outline($code)
         return null;
     }
 
-    $region = snowy_wp_cached('region_outline_' . $code, SNOWY_WP_TTL_REGIONS, static function () use ($code) {
+    $stored = SNOWY_WP_OUTLINE_OPTION . $code;
+    $geometry = snowy_wp_cached('region_outline_' . $code, SNOWY_WP_TTL_REGIONS, static function () use ($code, $stored) {
         $detail = snowy_wp_get('/regions/' . rawurlencode($code) . '?geometry=simplified');
+        $fresh = $detail['region']['geometry'] ?? null;
+        if (isset($fresh['coordinates'])) {
+            update_option($stored, $fresh, false);
+        }
 
-        return $detail['region']['geometry'] ?? null;
+        return $fresh;
     });
 
-    return isset($region['coordinates']) ? $region : null;
+    if (isset($geometry['coordinates'])) {
+        return $geometry;
+    }
+
+    $last = get_option($stored);
+
+    return isset($last['coordinates']) ? $last : null;
 }

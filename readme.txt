@@ -128,7 +128,8 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
   (`/weather/forecast/consensus`) en una sola llamada, con la misma fórmula que antes.
 * El nombre de región guardado en los ajustes se pasa a código con `/regions?name=`; un
   código ISO (`ES-RI`) también vale.
-* Nueva función `snowy_wp_region_outline()` con el contorno simplificado de una región.
+* Nueva función `snowy_wp_region_outline()` con el contorno simplificado de una región; guarda
+  la última copia buena sin caducidad para que un tema no se quede sin él si la API falla.
 
 = 2.7.1 =
 * Los bloques aceptan el nivel del título (`nivel`), como ya hacían los shortcodes: opción
