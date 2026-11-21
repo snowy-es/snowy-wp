@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.9.0
+Stable tag: 2.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,10 @@ evita que un artículo de hace un mes muestre la temperatura de hoy.
 Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 
 == Changelog ==
+
+= 2.9.1 =
+* Las estaciones que no son de AEMET se etiquetan como de la red de Snowy («Snowy») en vez de
+  «estación de aficionado». La red de origen no se nombra nunca.
 
 = 2.9.0 =
 * `snowy_wp_climate_places('ES-RI')` devuelve el clima de todos los municipios de una
@@ -251,6 +255,9 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 * Versión interna con los cinco shortcodes y sus bloques.
 
 == Upgrade Notice ==
+
+= 2.9.1 =
+La etiqueta de red de las estaciones no oficiales pasa a ser «Snowy».
 
 = 2.9.0 =
 Función nueva para el clima de todos los municipios de una región. Nada cambia si no la usas.
