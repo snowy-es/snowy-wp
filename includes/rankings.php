@@ -13,6 +13,7 @@ if (!defined('ABSPATH')) {
  */
 const SNOWY_WP_METRICS = [
     'temperatura' => [
+        'ranking'  => ['metric' => 'maxTemperature', 'mode' => 'now'],
         'label'    => 'Temperatura actual',
         'campo'    => 'current',
         'unidad'   => '°C',
@@ -21,6 +22,7 @@ const SNOWY_WP_METRICS = [
         'columna'  => 'Ahora',
     ],
     'maxima' => [
+        'ranking'  => ['metric' => 'maxTemperature', 'mode' => 'today'],
         'label'    => 'Temperatura máxima',
         'campo'    => 'today.tmax',
         'unidad'   => '°C',
@@ -29,6 +31,7 @@ const SNOWY_WP_METRICS = [
         'columna'  => 'Máxima',
     ],
     'minima' => [
+        'ranking'  => ['metric' => 'minTemperature', 'mode' => 'today'],
         'label'    => 'Temperatura mínima',
         'campo'    => 'today.tmin',
         'unidad'   => '°C',
@@ -37,6 +40,7 @@ const SNOWY_WP_METRICS = [
         'columna'  => 'Mínima',
     ],
     'lluvia' => [
+        'ranking'  => ['metric' => 'precipitation', 'mode' => 'now'],
         'label'    => 'Precipitación acumulada',
         'campo'    => 'precipitation',
         'unidad'   => 'mm',
@@ -45,6 +49,7 @@ const SNOWY_WP_METRICS = [
         'columna'  => 'Acumulado',
     ],
     'racha' => [
+        'ranking'  => ['metric' => 'wind', 'mode' => 'today'],
         'label'    => 'Racha máxima',
         'campo'    => 'today.gustMax',
         'unidad'   => 'km/h',
@@ -53,6 +58,7 @@ const SNOWY_WP_METRICS = [
         'columna'  => 'Racha',
     ],
     'humedad' => [
+        'ranking'  => ['metric' => 'humidity', 'mode' => 'now'],
         'label'    => 'Humedad',
         'campo'    => 'humidity',
         'unidad'   => '%',
@@ -61,7 +67,8 @@ const SNOWY_WP_METRICS = [
         'columna'  => 'Humedad',
     ],
     'presion' => [
-        'label'    => 'Presión',
+        'ranking'  => ['metric' => 'pressure', 'mode' => 'now'],
+        'label'    => 'Presión a nivel del mar',
         'campo'    => 'pressure',
         'unidad'   => 'hPa',
         'decimales' => 0,
@@ -100,24 +107,40 @@ function snowy_wp_format_metric($valor, $metric)
  */
 function snowy_wp_ranked($metric, $orden, $limite, $solo_positivos = false)
 {
-    $stations = array_filter(snowy_wp_stations(), static function ($s) use ($metric, $solo_positivos) {
-        $v = snowy_wp_field($s, $metric['campo']);
+    $query = [
+        'metric' => $metric['ranking']['metric'],
+        'mode'   => $metric['ranking']['mode'],
+        'order'  => $orden,
+        'limit'  => max(1, (int) $limite),
+    ];
+    $code = snowy_wp_region_code();
+    if (trim((string) snowy_wp_option('region')) !== '') {
+        if ($code === '') {
+            return [];
+        }
+        $query['region'] = $code;
+    }
 
-        return $v !== null && (!$solo_positivos || $v > 0);
-    });
-
-    if (!$stations) {
+    $ranking = snowy_wp_cached(
+        'ranking_' . md5(http_build_query($query)),
+        SNOWY_WP_TTL_STATIONS,
+        static function () use ($query) {
+            return snowy_wp_get('/stations/ranking?' . http_build_query($query));
+        }
+    );
+    if (!isset($ranking['entries']) || !is_array($ranking['entries'])) {
         return [];
     }
 
-    usort($stations, static function ($a, $b) use ($metric, $orden) {
-        $va = snowy_wp_field($a, $metric['campo']);
-        $vb = snowy_wp_field($b, $metric['campo']);
+    $stations = [];
+    foreach ($ranking['entries'] as $entry) {
+        if ($solo_positivos && (float) $entry['value'] <= 0) {
+            continue;
+        }
+        $stations[] = array_merge($entry['station'], ['valor' => (float) $entry['value']]);
+    }
 
-        return $orden === 'asc' ? $va <=> $vb : $vb <=> $va;
-    });
-
-    return array_slice($stations, 0, max(1, (int) $limite));
+    return $stations;
 }
 
 function snowy_wp_render_ranking($stations, $metric, $titulo, $etiqueta, $tag, $atts = [])
