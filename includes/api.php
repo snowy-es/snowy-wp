@@ -148,6 +148,82 @@ function snowy_wp_data_time($key)
     return is_array($last) && isset($last['ts']) ? (int) $last['ts'] : null;
 }
 
+const SNOWY_WP_TTL_REGIONS = WEEK_IN_SECONDS;
+
+/**
+ * Código ISO de la región configurada. El ajuste guarda el nombre que dan las
+ * estaciones («Navarra», «Cataluña»): el engine lo pasa a código con
+ * /regions?name=, que entiende los nombres de cada red.
+ */
+function snowy_wp_region_code()
+{
+    $region = trim((string) snowy_wp_option('region'));
+    if ($region === '') {
+        return '';
+    }
+
+    $found = snowy_wp_cached('region_code_' . md5($region), SNOWY_WP_TTL_REGIONS, static function () use ($region) {
+        $listing = snowy_wp_get('/regions?' . http_build_query(['level' => 'ccaa', 'name' => $region]));
+        if (!isset($listing['regions'])) {
+            return null;
+        }
+
+        return count($listing['regions']) === 1 ? ['code' => (string) $listing['regions'][0]['code']] : null;
+    });
+
+    return (string) ($found['code'] ?? '');
+}
+
+/**
+ * Ruta de la API con la región configurada. Devuelve null si hay región pero
+ * el engine no la reconoce: pedir la red entera pintaría toda España con el
+ * título de la región.
+ */
+function snowy_wp_regional_path($path)
+{
+    if (trim((string) snowy_wp_option('region')) === '') {
+        return $path;
+    }
+
+    $code = snowy_wp_region_code();
+
+    return $code === '' ? null : $path . '?' . http_build_query(['region' => $code]);
+}
+
+const SNOWY_WP_OUTLINE_OPTION = 'snowy_wp_outline_';
+
+/**
+ * Contorno simplificado de una región (MultiPolygon de GeoJSON, en lon/lat).
+ * La última copia buena se guarda como opción, sin caducidad: un tema que
+ * recorta o dibuja con el contorno no puede quedarse sin él porque la API
+ * falle más de un día.
+ */
+function snowy_wp_region_outline($code)
+{
+    if (!preg_match(SNOWY_WP_REGION_PATTERN, (string) $code)) {
+        return null;
+    }
+
+    $stored = SNOWY_WP_OUTLINE_OPTION . $code;
+    $geometry = snowy_wp_cached('region_outline_' . $code, SNOWY_WP_TTL_REGIONS, static function () use ($code, $stored) {
+        $detail = snowy_wp_get('/regions/' . rawurlencode($code) . '?geometry=simplified');
+        $fresh = $detail['region']['geometry'] ?? null;
+        if (isset($fresh['coordinates'])) {
+            update_option($stored, $fresh, false);
+        }
+
+        return $fresh;
+    });
+
+    if (isset($geometry['coordinates'])) {
+        return $geometry;
+    }
+
+    $last = get_option($stored);
+
+    return isset($last['coordinates']) ? $last : null;
+}
+
 /**
  * Estaciones con dato actual, filtradas por la region configurada. Sin region
  * se devuelve la red entera.
@@ -159,33 +235,25 @@ function snowy_wp_stations_key()
 
 function snowy_wp_stations()
 {
-    $region = trim((string) snowy_wp_option('region'));
+    return snowy_wp_cached(snowy_wp_stations_key(), SNOWY_WP_TTL_STATIONS, static function () {
+        $path = snowy_wp_regional_path('/stations/markers');
+        $stations = $path === null ? null : snowy_wp_get($path);
 
-    return snowy_wp_cached(snowy_wp_stations_key(), SNOWY_WP_TTL_STATIONS, static function () use ($region) {
-        $all = snowy_wp_get('/stations/markers');
-        if ($all === null) {
-            return null;
-        }
-        if ($region === '') {
-            return array_values($all);
-        }
-
-        return array_values(array_filter($all, static function ($s) use ($region) {
-            return isset($s['state']) && $s['state'] === $region;
-        }));
+        return $stations === null ? null : array_values($stations);
     });
 }
 
 /**
- * Avisos de AEMET agrupados por dia. La fuente devuelve tres dias para toda
- * España y el filtro por comunidad se aplica aqui.
+ * Avisos de AEMET de la region configurada, agrupados por dia. El engine
+ * decide a que region pertenece cada zona de aviso.
  */
 function snowy_wp_hazards()
 {
     $region = trim((string) snowy_wp_option('region'));
 
-    return snowy_wp_cached('hazards_' . md5($region), SNOWY_WP_TTL_HAZARDS, static function () use ($region) {
-        $all = snowy_wp_get('/hazards');
+    return snowy_wp_cached('hazards_' . md5($region), SNOWY_WP_TTL_HAZARDS, static function () {
+        $path = snowy_wp_regional_path('/hazards');
+        $all = $path === null ? null : snowy_wp_get($path);
         if ($all === null) {
             return null;
         }
@@ -198,9 +266,7 @@ function snowy_wp_hazards()
 
         $out = [];
         foreach ($days as $key => $label) {
-            $items = array_values(array_filter($all[$key] ?? [], static function ($a) use ($region) {
-                return $region === '' || (isset($a['ccaa']) && $a['ccaa'] === $region);
-            }));
+            $items = array_values($all[$key] ?? []);
             if ($items) {
                 $out[] = ['label' => $label, 'items' => $items];
             }

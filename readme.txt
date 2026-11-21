@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.7.1
+Stable tag: 2.8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,17 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 
 == Changelog ==
 
+= 2.8.0 =
+* Estaciones y avisos se piden ya filtrados por región (`?region=`): el plugin deja de
+  descargar la red entera para quedarse con una comunidad. Una estación con comunidad
+  asignada se queda en la suya aunque su punto caiga en otra.
+* `[snowy_prevision]` pide el consenso de ECMWF, GFS e ICON al engine
+  (`/weather/forecast/consensus`) en una sola llamada, con la misma fórmula que antes.
+* El nombre de región guardado en los ajustes se pasa a código con `/regions?name=`. Si no
+  se resuelve, estaciones y avisos tiran de la última copia buena y se vuelve a intentar.
+* Nueva función `snowy_wp_region_outline()` con el contorno simplificado de una región; guarda
+  la última copia buena sin caducidad para que un tema no se quede sin él si la API falla.
+
 = 2.7.1 =
 * Los bloques aceptan el nivel del título (`nivel`), como ya hacían los shortcodes: opción
   «Nivel del título» en el panel Apariencia.
@@ -234,6 +245,10 @@ Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 * Versión interna con los cinco shortcodes y sus bloques.
 
 == Upgrade Notice ==
+
+= 2.8.0 =
+Los widgets piden a la API los datos ya filtrados por región y el consenso ya
+calculado. Lo que se pinta no cambia.
 
 = 2.7.1 =
 Los bloques pueden elegir el nivel de su título. Nada cambia si no lo tocas.

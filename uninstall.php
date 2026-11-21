@@ -11,9 +11,10 @@ function snowy_wp_uninstall_site()
     delete_option('snowy_wp_settings');
 
     $wpdb->query($wpdb->prepare(
-        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
         $wpdb->esc_like('_transient_snowy_wp_') . '%',
-        $wpdb->esc_like('_transient_timeout_snowy_wp_') . '%'
+        $wpdb->esc_like('_transient_timeout_snowy_wp_') . '%',
+        $wpdb->esc_like('snowy_wp_outline_') . '%'
     ));
 }
 
