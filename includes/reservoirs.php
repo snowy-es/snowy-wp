@@ -36,6 +36,29 @@ function snowy_wp_reservoirs($region, $cuenca = '')
 }
 
 /**
+ * El conjunto de embalses de la cuenca, la comunidad o España, sumado por el
+ * engine con su nivel de llenado, su nivel de sequia y su proyeccion.
+ */
+function snowy_wp_reservoir_group($region, $cuenca = '')
+{
+    $by   = $cuenca !== '' ? 'basin' : ($region !== '' ? 'community' : 'country');
+    $name = $cuenca !== '' ? $cuenca : ($region !== '' ? $region : 'España');
+
+    $data = snowy_wp_cached('reservoir_groups_' . $by, SNOWY_WP_TTL_RESERVOIRS, static function () use ($by) {
+        return snowy_wp_get('/reservoirs/groups?by=' . rawurlencode($by));
+    });
+
+    $wanted = remove_accents(mb_strtolower($name));
+    foreach ($data['groups'] ?? [] as $group) {
+        if (remove_accents(mb_strtolower($group['name'] ?? '')) === $wanted) {
+            return $group;
+        }
+    }
+
+    return null;
+}
+
+/**
  * Lluvia prevista sobre la cuenca, que es lo que decide si el embalse sube.
  */
 function snowy_wp_basin_forecast($basin)
@@ -125,16 +148,15 @@ function snowy_wp_shortcode_embalses($atts = [])
 
     usort($embalses, static fn($a, $b) => ($b['totalCapacity'] ?? 0) <=> ($a['totalCapacity'] ?? 0));
 
-    $capacidad = 0.0;
-    $volumen   = 0.0;
-    $semana    = 0.0;
-    foreach ($embalses as $e) {
-        $capacidad += (float) ($e['totalCapacity'] ?? 0);
-        $volumen   += (float) ($e['currentVolume'] ?? 0);
-        $semana    += (float) ($e['weeklyChange'] ?? 0);
+    $grupo = snowy_wp_reservoir_group($region, $cuenca);
+    if (!$grupo) {
+        return '';
     }
-    $porcentaje = $capacidad > 0 ? ($volumen / $capacidad) * 100 : 0;
-    $conjunto   = snowy_wp_fill_level(['fillLevel' => snowy_wp_fill_level_for($porcentaje)]);
+    $capacidad  = (float) ($grupo['totalCapacity'] ?? 0);
+    $volumen    = (float) ($grupo['currentVolume'] ?? 0);
+    $semana     = (float) ($grupo['weeklyChange'] ?? 0);
+    $porcentaje = (float) ($grupo['fillPercentage'] ?? 0);
+    $conjunto   = snowy_wp_fill_level($grupo);
 
     $limite = (int) $atts['limite'];
     $lista  = $limite > 0 ? array_slice($embalses, 0, $limite) : $embalses;
@@ -172,28 +194,6 @@ function snowy_wp_shortcode_embalses($atts = [])
     ], $atts);
 }
 add_shortcode('snowy_embalses', 'snowy_wp_shortcode_embalses');
-
-/**
- * Los mismos cortes que aplica la API a cada embalse, para poder clasificar
- * tambien el conjunto de la region.
- */
-function snowy_wp_fill_level_for($percentage)
-{
-    if ($percentage < 25) {
-        return 'critical';
-    }
-    if ($percentage < 40) {
-        return 'low';
-    }
-    if ($percentage < 60) {
-        return 'moderate';
-    }
-    if ($percentage < 80) {
-        return 'good';
-    }
-
-    return 'full';
-}
 
 /**
  * Enlace a la pagina de la comunidad en snowy.es. Se enlaza el conjunto y no
