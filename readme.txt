@@ -4,7 +4,7 @@ Tags: meteorologia, tiempo, estaciones, aemet, avisos
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.11.0
+Stable tag: 2.12.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,9 @@ evita que un artículo de hace un mes muestre la temperatura de hoy.
 Las fuentes se sirven desde el propio plugin, nunca desde un servicio externo.
 
 == Changelog ==
+
+= 2.12.0 =
+* Embalses: los totales de la cuenca, la comunidad o España y su nivel de llenado salen del engine (/reservoirs/groups, contrato 1.16.0), en vez de sumarlos aquí.
 
 = 2.11.0 =
 * Los rankings (`[snowy_ranking]`, `[snowy_lluvia]`, `[snowy_viento]` y `[snowy_extremos]`) salen del ranking del engine
